@@ -63,7 +63,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
     try{
       final createResponse = await _dio.post(
           "public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts",
-          data: user
+          data: user?.toJson()
       );
       if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
         //creating contact successful continue with request

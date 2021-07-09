@@ -5,6 +5,11 @@ import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:dio/dio.dart';
 
+
+///Intercepts network requests and attaches inbox identifier, contact identifiers, conversation identifiers
+///
+/// Creates a new contact and conversation when no persisted contact is found
+/// Clears and recreates contact when a 401 (Unauthorized) response is returned from chatwoot api
 class ChatwootClientApiInterceptor extends Interceptor{
   static const INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER = "{INBOX_IDENTIFIER}";
   static const INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER = "{CONTACT_IDENTIFIER}";

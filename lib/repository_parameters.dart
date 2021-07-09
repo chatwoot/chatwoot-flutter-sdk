@@ -1,7 +1,7 @@
 
 
-import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
-import 'package:chatwoot_client_sdk/di/persistence_parameters.dart';
+import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
+import 'package:chatwoot_client_sdk/persistence_parameters.dart';
 
 class RepositoryParameters{
   ChatwootParameters params;

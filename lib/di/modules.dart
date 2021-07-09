@@ -12,19 +12,20 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_api_interceptor.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
-import 'package:chatwoot_client_sdk/di/persistence_parameters.dart';
-import 'package:chatwoot_client_sdk/di/repository_parameters.dart';
+import 'package:chatwoot_client_sdk/persistence_parameters.dart';
+import 'package:chatwoot_client_sdk/repository_parameters.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod/riverpod.dart';
 
 
-
+///Provides an instance of [Dio]
 final unauthenticatedDioProvider = Provider.family<Dio,ChatwootParameters>((ref,params) {
   return Dio(BaseOptions(baseUrl: params.baseUrl));
 });
 
+///Provides an instance of [ChatwootClientApiInterceptor]
 final chatwootClientApiInterceptorProvider = Provider.family<ChatwootClientApiInterceptor, ChatwootParameters>((ref,params) {
   final dio = ref.read(unauthenticatedDioProvider(params));
   final localStorage = ref.read(localStorageProvider(params));
@@ -36,6 +37,7 @@ final chatwootClientApiInterceptorProvider = Provider.family<ChatwootClientApiIn
   );
 });
 
+///Provides an instance of Dio with interceptors set to authenticate all requests called with this dio instance
 final authenticatedDioProvider = Provider.family<Dio,ChatwootParameters>((ref,params) {
   final authenticatedDio = ref.read(unauthenticatedDioProvider(params));
   final interceptor = ref.read(chatwootClientApiInterceptorProvider(params));
@@ -43,6 +45,7 @@ final authenticatedDioProvider = Provider.family<Dio,ChatwootParameters>((ref,pa
   return authenticatedDio;
 });
 
+///Provides instance of chatwoot client api service [ChatwootClientService].
 final chatwootClientServiceProvider = Provider.family<ChatwootClientService,ChatwootParameters>((ref,params) {
   final authenticatedDio = ref.read(authenticatedDioProvider(params));
   return ChatwootClientServiceImpl(
@@ -51,40 +54,58 @@ final chatwootClientServiceProvider = Provider.family<ChatwootClientService,Chat
   );
 });
 
+///Provides flutter secure storage instance
 final secureStoreProvider = Provider((ref)=>FlutterSecureStorage());
 
+///Provides hive box to store relations between chatwoot client instance and contact object,
+///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
 final clientInstanceToContactBoxProvider = Provider<Box<String>>((ref) {
   return Hive.box<String>("ClientInstanceToContact");
 });
 
+///Provides hive box to store relations between chatwoot client instance and conversation object,
+///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
 final clientInstanceToConversationBoxProvider = Provider<Box<String>>((ref) {
   return Hive.box<String>("ClientInstanceToConversation");
 });
 
+///Provides hive box to store relations between chatwoot client instance and messages,
+///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
 final messageToClientInstanceBoxProvider = Provider<Box<String>>((ref) {
   return Hive.box<String>("MessageToClientInstance");
 });
 
+///Provides hive box to store relations between chatwoot client instance and user object,
+///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
 final clientInstanceToUserBoxProvider = Provider<Box<String>>((ref) {
   return Hive.box<String>("ClientInstanceToUser");
 });
 
+///Provides hive box for [ChatwootContact] object, which is used when persistence is enabled
 final contactBoxProvider = Provider<Box<ChatwootContact>>((ref) {
   return ChatwootContact.getBox();
 });
 
+///Provides hive box for [ChatwootConversation] object, which is used when persistence is enabled
 final conversationBoxProvider = Provider<Box<ChatwootConversation>>((ref) {
   return ChatwootConversation.getBox();
 });
 
+///Provides hive box for [ChatwootMessage] object, which is used when persistence is enabled
 final messagesBoxProvider = Provider<Box<ChatwootMessage>>((ref) {
   return ChatwootMessage.getBox();
 });
 
+///Provides hive box for [ChatwootUser] object, which is used when persistence is enabled
 final userBoxProvider = Provider<Box<ChatwootUser>>((ref) {
   return ChatwootUser.getBox();
 });
 
+
+///Provides an instance of chatwoot user dao
+///
+/// Creates an in memory storage if persistence isn't enabled in params else hive boxes are create to store
+/// chatwoot client's contact
 final chatwootContactDaoProvider = Provider.family<ChatwootContactDao, ChatwootParameters>(
         (ref, params){
           if(!params.isPersistenceEnabled){
@@ -103,6 +124,10 @@ final chatwootContactDaoProvider = Provider.family<ChatwootContactDao, ChatwootP
         }
 );
 
+///Provides an instance of chatwoot user dao
+///
+/// Creates an in memory storage if persistence isn't enabled in params else hive boxes are create to store
+/// chatwoot client's conversation
 final chatwootConversationDaoProvider = Provider.family<ChatwootConversationDao, ChatwootParameters>((ref, params){
   if(!params.isPersistenceEnabled){
     return NonPersistedChatwootConversationDao();
@@ -118,6 +143,10 @@ final chatwootConversationDaoProvider = Provider.family<ChatwootConversationDao,
   );
 });
 
+///Provides an instance of chatwoot user dao
+///
+/// Creates an in memory storage if persistence isn't enabled in params else hive boxes are create to store
+/// chatwoot client's messages
 final chatwootMessagesDaoProvider = Provider.family<ChatwootMessagesDao, ChatwootParameters>((ref, params){
   if(!params.isPersistenceEnabled){
     return NonPersistedChatwootMessagesDao();
@@ -133,6 +162,10 @@ final chatwootMessagesDaoProvider = Provider.family<ChatwootMessagesDao, Chatwoo
   );
 });
 
+///Provides an instance of chatwoot user dao
+///
+/// Creates an in memory storage if persistence isn't enabled in params else hive boxes are create to store
+/// user info
 final chatwootUserDaoProvider = Provider.family<ChatwootUserDao, ChatwootParameters>((ref, params){
   if(!params.isPersistenceEnabled){
     return NonPersistedChatwootUserDao();
@@ -148,6 +181,7 @@ final chatwootUserDaoProvider = Provider.family<ChatwootUserDao, ChatwootParamet
   );
 });
 
+///Provides an instance of local storage
 final localStorageProvider = Provider.family<LocalStorage, ChatwootParameters>((ref, params){
 
   final contactDao = ref.read(chatwootContactDaoProvider(params));
@@ -165,6 +199,7 @@ final localStorageProvider = Provider.family<LocalStorage, ChatwootParameters>((
   );
 });
 
+///Provides an instance of chatwoot repository
 final chatwootRepositoryProvider = Provider.family<ChatwootRepository, RepositoryParameters>((ref, repoParams){
 
   final localStorage = ref.read(localStorageProvider(repoParams.params));

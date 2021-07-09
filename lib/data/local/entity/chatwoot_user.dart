@@ -56,4 +56,9 @@ class ChatwootUser extends Equatable{
     customAttributes
   ];
 
+
+  factory ChatwootUser.fromJson(Map<String, dynamic> json) => _$ChatwootUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ChatwootUserToJson(this);
+
 }
