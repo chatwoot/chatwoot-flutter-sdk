@@ -66,7 +66,9 @@ class ChatwootClientApiInterceptor extends Interceptor{
       await localStorage.conversationDao.saveConversation(conversation);
 
       RequestOptions newOptions = response.requestOptions;
-      newOptions.headers.update("AUTHORIZATION", (value) => contact.contactIdentifier);
+      newOptions.headers.update("AUTHORIZATION", (value) => contact.pubsubToken);
+
+      handler.next(await dio.fetch(newOptions));
 
     }else{
       handler.next(response);
