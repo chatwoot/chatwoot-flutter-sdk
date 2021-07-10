@@ -6,8 +6,8 @@ class ChatwootCallbacks{
   void Function(dynamic)? onWelcome;
   void Function(dynamic)? onPing;
   void Function(dynamic)? onConfirmedSubscription;
-  void Function(ChatwootMessage)? onMessageCreated;
-  void Function(ChatwootMessage)? onMyMessageSent;
+  void Function(ChatwootMessage)? onMessageReceived;
+  void Function(ChatwootMessage, String)? onMessageSent;
   void Function(List<ChatwootMessage>)? onPersistedMessagesRetrieved;
   void Function(List<ChatwootMessage>)? onMessagesRetrieved;
   void Function(ChatwootClientException)? onError;
@@ -16,8 +16,8 @@ class ChatwootCallbacks{
     this.onWelcome,
     this.onPing,
     this.onConfirmedSubscription,
-    this.onMessageCreated,
-    this.onMyMessageSent,
+    this.onMessageReceived,
+    this.onMessageSent,
     this.onPersistedMessagesRetrieved,
     this.onMessagesRetrieved,
     this.onError,

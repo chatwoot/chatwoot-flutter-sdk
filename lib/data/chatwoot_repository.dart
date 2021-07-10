@@ -145,10 +145,11 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
         callbacks.onConfirmedSubscription?.call(event);
       }else if(event["message"]["event"] == "message.created"){
         print("here comes message: $event");
-        if(event["message"]["data"]["message_type"] == 1){
-          callbacks.onMessageCreated?.call(ChatwootMessage.fromJson(event["message"]["data"]));
+        final message = ChatwootMessage.fromJson(event["message"]["data"]);
+        if(message.isMine){
+          callbacks.onMessageSent?.call(message, event["message"]["echo_id"]);
         }else{
-          callbacks.onMyMessageSent?.call(ChatwootMessage.fromJson(event["message"]["data"]));
+          callbacks.onMessageReceived?.call(message);
         }
       }else{
         print("chatwoot unknown event: $event");

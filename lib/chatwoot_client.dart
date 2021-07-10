@@ -42,7 +42,7 @@ class ChatwootClient{
     );
   }
 
-  Future<void> init() async{
+  Future<void> _init() async{
     await _repository.initialize(user);
   }
 
@@ -72,7 +72,7 @@ class ChatwootClient{
         user: user
     );
 
-    await client.init();
+    await client._init();
 
     return client;
   }

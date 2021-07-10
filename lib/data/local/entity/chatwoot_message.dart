@@ -44,6 +44,8 @@ class ChatwootMessage{
   @HiveField(8)
   final dynamic sender;
 
+  bool get isMine => messageType == "1";
+
   ChatwootMessage({
     required this.id,
     required this.content,
