@@ -29,7 +29,7 @@ abstract class ChatwootRepository{
   );
 
   /// Initializes client contact
-  Future<void> initialize();
+  Future<void> initialize(ChatwootUser? user);
 
   /// Fetches persisted messages.
   ///
@@ -102,9 +102,14 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     }
   }
 
-  Future<void> initialize() async{
+  Future<void> initialize(ChatwootUser? user) async{
     try{
       await localStorage.openDB();
+
+      if(user != null){
+        await localStorage.userDao.saveUser(user);
+      }
+
       final contact = await clientService.getContact();
       localStorage.contactDao.saveContact(contact);
       listenForEvents();

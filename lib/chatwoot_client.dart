@@ -43,10 +43,7 @@ class ChatwootClient{
   }
 
   Future<void> init() async{
-    if(user != null && _parameters.isPersistenceEnabled){
-      await _repository.saveUser(user!);
-    }
-    await _repository.initialize();
+    await _repository.initialize(user);
   }
 
   static Future<ChatwootClient> create({
