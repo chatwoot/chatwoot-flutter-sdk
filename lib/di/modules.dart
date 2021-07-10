@@ -117,7 +117,7 @@ final chatwootContactDaoProvider = Provider.family<ChatwootContactDao, ChatwootP
           return PersistedChatwootContactDao(
               contactBox,
               clientInstanceToContactBox,
-              clientInstanceKey: params.clientInstanceKey
+              params.clientInstanceKey
           );
         }
 );
@@ -135,7 +135,7 @@ final chatwootConversationDaoProvider = Provider.family<ChatwootConversationDao,
   return PersistedChatwootConversationDao(
       conversationBox,
       clientInstanceToConversationBox,
-      clientInstanceKey: params.clientInstanceKey
+      params.clientInstanceKey
   );
 });
 
@@ -152,7 +152,7 @@ final chatwootMessagesDaoProvider = Provider.family<ChatwootMessagesDao, Chatwoo
   return PersistedChatwootMessagesDao(
       messagesBox,
       messageToClientInstanceBox,
-      clientInstanceKey: params.clientInstanceKey
+      params.clientInstanceKey
   );
 });
 
@@ -169,7 +169,7 @@ final chatwootUserDaoProvider = Provider.family<ChatwootUserDao, ChatwootParamet
   return PersistedChatwootUserDao(
       userBox,
       clientInstanceToUserBoxBox,
-      clientInstanceKey: params.clientInstanceKey
+      params.clientInstanceKey
   );
 });
 

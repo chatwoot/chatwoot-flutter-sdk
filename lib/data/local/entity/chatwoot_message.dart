@@ -1,4 +1,5 @@
 
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -6,7 +7,7 @@ part 'chatwoot_message.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 2)
-class ChatwootMessage{
+class ChatwootMessage extends Equatable{
 
   @JsonKey()
   @HiveField(0)
@@ -62,5 +63,18 @@ class ChatwootMessage{
   factory ChatwootMessage.fromJson(Map<String, dynamic> json) => _$ChatwootMessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootMessageToJson(this);
+
+  @override
+  List<Object?> get props => [
+    id,
+    content,
+    messageType,
+    contentType,
+    contentAttributes,
+    createdAt,
+    conversationId,
+    attachments,
+    sender
+  ];
 
 }

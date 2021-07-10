@@ -4,11 +4,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../entity/chatwoot_contact.dart';
 
 abstract class ChatwootContactDao{
-  Future<void> openDB();
   Future<void> saveContact(ChatwootContact contact);
   ChatwootContact? getContact();
   Future<void> deleteContact();
-  void onDispose();
+  Future<void> onDispose();
 }
 
 //Only used when persistence is enabled
@@ -18,93 +17,88 @@ enum ChatwootContactBoxNames{
 class PersistedChatwootContactDao extends ChatwootContactDao{
   
   //box containing all persisted contacts
-  Box<ChatwootContact> box;
+  Box<ChatwootContact> _box;
 
-  //box with one to one relation between generated client instance id and conversation id
-  final Box<String> clientInstanceIdToContactIdentifierBox;
+  //_box with one to one relation between generated client instance id and conversation id
+  final Box<String> _clientInstanceIdToContactIdentifierBox;
 
-  final String clientInstanceKey;
+  final String _clientInstanceKey;
 
   PersistedChatwootContactDao(
-    this.box,
-    this.clientInstanceIdToContactIdentifierBox,{
-    required this.clientInstanceKey
-  });
+    this._box,
+    this._clientInstanceIdToContactIdentifierBox,
+    this._clientInstanceKey
+  );
 
   @override
   Future<void> deleteContact() async{
-    final contactIdentifier = clientInstanceIdToContactIdentifierBox.get(
-        clientInstanceKey
+    final contactIdentifier = _clientInstanceIdToContactIdentifierBox.get(
+        _clientInstanceKey
     );
-    await clientInstanceIdToContactIdentifierBox.delete(
-        clientInstanceKey
+    await _clientInstanceIdToContactIdentifierBox.delete(
+        _clientInstanceKey
     );
-    await box.delete(contactIdentifier);
+    await _box.delete(contactIdentifier);
   }
 
   @override
   Future<void> saveContact(ChatwootContact contact) async{
-    await clientInstanceIdToContactIdentifierBox.put(
-        clientInstanceKey,
+    await _clientInstanceIdToContactIdentifierBox.put(
+        _clientInstanceKey,
         contact.contactIdentifier
     );
-    await box.put(contact.contactIdentifier, contact);
+    await _box.put(contact.contactIdentifier, contact);
   }
 
   @override
   ChatwootContact? getContact(){
-    if(box.values.length==0){
+    if(_box.values.length==0){
       return null;
     }
 
-    final contactIdentifier = clientInstanceIdToContactIdentifierBox.get(
-        clientInstanceKey
+    final contactIdentifier = _clientInstanceIdToContactIdentifierBox.get(
+        _clientInstanceKey
     );
 
-    return box.get(contactIdentifier,defaultValue: null);
+    return _box.get(contactIdentifier,defaultValue: null);
   }
 
   @override
-  void onDispose() {
-    box.close();
+  Future<void> onDispose() async{
+    await _box.close();
   }
 
-  @override
-  Future<void> openDB() async{
-    ChatwootContactBoxNames.values.forEach((value) async{
-      await Hive.openBox(value.toString());
-    });
+
+  static Future<void> openDB() async{
+    for(ChatwootContactBoxNames boxName in ChatwootContactBoxNames.values){
+      await Hive.openBox(boxName.toString());
+    }
   }
 
 }
 
 class NonPersistedChatwootContactDao extends ChatwootContactDao{
-  ChatwootContact? contact;
+  ChatwootContact? _contact;
 
 
   @override
   Future<void> deleteContact() async{
-    contact = null;
+    _contact = null;
   }
 
   @override
   ChatwootContact? getContact() {
-    return contact;
+    return _contact;
   }
 
   @override
-  void onDispose() {
-    contact = null;
+  Future<void> onDispose() async{
+    _contact = null;
   }
 
   @override
   Future<void> saveContact(ChatwootContact contact) async{
-    contact = contact;
-  }
-
-  @override
-  Future<void> openDB() async{
-    //nothing to do here
+    _contact = contact;
   }
 
 

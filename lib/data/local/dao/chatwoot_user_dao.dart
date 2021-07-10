@@ -4,11 +4,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class ChatwootUserDao{
 
-  Future<void> openDB();
   Future<void> saveUser(ChatwootUser user);
   ChatwootUser? getUser();
   Future<void> deleteUser();
-  void onDispose();
+  Future<void> onDispose();
 }
 
 
@@ -18,91 +17,84 @@ enum ChatwootUserBoxNames{
 }
 class PersistedChatwootUserDao extends ChatwootUserDao{
   //box containing chat users
-  Box<ChatwootUser> box;
+  Box<ChatwootUser> _box;
   //box with one to one relation between generated client instance id and user identifier
-  final Box<String> clientInstanceIdToUserIdentifierBox;
+  final Box<String> _clientInstanceIdToUserIdentifierBox;
 
-  final String clientInstanceKey;
+  final String _clientInstanceKey;
 
   PersistedChatwootUserDao(
-      this.box,
-      this.clientInstanceIdToUserIdentifierBox,{
-      required this.clientInstanceKey
-  });
+      this._box,
+      this._clientInstanceIdToUserIdentifierBox,
+      this._clientInstanceKey
+  );
 
   @override
   Future<void> deleteUser() async{
-    final userIdentifier = clientInstanceIdToUserIdentifierBox.get(
-        clientInstanceKey
+    final userIdentifier = _clientInstanceIdToUserIdentifierBox.get(
+        _clientInstanceKey
     );
-    await clientInstanceIdToUserIdentifierBox.delete(
-        clientInstanceKey
+    await _clientInstanceIdToUserIdentifierBox.delete(
+        _clientInstanceKey
     );
-    await box.delete(userIdentifier);
+    await _box.delete(userIdentifier);
   }
 
   @override
   Future<void> saveUser(ChatwootUser user) async{
-    await clientInstanceIdToUserIdentifierBox.put(
-        clientInstanceKey,
+    await _clientInstanceIdToUserIdentifierBox.put(
+        _clientInstanceKey,
         user.identifier.toString()
     );
-    await box.put(user.identifier, user);
+    await _box.put(user.identifier, user);
   }
 
   @override
   ChatwootUser? getUser(){
-    if(box.values.length==0){
+    if(_box.values.length==0){
       return null;
     }
-    final userIdentifier = clientInstanceIdToUserIdentifierBox.get(
-        clientInstanceKey
+    final userIdentifier = _clientInstanceIdToUserIdentifierBox.get(
+        _clientInstanceKey
     );
 
-    return box.get(userIdentifier);
+    return _box.get(userIdentifier);
   }
 
   @override
-  void onDispose() {
-    box.close();
+  Future<void> onDispose() async{
+    await _box.close();
   }
 
-  @override
-  Future<void> openDB() async{
-    ChatwootUserBoxNames.values.forEach((boxName) async{
+  static Future<void> openDB() async{
+    for(ChatwootUserBoxNames boxName in ChatwootUserBoxNames.values){
       await Hive.openBox(boxName.toString());
-    });
+    }
   }
 
 }
 
 class NonPersistedChatwootUserDao extends ChatwootUserDao{
-  ChatwootUser? user;
+  ChatwootUser? _user;
 
   @override
   Future<void> deleteUser() async{
-    user = null;
+    _user = null;
   }
 
   @override
   ChatwootUser? getUser() {
-    return user;
+    return _user;
   }
 
   @override
-  void onDispose() {
-    user = null;
+  Future<void> onDispose() async {
+    _user = null;
   }
 
   @override
   Future<void> saveUser(ChatwootUser user) async{
-    user = user;
+    _user = user;
   }
-
-  @override
-  Future<void> openDB() async{
-    //nothing to do here
-  }
-
 
 }

@@ -1,13 +1,17 @@
 
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_client_sdk/di/modules.dart';
 import 'package:chatwoot_client_sdk/persistence_parameters.dart';
 import 'package:chatwoot_client_sdk/repository_parameters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod/riverpod.dart';
+
+import 'data/local/entity/chatwoot_contact.dart';
 
 
 /// Represents a chatwoot client instance
@@ -55,7 +59,12 @@ class ChatwootClient{
   }) async {
 
     if(enableMessagesPersistence){
-      await Hive.initFlutter();
+      Hive
+        ..initFlutter()
+        ..registerAdapter(ChatwootContactAdapter())
+        ..registerAdapter(ChatwootConversationAdapter())
+        ..registerAdapter(ChatwootMessageAdapter())
+        ..registerAdapter(ChatwootUserAdapter());
     }
 
     final chatwootParams = ChatwootParameters(

@@ -4,11 +4,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 
 abstract class ChatwootConversationDao{
-  Future<void> openDB();
   Future<void> saveConversation(ChatwootConversation conversation);
   ChatwootConversation? getConversation();
   Future<void> deleteConversation();
-  void onDispose();
+  Future<void> onDispose();
 }
 
 //Only used when persistence is enabled
@@ -19,47 +18,47 @@ class PersistedChatwootConversationDao extends ChatwootConversationDao{
   
   
   //box containing all persisted conversations
-  Box<ChatwootConversation> box;
+  Box<ChatwootConversation> _box;
 
   //box with one to one relation between generated client instance id and conversation id
-  final Box<String> clientInstanceIdToConversationIdentifierBox;
+  final Box<String> _clientInstanceIdToConversationIdentifierBox;
 
-  final String clientInstanceKey;
+  final String _clientInstanceKey;
 
   PersistedChatwootConversationDao(
-    this.box,
-    this.clientInstanceIdToConversationIdentifierBox,{
-    required this.clientInstanceKey
-  });
+    this._box,
+    this._clientInstanceIdToConversationIdentifierBox,
+    this._clientInstanceKey
+  );
   
   @override
   Future<void> deleteConversation() async{
-    final conversationIdentifier = clientInstanceIdToConversationIdentifierBox.get(
-        clientInstanceKey
+    final conversationIdentifier = _clientInstanceIdToConversationIdentifierBox.get(
+        _clientInstanceKey
     );
-    await clientInstanceIdToConversationIdentifierBox.delete(
-        clientInstanceKey
+    await _clientInstanceIdToConversationIdentifierBox.delete(
+        _clientInstanceKey
     );
-    await box.delete(conversationIdentifier);
+    await _box.delete(conversationIdentifier);
   }
 
   @override
   Future<void> saveConversation(ChatwootConversation conversation) async{
-    await clientInstanceIdToConversationIdentifierBox.put(
-        clientInstanceKey, 
+    await _clientInstanceIdToConversationIdentifierBox.put(
+        _clientInstanceKey, 
         conversation.id.toString()
     );
-    await box.put(conversation.id, conversation);
+    await _box.put(conversation.id, conversation);
   }
 
   @override
   ChatwootConversation? getConversation() {
-    if(box.values.length==0){
+    if(_box.values.length==0){
       return null;
     }
     
-    final conversationidentifierString = clientInstanceIdToConversationIdentifierBox.get(
-        clientInstanceKey
+    final conversationidentifierString = _clientInstanceIdToConversationIdentifierBox.get(
+        _clientInstanceKey
     );
     final conversationIdentifier = int.tryParse(conversationidentifierString ?? "");
 
@@ -67,50 +66,45 @@ class PersistedChatwootConversationDao extends ChatwootConversationDao{
       return null;
     }
     
-    return box.get(conversationIdentifier);
+    return _box.get(conversationIdentifier);
   }
 
   @override
-  void onDispose() {
-    box.close();
+  Future<void> onDispose() async{
+    await _box.close();
   }
 
-  @override
-  Future<void> openDB() async{
-    ChatwootConversationBoxNames.values.forEach((boxName) async{
+
+  static Future<void> openDB() async{
+    for(ChatwootConversationBoxNames boxName in ChatwootConversationBoxNames.values){
       await Hive.openBox(boxName.toString());
-    });
+    }
   }
 
 }
 
 class NonPersistedChatwootConversationDao extends ChatwootConversationDao{
 
-  ChatwootConversation? conversation;
+  ChatwootConversation? _conversation;
 
   @override
   Future<void> deleteConversation() async{
-    conversation = null;
+    _conversation = null;
   }
 
   @override
   ChatwootConversation? getConversation(){
-    return conversation;
+    return _conversation;
   }
 
   @override
-  void onDispose() {
-    conversation = null;
+  Future<void> onDispose() async{
+    _conversation = null;
   }
 
   @override
   Future<void> saveConversation(ChatwootConversation conversation) async{
-    conversation = conversation;
-  }
-
-  @override
-  Future<void> openDB() async{
-    //nothing to do here
+    _conversation = conversation;
   }
 
 

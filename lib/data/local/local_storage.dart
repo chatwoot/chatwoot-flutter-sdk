@@ -22,16 +22,27 @@ class LocalStorage{
   });
 
   Future<void> openDB() async{
-    await userDao.openDB();
-    await contactDao.openDB();
-    await conversationDao.openDB();
-    await messagesDao.openDB();
+    if(contactDao is PersistedChatwootContactDao){
+      await PersistedChatwootContactDao.openDB();
+    }
+    if(conversationDao is PersistedChatwootConversationDao){
+      await PersistedChatwootConversationDao.openDB();
+    }
+    if(messagesDao is PersistedChatwootMessagesDao){
+      await PersistedChatwootMessagesDao.openDB();
+    }
+    if(userDao is PersistedChatwootUserDao){
+      await PersistedChatwootUserDao.openDB();
+    }
   }
 
-  Future<void> clear() async{
+  Future<void> clear({bool clearChatwootUserStorage = true}) async{
     await conversationDao.deleteConversation();
     await contactDao.deleteContact();
     await messagesDao.clear();
+    if(clearChatwootUserStorage){
+      await userDao.deleteUser();
+    }
   }
 
   dispose(){
