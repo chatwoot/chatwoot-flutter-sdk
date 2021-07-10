@@ -5,6 +5,8 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'chatwoot_conversation.g.dart';
 
+
+
 @JsonSerializable()
 @HiveType(typeId: 1)
 class ChatwootConversation extends Equatable{
@@ -31,10 +33,6 @@ class ChatwootConversation extends Equatable{
     required this.messages,
     required this.contact
   });
-
-  static Box<ChatwootConversation> getBox(){
-    return Hive.box<ChatwootConversation>("ChatwootConversation");
-  }
 
   factory ChatwootConversation.fromJson(Map<String, dynamic> json) => _$ChatwootConversationFromJson(json);
 

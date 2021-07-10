@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 
 abstract class ChatwootMessagesDao{
+  Future<void> openDB();
   Future<void> saveMessage(ChatwootMessage message);
   Future<void> saveAllMessages(List<ChatwootMessage> messages);
   ChatwootMessage? getMessage(String messageId);
@@ -15,39 +16,32 @@ abstract class ChatwootMessagesDao{
   void onDispose();
 }
 
+//Only used when persistence is enabled
+enum ChatwootMessagesBoxNames{
+  MESSAGES, MESSAGES_TO_CLIENT_INSTANCE_KEY
+}
 class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
   // box containing all persisted messages
   final Box<ChatwootMessage> box;
 
-  final String baseUrl;
-  final String inboxIdentifier;
-  final String? userIdentifier;
+  final String clientInstanceKey;
 
   //box with many to one relation
-  final Box<String> messageIdToGeneratedClientInstanceKeyBox;
+  final Box<String> messageIdToClientInstanceKeyBox;
 
   PersistedChatwootMessagesDao(
     this.box,
-    this.messageIdToGeneratedClientInstanceKeyBox,{
-    required this.baseUrl,
-    required this.inboxIdentifier,
-    this.userIdentifier
+    this.messageIdToClientInstanceKeyBox,{
+    required this.clientInstanceKey
   });
-
-  final keySeparator= "|||";
-
-  String getMessageGeneratedClientInstanceKey(){
-    return "$baseUrl$keySeparator$userIdentifier$keySeparator$inboxIdentifier${keySeparator}messages";
-  }
 
   @override
   Future<void> clear() async{
-    final messageClientInstancekey = getMessageGeneratedClientInstanceKey();
 
     //filter current client instance message ids
-    Iterable clientMessageIds = messageIdToGeneratedClientInstanceKeyBox
+    Iterable clientMessageIds = messageIdToClientInstanceKeyBox
         .keys
-        .where((key) => messageIdToGeneratedClientInstanceKeyBox.get(key) == messageClientInstancekey);
+        .where((key) => messageIdToClientInstanceKeyBox.get(key) == clientInstanceKey);
 
     await box.deleteAll(clientMessageIds);
   }
@@ -55,7 +49,7 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
   @override
   Future<void> saveMessage(ChatwootMessage message) async{
     await box.put(message.id, message);
-    await messageIdToGeneratedClientInstanceKeyBox.put(message.id, getMessageGeneratedClientInstanceKey());
+    await messageIdToClientInstanceKeyBox.put(message.id, clientInstanceKey);
   }
 
   @override
@@ -67,12 +61,12 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
 
   @override
   List<ChatwootMessage> getMessages(){
-    final messageClientInstancekey = getMessageGeneratedClientInstanceKey();
+    final messageClientInstancekey = clientInstanceKey;
 
     //filter current client instance message ids
-    Set<String> clientMessageIds = messageIdToGeneratedClientInstanceKeyBox
+    Set<String> clientMessageIds = messageIdToClientInstanceKeyBox
         .keys
-        .where((key) => messageIdToGeneratedClientInstanceKeyBox.get(key) == messageClientInstancekey)
+        .where((key) => messageIdToClientInstanceKeyBox.get(key) == messageClientInstancekey)
         .toSet() as Set<String>;
 
     //retrieve messages with ids
@@ -97,12 +91,19 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
   @override
   Future<void> deleteMessage(String messageId) async{
     await box.delete(messageId);
-    await messageIdToGeneratedClientInstanceKeyBox.delete(messageId);
+    await messageIdToClientInstanceKeyBox.delete(messageId);
   }
 
   @override
   ChatwootMessage? getMessage(String messageId) {
     return box.get(messageId,defaultValue: null);
+  }
+
+  @override
+  Future<void> openDB() async{
+    ChatwootMessagesBoxNames.values.forEach((boxName) async{
+      await Hive.openBox(boxName.toString());
+    });
   }
 
 }
@@ -149,6 +150,11 @@ class NonPersistedChatwootMessagesDao extends ChatwootMessagesDao{
   @override
   Future<void> saveMessage(ChatwootMessage message) async{
     messages.update(message.id, (value) => message, ifAbsent: ()=>message);
+  }
+
+  @override
+  Future<void> openDB() async{
+    //nothing to do here
   }
 
 }

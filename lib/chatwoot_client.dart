@@ -2,6 +2,7 @@
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_client_sdk/di/modules.dart';
 import 'package:chatwoot_client_sdk/persistence_parameters.dart';
 import 'package:chatwoot_client_sdk/repository_parameters.dart';
@@ -39,9 +40,13 @@ class ChatwootClient{
             )
         )
     );
-    if(user != null){
-      _repository.saveUser(user!);
+  }
+
+  Future<void> init() async{
+    if(user != null && _parameters.isPersistenceEnabled){
+      await _repository.saveUser(user!);
     }
+    await _repository.initialize();
   }
 
   static Future<ChatwootClient> create({
@@ -52,7 +57,12 @@ class ChatwootClient{
     ChatwootCallbacks? callbacks
   }) async {
 
+    if(enableMessagesPersistence){
+      await Hive.initFlutter();
+    }
+
     final chatwootParams = ChatwootParameters(
+        clientInstanceKey: _getClientInstanceKey(baseUrl: baseUrl, inboxIdentifier: inboxIdentifier),
         isPersistenceEnabled: enableMessagesPersistence,
         baseUrl: baseUrl,
         inboxIdentifier: inboxIdentifier,
@@ -65,9 +75,7 @@ class ChatwootClient{
         user: user
     );
 
-    if(enableMessagesPersistence){
-      await Hive.initFlutter();
-    }
+    await client.init();
 
     return client;
   }
@@ -75,6 +83,26 @@ class ChatwootClient{
   void loadMessages() async{
     _repository.getPersistedMessages();
     await _repository.getMessages();
+  }
+
+  Future<void> sendMessage({
+    required String content,
+    required String echoId
+  }) async{
+    final request = ChatwootNewMessageRequest(
+      content: content,
+      echoId: echoId
+    );
+    await _repository.sendMessage(request);
+  }
+
+  static final keySeparator= "|||";
+  static String _getClientInstanceKey({
+    required String baseUrl,
+    required String inboxIdentifier,
+    String? userIdentifier
+  }){
+    return "$baseUrl$keySeparator$userIdentifier$keySeparator$inboxIdentifier";
   }
 
   dispose(){

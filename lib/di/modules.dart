@@ -60,45 +60,45 @@ final secureStoreProvider = Provider((ref)=>FlutterSecureStorage());
 ///Provides hive box to store relations between chatwoot client instance and contact object,
 ///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
 final clientInstanceToContactBoxProvider = Provider<Box<String>>((ref) {
-  return Hive.box<String>("ClientInstanceToContact");
+  return Hive.box<String>(ChatwootContactBoxNames.CLIENT_INSTANCE_TO_CONTACTS.toString());
 });
 
 ///Provides hive box to store relations between chatwoot client instance and conversation object,
 ///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
 final clientInstanceToConversationBoxProvider = Provider<Box<String>>((ref) {
-  return Hive.box<String>("ClientInstanceToConversation");
+  return Hive.box<String>(ChatwootConversationBoxNames.CLIENT_INSTANCE_TO_CONVERSATIONS.toString());
 });
 
 ///Provides hive box to store relations between chatwoot client instance and messages,
 ///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
 final messageToClientInstanceBoxProvider = Provider<Box<String>>((ref) {
-  return Hive.box<String>("MessageToClientInstance");
+  return Hive.box<String>(ChatwootMessagesBoxNames.MESSAGES_TO_CLIENT_INSTANCE_KEY.toString());
 });
 
 ///Provides hive box to store relations between chatwoot client instance and user object,
 ///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
 final clientInstanceToUserBoxProvider = Provider<Box<String>>((ref) {
-  return Hive.box<String>("ClientInstanceToUser");
+  return Hive.box<String>(ChatwootUserBoxNames.CLIENT_INSTANCE_TO_USER.toString());
 });
 
 ///Provides hive box for [ChatwootContact] object, which is used when persistence is enabled
 final contactBoxProvider = Provider<Box<ChatwootContact>>((ref) {
-  return ChatwootContact.getBox();
+  return Hive.box<ChatwootContact>(ChatwootContactBoxNames.CONTACTS.toString());
 });
 
 ///Provides hive box for [ChatwootConversation] object, which is used when persistence is enabled
 final conversationBoxProvider = Provider<Box<ChatwootConversation>>((ref) {
-  return ChatwootConversation.getBox();
+  return Hive.box<ChatwootConversation>(ChatwootConversationBoxNames.CONVERSATIONS.toString());
 });
 
 ///Provides hive box for [ChatwootMessage] object, which is used when persistence is enabled
 final messagesBoxProvider = Provider<Box<ChatwootMessage>>((ref) {
-  return ChatwootMessage.getBox();
+  return Hive.box<ChatwootMessage>(ChatwootMessagesBoxNames.MESSAGES.toString());
 });
 
 ///Provides hive box for [ChatwootUser] object, which is used when persistence is enabled
 final userBoxProvider = Provider<Box<ChatwootUser>>((ref) {
-  return ChatwootUser.getBox();
+  return Hive.box<ChatwootUser>(ChatwootUserBoxNames.USERS.toString());
 });
 
 
@@ -117,9 +117,7 @@ final chatwootContactDaoProvider = Provider.family<ChatwootContactDao, ChatwootP
           return PersistedChatwootContactDao(
               contactBox,
               clientInstanceToContactBox,
-              baseUrl: params.baseUrl,
-              inboxIdentifier: params.inboxIdentifier,
-              userIdentifier: params.userIdentifier
+              clientInstanceKey: params.clientInstanceKey
           );
         }
 );
@@ -137,9 +135,7 @@ final chatwootConversationDaoProvider = Provider.family<ChatwootConversationDao,
   return PersistedChatwootConversationDao(
       conversationBox,
       clientInstanceToConversationBox,
-      baseUrl: params.baseUrl,
-      inboxIdentifier: params.inboxIdentifier,
-      userIdentifier: params.userIdentifier
+      clientInstanceKey: params.clientInstanceKey
   );
 });
 
@@ -156,9 +152,7 @@ final chatwootMessagesDaoProvider = Provider.family<ChatwootMessagesDao, Chatwoo
   return PersistedChatwootMessagesDao(
       messagesBox,
       messageToClientInstanceBox,
-      baseUrl: params.baseUrl,
-      inboxIdentifier: params.inboxIdentifier,
-      userIdentifier: params.userIdentifier
+      clientInstanceKey: params.clientInstanceKey
   );
 });
 
@@ -175,9 +169,7 @@ final chatwootUserDaoProvider = Provider.family<ChatwootUserDao, ChatwootParamet
   return PersistedChatwootUserDao(
       userBox,
       clientInstanceToUserBoxBox,
-      baseUrl: params.baseUrl,
-      inboxIdentifier: params.inboxIdentifier,
-      userIdentifier: params.userIdentifier
+      clientInstanceKey: params.clientInstanceKey
   );
 });
 

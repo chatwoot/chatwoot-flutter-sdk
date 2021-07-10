@@ -7,6 +7,7 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +54,11 @@ abstract class ChatwootRepository{
   /// to current user
   void listenForEvents();
 
+  ///Save user object to local storage
   Future<void> saveUser(ChatwootUser user);
+
+  ///Save user object to local storage
+  Future<void> sendMessage(ChatwootNewMessageRequest request);
 
   /// Clears all data related to current chatwoot client instance
   Future<void> clear();
@@ -80,13 +85,12 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
 
   @override
   Future<void> getMessages() async{
-    await initialize();
     try{
       final messages = await clientService.getAllMessages();
       await localStorage.messagesDao.saveAllMessages(messages);
       callbacks.onMessagesRetrieved?.call(messages);
     }on ChatwootClientException catch(e){
-      callbacks.onError?.call(e.cause);
+      callbacks.onError?.call(e);
     }
   }
 
@@ -100,11 +104,12 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
 
   Future<void> initialize() async{
     try{
+      await localStorage.openDB();
       final contact = await clientService.getContact();
       localStorage.contactDao.saveContact(contact);
       listenForEvents();
     }on ChatwootClientException catch(e){
-      callbacks.onError?.call(e.cause);
+      callbacks.onError?.call(e);
     }
   }
 
@@ -112,6 +117,15 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   @override
   Future<void> saveUser(ChatwootUser user) async{
     await localStorage.userDao.saveUser(user);
+  }
+
+
+  Future<void> sendMessage(ChatwootNewMessageRequest request) async{
+    try{
+      await clientService.createMessage(request);
+    }on ChatwootClientException catch(e){
+      callbacks.onError?.call(e);
+    }
   }
 
   @override

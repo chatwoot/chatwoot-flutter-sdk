@@ -9,6 +9,8 @@ part 'chatwoot_contact.g.dart';
 @HiveType(typeId: 0)
 class ChatwootContact extends Equatable{
 
+  static const BOX_NAME = "ChatwootContact";
+
   @JsonKey(name: "id")
   @HiveField(0)
   final int id;
@@ -36,10 +38,6 @@ class ChatwootContact extends Equatable{
     required this.name,
     required this.email,
   });
-
-  static Box<ChatwootContact> getBox(){
-    return Hive.box<ChatwootContact>("ChatwootContact");
-  }
 
   factory ChatwootContact.fromJson(Map<String, dynamic> json) => _$ChatwootContactFromJson(json);
 

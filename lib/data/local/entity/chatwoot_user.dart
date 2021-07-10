@@ -42,10 +42,6 @@ class ChatwootUser extends Equatable{
     this.customAttributes
   });
 
-  static Box<ChatwootUser> getBox(){
-    return Hive.box<ChatwootUser>("ChatwootUser");
-  }
-
   @override
   List<Object?> get props => [
     identifier,

@@ -57,12 +57,6 @@ class ChatwootMessage{
   });
 
 
-
-  static Box<ChatwootMessage> getBox(){
-    return Hive.box<ChatwootMessage>("ChatwootMessage");
-  }
-
-
   factory ChatwootMessage.fromJson(Map<String, dynamic> json) => _$ChatwootMessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootMessageToJson(this);

@@ -1,5 +1,6 @@
 
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
+import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
 
 class ChatwootCallbacks{
   void Function(dynamic)? onWelcome;
@@ -9,7 +10,7 @@ class ChatwootCallbacks{
   void Function(ChatwootMessage)? onMyMessageSent;
   void Function(List<ChatwootMessage>)? onPersistedMessagesRetrieved;
   void Function(List<ChatwootMessage>)? onMessagesRetrieved;
-  void Function(String)? onError;
+  void Function(ChatwootClientException)? onError;
 
   ChatwootCallbacks({
     this.onWelcome,

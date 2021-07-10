@@ -3,50 +3,48 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class ChatwootUserDao{
+
+  Future<void> openDB();
   Future<void> saveUser(ChatwootUser user);
   ChatwootUser? getUser();
   Future<void> deleteUser();
   void onDispose();
 }
 
+
+//Only used when persistence is enabled
+enum ChatwootUserBoxNames{
+  USERS, CLIENT_INSTANCE_TO_USER
+}
 class PersistedChatwootUserDao extends ChatwootUserDao{
   //box containing chat users
   Box<ChatwootUser> box;
   //box with one to one relation between generated client instance id and user identifier
-  final Box<String> generatedClientInstanceIdToUserIdentifierBox;
-  String baseUrl;
-  String inboxIdentifier;
-  String? userIdentifier;
+  final Box<String> clientInstanceIdToUserIdentifierBox;
+
+  final String clientInstanceKey;
 
   PersistedChatwootUserDao(
       this.box,
-      this.generatedClientInstanceIdToUserIdentifierBox,{
-        required this.baseUrl,
-        required this.inboxIdentifier,
-        this.userIdentifier
+      this.clientInstanceIdToUserIdentifierBox,{
+      required this.clientInstanceKey
   });
-
-  final keySeparator= "|||";
-
-  String getUserGeneratedClientInstanceKey(){
-    return "$baseUrl$keySeparator$userIdentifier$keySeparator$inboxIdentifier${keySeparator}user";
-  }
 
   @override
   Future<void> deleteUser() async{
-    final userIdentifier = generatedClientInstanceIdToUserIdentifierBox.get(
-        getUserGeneratedClientInstanceKey()
+    final userIdentifier = clientInstanceIdToUserIdentifierBox.get(
+        clientInstanceKey
     );
-    await generatedClientInstanceIdToUserIdentifierBox.delete(
-        getUserGeneratedClientInstanceKey()
+    await clientInstanceIdToUserIdentifierBox.delete(
+        clientInstanceKey
     );
     await box.delete(userIdentifier);
   }
 
   @override
   Future<void> saveUser(ChatwootUser user) async{
-    await generatedClientInstanceIdToUserIdentifierBox.put(
-        getUserGeneratedClientInstanceKey(),
+    await clientInstanceIdToUserIdentifierBox.put(
+        clientInstanceKey,
         user.identifier.toString()
     );
     await box.put(user.identifier, user);
@@ -57,8 +55,8 @@ class PersistedChatwootUserDao extends ChatwootUserDao{
     if(box.values.length==0){
       return null;
     }
-    final userIdentifier = generatedClientInstanceIdToUserIdentifierBox.get(
-        getUserGeneratedClientInstanceKey()
+    final userIdentifier = clientInstanceIdToUserIdentifierBox.get(
+        clientInstanceKey
     );
 
     return box.get(userIdentifier);
@@ -67,6 +65,13 @@ class PersistedChatwootUserDao extends ChatwootUserDao{
   @override
   void onDispose() {
     box.close();
+  }
+
+  @override
+  Future<void> openDB() async{
+    ChatwootUserBoxNames.values.forEach((boxName) async{
+      await Hive.openBox(boxName.toString());
+    });
   }
 
 }
@@ -92,6 +97,11 @@ class NonPersistedChatwootUserDao extends ChatwootUserDao{
   @override
   Future<void> saveUser(ChatwootUser user) async{
     user = user;
+  }
+
+  @override
+  Future<void> openDB() async{
+    //nothing to do here
   }
 
 

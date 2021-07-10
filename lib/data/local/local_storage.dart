@@ -21,6 +21,13 @@ class LocalStorage{
     required this.messagesDao,
   });
 
+  Future<void> openDB() async{
+    await userDao.openDB();
+    await contactDao.openDB();
+    await conversationDao.openDB();
+    await messagesDao.openDB();
+  }
+
   clear(){
     conversationDao.deleteConversation();
     contactDao.deleteContact();
