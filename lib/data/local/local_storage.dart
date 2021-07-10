@@ -28,10 +28,10 @@ class LocalStorage{
     await messagesDao.openDB();
   }
 
-  clear(){
-    conversationDao.deleteConversation();
-    contactDao.deleteContact();
-    messagesDao.clear();
+  Future<void> clear() async{
+    await conversationDao.deleteConversation();
+    await contactDao.deleteContact();
+    await messagesDao.clear();
   }
 
   dispose(){

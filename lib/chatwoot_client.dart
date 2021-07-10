@@ -102,6 +102,22 @@ class ChatwootClient{
     return "$baseUrl$keySeparator$userIdentifier$keySeparator$inboxIdentifier";
   }
 
+  static Future<void> clearData() async{
+    final providerContainer = ProviderContainer();
+    final params = ChatwootParameters(
+        isPersistenceEnabled: true,
+        baseUrl: "",
+        inboxIdentifier: "",
+        clientInstanceKey: ""
+    );
+
+    final localStorage = providerContainer.read(localStorageProvider(params));
+    await localStorage.clear();
+
+    localStorage.dispose();
+    providerContainer.dispose();
+  }
+
   dispose(){
     _repository.dispose();
     _container.dispose();
