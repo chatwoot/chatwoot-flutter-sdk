@@ -11,6 +11,7 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_api_interceptor.dart';
+import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_auth_service.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:chatwoot_client_sdk/persistence_parameters.dart';
 import 'package:chatwoot_client_sdk/repository_parameters.dart';
@@ -27,13 +28,12 @@ final unauthenticatedDioProvider = Provider.family<Dio,ChatwootParameters>((ref,
 
 ///Provides an instance of [ChatwootClientApiInterceptor]
 final chatwootClientApiInterceptorProvider = Provider.family<ChatwootClientApiInterceptor, ChatwootParameters>((ref,params) {
-  final dio = ref.read(unauthenticatedDioProvider(params));
   final localStorage = ref.read(localStorageProvider(params));
+  final authService = ref.read(chatwootClientAuthServiceProvider(params));
   return ChatwootClientApiInterceptor(
-      baseUrl: params.baseUrl,
-      inboxIdentifier: params.inboxIdentifier,
-      localStorage: localStorage,
-      dio: dio
+      params.inboxIdentifier,
+      localStorage,
+      authService
   );
 });
 
@@ -45,12 +45,20 @@ final authenticatedDioProvider = Provider.family<Dio,ChatwootParameters>((ref,pa
   return authenticatedDio;
 });
 
+///Provides instance of chatwoot client auth service [ChatwootClientAuthService].
+final chatwootClientAuthServiceProvider = Provider.family<ChatwootClientAuthService,ChatwootParameters>((ref,params) {
+  final unAuthenticatedDio = ref.read(unauthenticatedDioProvider(params));
+  return ChatwootClientAuthServiceImpl(
+      dio: unAuthenticatedDio
+  );
+});
+
 ///Provides instance of chatwoot client api service [ChatwootClientService].
 final chatwootClientServiceProvider = Provider.family<ChatwootClientService,ChatwootParameters>((ref,params) {
   final authenticatedDio = ref.read(authenticatedDioProvider(params));
   return ChatwootClientServiceImpl(
-    params.baseUrl,
-    dio: authenticatedDio
+      params.baseUrl,
+      dio: authenticatedDio
   );
 });
 
