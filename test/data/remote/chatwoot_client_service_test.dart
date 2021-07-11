@@ -2,7 +2,6 @@
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
@@ -17,19 +16,10 @@ import 'chatwoot_client_service_test.mocks.dart';
   Dio
 ])
 void main() {
-  group("Non Persisted Chatwoot Contact Dao Test", (){
+  group("Client Service Tests", (){
     late final ChatwootClientService clientService ;
     final testBaseUrl = "https://test.com";
     final mockDio = MockDio();
-
-    final testUser = ChatwootUser(
-        identifier: "identifier",
-        identifierHash: "identifierHash",
-        name: "name",
-        email: "email",
-        avatarUrl: "avatarUrl",
-        customAttributes: {}
-    );
 
     setUpAll((){
       clientService = ChatwootClientServiceImpl(testBaseUrl, dio: mockDio);
@@ -50,131 +40,6 @@ void main() {
         requestOptions: RequestOptions(path: "")
       );
     }
-
-    test('Given contact is successfully created when createNewContact is called, then return created contact', () async{
-
-      //GIVEN
-      final responseBody = {
-        "id": 0,
-        "source_id": "contactIdentifier",
-        "pubsub_token": "pubsubToken",
-        "name": "name",
-        "email": "email"
-      };
-      when(mockDio.post(any, data: testUser.toJson())).thenAnswer((_) => Future.value(_createSuccessResponse(responseBody)));
-
-      //WHEN
-      final result = await clientService.createNewContact(testUser);
-
-      //THEN
-      expect(result, ChatwootContact.fromJson(responseBody));
-
-    });
-
-    test('Given contact creation returns with error response when createNewContact is called, then throw error', () async{
-
-      //GIVEN
-      when(
-          mockDio.post(any, data: testUser.toJson())
-      ).thenAnswer((_) => Future.value(_createErrorResponse(statusCode:401, body: {})));
-
-      //WHEN
-      ChatwootClientException? chatwootClientException;
-      try{
-        await clientService.createNewContact(testUser);
-      }on ChatwootClientException catch (e){
-        chatwootClientException = e;
-      }
-
-      //THEN
-      expect(chatwootClientException, isNotNull);
-      expect(chatwootClientException!.type, equals(ChatwootClientExceptionType.CREATE_CONTACT_FAILED));
-
-    });
-
-    test('Given contact creation fails when createNewContact is called, then throw error', () async{
-
-      //GIVEN
-      final testError = DioError(requestOptions: RequestOptions(path: ""));
-      when(
-          mockDio.post(any, data: testUser.toJson())
-      ).thenThrow(testError);
-
-      //WHEN
-      ChatwootClientException? chatwootClientException;
-      try{
-        await clientService.createNewContact(testUser);
-      }on ChatwootClientException catch (e){
-        chatwootClientException = e;
-      }
-
-      //THEN
-      expect(chatwootClientException, isNotNull);
-      expect(chatwootClientException!.type, equals(ChatwootClientExceptionType.CREATE_CONTACT_FAILED));
-
-    });
-
-    test('Given conversation is successfully created when createNewConversation is called, then return created conversation', () async{
-
-      //GIVEN
-      final responseBody = {
-        "id": 0,
-        "inbox_id": "",
-        "messages": "",
-        "contact": ""
-      };
-      when(mockDio.post(any)).thenAnswer((_) => Future.value(_createSuccessResponse(responseBody)));
-
-      //WHEN
-      final result = await clientService.createNewConversation();
-
-      //THEN
-      expect(result, ChatwootConversation.fromJson(responseBody));
-
-    });
-
-    test('Given conversation creation returns with error response when createNewConversation is called, then throw error', () async{
-
-      //GIVEN
-      when(
-          mockDio.post(any)
-      ).thenAnswer((_) => Future.value(_createErrorResponse(statusCode:401, body: {})));
-
-      //WHEN
-      ChatwootClientException? chatwootClientException;
-      try{
-        await clientService.createNewConversation();
-      }on ChatwootClientException catch (e){
-        chatwootClientException = e;
-      }
-
-      //THEN
-      expect(chatwootClientException, isNotNull);
-      expect(chatwootClientException!.type, equals(ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED));
-
-    });
-
-    test('Given conversation creation fails when createNewConversation is called, then throw error', () async{
-
-      //GIVEN
-      final testError = DioError(requestOptions: RequestOptions(path: ""));
-      when(
-          mockDio.post(any)
-      ).thenThrow(testError);
-
-      //WHEN
-      ChatwootClientException? chatwootClientException;
-      try{
-        await clientService.createNewConversation();
-      }on ChatwootClientException catch (e){
-        chatwootClientException = e;
-      }
-
-      //THEN
-      expect(chatwootClientException, isNotNull);
-      expect(chatwootClientException!.type, equals(ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED));
-
-    });
 
     test('Given message is successfully sent when createMessage is called, then return sent message', () async{
 

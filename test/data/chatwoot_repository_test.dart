@@ -29,7 +29,7 @@ import 'local/local_storage_test.mocks.dart';
 ])
 void main() {
 
-  group("Local Storage Tests", (){
+  group("Chatwoot Repository Tests", (){
     final testContact = ChatwootContact(
         id: 0,
         contactIdentifier: "contactIdentifier",

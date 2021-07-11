@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_api_interceptor.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
@@ -39,10 +38,6 @@ abstract class ChatwootClientService{
 
   Future<List<ChatwootMessage>> getAllMessages();
 
-  Future<ChatwootContact> createNewContact(ChatwootUser? user);
-
-  Future<ChatwootConversation> createNewConversation();
-
   void startWebSocketConnection(
       String contactPubsubToken
   );
@@ -58,49 +53,6 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
       }
   ) : super(baseUrl, dio);
 
-
-  Future<ChatwootContact> createNewContact(ChatwootUser? user) async{
-    try{
-      final createResponse = await _dio.post(
-          "public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts",
-          data: user?.toJson()
-      );
-      if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
-        //creating contact successful continue with request
-        final contact = ChatwootContact.fromJson(createResponse.data);
-        return contact;
-      }else{
-        throw ChatwootClientException(
-            createResponse.statusMessage ?? "unknown error",
-            ChatwootClientExceptionType.CREATE_CONTACT_FAILED
-        );
-      }
-    } on DioError catch(e){
-      throw ChatwootClientException(e.message,ChatwootClientExceptionType.CREATE_CONTACT_FAILED);
-    }
-  }
-
-  Future<ChatwootConversation> createNewConversation() async{
-    try{
-      final createResponse = await _dio.post(
-          "public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations"
-      );
-      if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
-        //creating contact successful continue with request
-        final newConversation = ChatwootConversation.fromJson(createResponse.data);
-        return newConversation;
-      }else{
-        throw ChatwootClientException(
-            createResponse.statusMessage ?? "unknown error",
-            ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED
-        );
-      }
-    } on DioError catch(e){
-      throw ChatwootClientException(
-          e.message,ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED
-      );
-    }
-  }
 
   @override
   Future<ChatwootMessage> createMessage(
