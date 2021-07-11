@@ -92,6 +92,8 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
         chatwootClient = client;
         chatwootClient.loadMessages();
       });
+    }).onError((error, stackTrace) {
+      print(error);
     });
 
   }

@@ -24,4 +24,10 @@ class ChatwootNewMessageRequest extends Equatable{
     content,
     echoId
   ];
+
+
+  factory ChatwootNewMessageRequest.fromJson(Map<String, dynamic> json) => _$ChatwootNewMessageRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ChatwootNewMessageRequestToJson(this);
+
 }

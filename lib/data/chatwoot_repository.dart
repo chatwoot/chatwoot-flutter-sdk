@@ -55,9 +55,6 @@ abstract class ChatwootRepository{
   void listenForEvents();
 
   ///Save user object to local storage
-  Future<void> saveUser(ChatwootUser user);
-
-  ///Save user object to local storage
   Future<void> sendMessage(ChatwootNewMessageRequest request);
 
   /// Clears all data related to current chatwoot client instance
@@ -103,31 +100,29 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   }
 
   Future<void> initialize(ChatwootUser? user) async{
-    try{
-      await localStorage.openDB();
+    await localStorage.openDB();
 
-      if(user != null){
-        await localStorage.userDao.saveUser(user);
-      }
-
-      final contact = await clientService.getContact();
-      localStorage.contactDao.saveContact(contact);
-      listenForEvents();
-    }on ChatwootClientException catch(e){
-      callbacks.onError?.call(e);
+    if(user != null){
+      await localStorage.userDao.saveUser(user);
     }
-  }
 
+    //refresh contact
+    final contact = await clientService.getContact();
+    localStorage.contactDao.saveContact(contact);
 
-  @override
-  Future<void> saveUser(ChatwootUser user) async{
-    await localStorage.userDao.saveUser(user);
+    //refresh conversation
+    final conversation = await clientService.getConversations();
+    localStorage.conversationDao.saveConversation(conversation[0]);
+
+    listenForEvents();
   }
 
 
   Future<void> sendMessage(ChatwootNewMessageRequest request) async{
     try{
-      await clientService.createMessage(request);
+      final createdMessage = await clientService.createMessage(request);
+      await localStorage.messagesDao.saveMessage(createdMessage);
+      callbacks.onMessageSent?.call(createdMessage, request.echoId);
     }on ChatwootClientException catch(e){
       callbacks.onError?.call(e);
     }
@@ -143,11 +138,11 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
         callbacks.onPing?.call(event);
       }else if(event["type"] == "confirm_subscription"){
         callbacks.onConfirmedSubscription?.call(event);
-      }else if(event["message"]["event"] == "message.created"){
+      }else if(event["message"]?["event"] == "message.created"){
         print("here comes message: $event");
         final message = ChatwootMessage.fromJson(event["message"]["data"]);
         if(message.isMine){
-          callbacks.onMessageSent?.call(message, event["message"]["echo_id"]);
+          callbacks.onMessageDelivered?.call(message, event["message"]["echo_id"]);
         }else{
           callbacks.onMessageReceived?.call(message);
         }

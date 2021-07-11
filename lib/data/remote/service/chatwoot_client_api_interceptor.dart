@@ -37,18 +37,23 @@ class ChatwootClientApiInterceptor extends Interceptor{
 
     if(contact == null){
       // create new contact from user if no token found
-      final contact = await _createNewContact();
-      final conversation = await _createNewConversation(contact.contactIdentifier);
+      contact = await _createNewContact();
+      conversation = await _createNewConversation(contact.contactIdentifier);
       await localStorage.conversationDao.saveConversation(conversation);
       await localStorage.contactDao.saveContact(contact);
       token = contact.pubsubToken;
+    }
+
+    if(conversation == null){
+      final conversation = await _createNewConversation(contact.contactIdentifier);
+      await localStorage.conversationDao.saveConversation(conversation);
     }
 
     if(newOptions.headers["AUTHORIZATION"] == INTERCEPTOR_AUTHORIZATION_PLACEHOLDER){
       newOptions.headers.update("AUTHORIZATION", (value) => token);
     }
     newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER, inboxIdentifier);
-    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER, contact!.contactIdentifier);
+    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER, contact.contactIdentifier);
     newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER, "${conversation!.id}");
 
 
@@ -87,10 +92,13 @@ class ChatwootClientApiInterceptor extends Interceptor{
         await localStorage.contactDao.saveContact(contact);
         return contact;
       }else{
-        throw ChatwootClientException(createResponse.statusMessage ?? "unknown error");
+        throw ChatwootClientException(
+            createResponse.statusMessage ?? "unknown error",
+            ChatwootClientExceptionType.CREATE_CONTACT_FAILED
+        );
       }
     } on DioError catch(e){
-      throw ChatwootClientException(e.message);
+      throw ChatwootClientException(e.message,ChatwootClientExceptionType.CREATE_CONTACT_FAILED);
     }
   }
 
@@ -105,10 +113,13 @@ class ChatwootClientApiInterceptor extends Interceptor{
         await localStorage.conversationDao.saveConversation(newConversation);
         return newConversation;
       }else{
-        throw ChatwootClientException(createResponse.statusMessage ?? "unknown error");
+        throw ChatwootClientException(
+            createResponse.statusMessage ?? "unknown error",
+            ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED
+        );
       }
     } on DioError catch(e){
-      throw ChatwootClientException(e.message);
+      throw ChatwootClientException(e.message, ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
     }
   }
 }
