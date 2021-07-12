@@ -120,8 +120,6 @@ void main() {
       return Future(()async{
         await mockConversationBox.close();
         await mockClientInstanceKeyToConversationBox.close();
-        await mockConversationBox.deleteFromDisk();
-        await mockClientInstanceKeyToConversationBox.deleteFromDisk();
       });
     });
 

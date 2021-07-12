@@ -139,8 +139,6 @@ void main() {
       return Future(()async{
         await mockContactBox.close();
         await mockClientInstanceKeyToContactBox.close();
-        await mockContactBox.deleteFromDisk();
-        await mockClientInstanceKeyToContactBox.deleteFromDisk();
       });
     });
 

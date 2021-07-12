@@ -122,8 +122,6 @@ void main() {
       return Future(()async{
         await mockUserBox.close();
         await mockClientInstanceKeyToUserBox.close();
-        await mockUserBox.deleteFromDisk();
-        await mockClientInstanceKeyToUserBox.deleteFromDisk();
       });
     });
 

@@ -171,8 +171,6 @@ void main() {
       return Future(()async{
         await mockMessageBox.close();
         await mockClientInstanceKeyToMessageBox.close();
-        await mockMessageBox.deleteFromDisk();
-        await mockClientInstanceKeyToMessageBox.deleteFromDisk();
       });
     });
 
