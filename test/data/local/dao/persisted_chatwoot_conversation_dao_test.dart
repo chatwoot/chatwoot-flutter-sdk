@@ -77,6 +77,18 @@ void main() {
       expect(retrievedConversation, testConversation);
     });
 
+
+    test('Given conversations are successfully cleared when clearAll is called, then retrieving a conversation should be null', () async{
+      //GIVEN
+      await dao.saveConversation(testConversation);
+
+      //WHEN
+      await dao.clearAll();
+
+      //THEN
+      expect(dao.getConversation(), null);
+    });
+
     test('Given dao is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
 
       //WHEN

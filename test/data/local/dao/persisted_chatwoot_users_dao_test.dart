@@ -95,6 +95,18 @@ void main() {
       expect(hiveError != null, true);
     });
 
+
+    test('Given users are successfully cleared when clearAll is called, then retrieving a user should be null', () async{
+      //GIVEN
+      await dao.saveUser(testUser);
+
+      //WHEN
+      await dao.clearAll();
+
+      //THEN
+      expect(dao.getUser(), null);
+    });
+
     tearDown((){
       return Future(()async{
         try{

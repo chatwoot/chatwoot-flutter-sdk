@@ -54,6 +54,11 @@ class MockChatwootConversationDao extends _i1.Mock
       (super.noSuchMethod(Invocation.method(#onDispose, []),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
+  @override
+  _i3.Future<void> clearAll() =>
+      (super.noSuchMethod(Invocation.method(#clearAll, []),
+          returnValue: Future<void>.value(null),
+          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }
 
 /// A class which mocks [ChatwootContactDao].
@@ -78,6 +83,11 @@ class MockChatwootContactDao extends _i1.Mock
   @override
   _i3.Future<void> onDispose() =>
       (super.noSuchMethod(Invocation.method(#onDispose, []),
+          returnValue: Future<void>.value(null),
+          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
+  @override
+  _i3.Future<void> clearAll() =>
+      (super.noSuchMethod(Invocation.method(#clearAll, []),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }
@@ -123,6 +133,11 @@ class MockChatwootMessagesDao extends _i1.Mock
       (super.noSuchMethod(Invocation.method(#onDispose, []),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
+  @override
+  _i3.Future<void> clearAll() =>
+      (super.noSuchMethod(Invocation.method(#clearAll, []),
+          returnValue: Future<void>.value(null),
+          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }
 
 /// A class which mocks [PersistedChatwootConversationDao].
@@ -149,6 +164,11 @@ class MockPersistedChatwootConversationDao extends _i1.Mock
       (super.noSuchMethod(Invocation.method(#onDispose, []),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
+  @override
+  _i3.Future<void> clearAll() =>
+      (super.noSuchMethod(Invocation.method(#clearAll, []),
+          returnValue: Future<void>.value(null),
+          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }
 
 /// A class which mocks [PersistedChatwootContactDao].
@@ -173,6 +193,11 @@ class MockPersistedChatwootContactDao extends _i1.Mock
   @override
   _i3.Future<void> onDispose() =>
       (super.noSuchMethod(Invocation.method(#onDispose, []),
+          returnValue: Future<void>.value(null),
+          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
+  @override
+  _i3.Future<void> clearAll() =>
+      (super.noSuchMethod(Invocation.method(#clearAll, []),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }
@@ -218,6 +243,11 @@ class MockPersistedChatwootMessagesDao extends _i1.Mock
   _i8.ChatwootMessage? getMessage(String? messageId) =>
       (super.noSuchMethod(Invocation.method(#getMessage, [messageId]))
           as _i8.ChatwootMessage?);
+  @override
+  _i3.Future<void> clearAll() =>
+      (super.noSuchMethod(Invocation.method(#clearAll, []),
+          returnValue: Future<void>.value(null),
+          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }
 
 /// A class which mocks [FlutterSecureStorage].
@@ -338,6 +368,11 @@ class MockChatwootUserDao extends _i1.Mock implements _i10.ChatwootUserDao {
       (super.noSuchMethod(Invocation.method(#onDispose, []),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
+  @override
+  _i3.Future<void> clearAll() =>
+      (super.noSuchMethod(Invocation.method(#clearAll, []),
+          returnValue: Future<void>.value(null),
+          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }
 
 /// A class which mocks [PersistedChatwootUserDao].
@@ -362,6 +397,11 @@ class MockPersistedChatwootUserDao extends _i1.Mock
   @override
   _i3.Future<void> onDispose() =>
       (super.noSuchMethod(Invocation.method(#onDispose, []),
+          returnValue: Future<void>.value(null),
+          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
+  @override
+  _i3.Future<void> clearAll() =>
+      (super.noSuchMethod(Invocation.method(#clearAll, []),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }

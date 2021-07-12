@@ -8,6 +8,7 @@ abstract class ChatwootContactDao{
   ChatwootContact? getContact();
   Future<void> deleteContact();
   Future<void> onDispose();
+  Future<void> clearAll();
 }
 
 //Only used when persistence is enabled
@@ -68,6 +69,11 @@ class PersistedChatwootContactDao extends ChatwootContactDao{
     await _box.close();
   }
 
+  Future<void> clearAll() async{
+    await _box.clear();
+    await _clientInstanceIdToContactIdentifierBox.clear();
+  }
+
 
   static Future<void> openDB() async{
     for(ChatwootContactBoxNames boxName in ChatwootContactBoxNames.values){
@@ -99,6 +105,11 @@ class NonPersistedChatwootContactDao extends ChatwootContactDao{
   @override
   Future<void> saveContact(ChatwootContact contact) async{
     _contact = contact;
+  }
+
+
+  Future<void> clearAll() async{
+    _contact = null;
   }
 
 

@@ -122,6 +122,18 @@ void main() {
       verifyNever(mockUserDao.deleteUser());
     });
 
+    test('Given all data is successfully cleared when clearAll is called, then all data daos should be cleared', () async{
+
+      //WHEN
+      await localStorage.clearAll();
+
+      //THEN
+      verify(mockContactDao.clearAll());
+      verify(mockConversationDao.clearAll());
+      verify(mockMessagesDao.clearAll());
+      verify(mockUserDao.clearAll());
+    });
+
     test('Given localStorage is successfully disposed when dispose is called, then all daos should be disposed', () {
 
       //WHEN

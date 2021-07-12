@@ -8,6 +8,7 @@ abstract class ChatwootUserDao{
   ChatwootUser? getUser();
   Future<void> deleteUser();
   Future<void> onDispose();
+  Future<void> clearAll();
 }
 
 
@@ -66,6 +67,12 @@ class PersistedChatwootUserDao extends ChatwootUserDao{
     await _box.close();
   }
 
+  @override
+  Future<void> clearAll() async{
+    await _box.clear();
+    await _clientInstanceIdToUserIdentifierBox.clear();
+  }
+
   static Future<void> openDB() async{
     for(ChatwootUserBoxNames boxName in ChatwootUserBoxNames.values){
       await Hive.openBox(boxName.toString());
@@ -95,6 +102,11 @@ class NonPersistedChatwootUserDao extends ChatwootUserDao{
   @override
   Future<void> saveUser(ChatwootUser user) async{
     _user = user;
+  }
+
+  @override
+  Future<void> clearAll() async{
+    _user = null;
   }
 
 }

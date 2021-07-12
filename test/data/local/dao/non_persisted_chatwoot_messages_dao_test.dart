@@ -99,6 +99,19 @@ void main() {
       expect(retrievedMessages.length, 0);
     });
 
+
+
+    test('Given messages are successfully cleared when clearAll is called, then retrieving messages should be empty', () {
+      //GIVEN
+      dao.saveMessage(testMessage);
+
+      //WHEN
+      dao.clearAll();
+
+      //THEN
+      expect(dao.getMessages().isEmpty, true);
+    });
+
     test('Given dao is successfully disposed when onDispose is called, then saved message should be null', () {
       //GIVEN
       dao.saveMessage(testMessage);

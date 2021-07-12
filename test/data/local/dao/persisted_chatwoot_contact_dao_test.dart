@@ -95,6 +95,19 @@ void main() {
       expect(hiveError != null, true);
     });
 
+
+
+    test('Given contacts are successfully cleared when clearAll is called, then retrieved contact should be null', () async{
+      //GIVEN
+      await dao.saveContact(testContact);
+
+      //WHEN
+      await dao.clearAll();
+
+      //THEN
+      expect(dao.getContact(), null);
+    });
+
     test('Given boxes is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
 
       //WHEN

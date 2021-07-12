@@ -48,6 +48,19 @@ void main() {
       expect(retrievedConversation, testConversation);
     });
 
+
+
+    test('Given conversations are successfully cleared when clearAll is called, then retrieving a conversation should be null', () {
+      //GIVEN
+      dao.saveConversation(testConversation);
+
+      //WHEN
+      dao.clearAll();
+
+      //THEN
+      expect(dao.getConversation(), null);
+    });
+
     test('Given dao is successfully disposed when onDispose is called, then saved conversation should be null', () {
       //GIVEN
       dao.saveConversation(testConversation);

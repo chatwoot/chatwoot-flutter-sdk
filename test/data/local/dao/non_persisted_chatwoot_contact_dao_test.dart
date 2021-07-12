@@ -48,6 +48,17 @@ void main() {
       expect(retrievedContact, testContact);
     });
 
+    test('Given contacts are successfully cleared when clearAll is called, then retrieving a contact should be null', () {
+      //GIVEN
+      dao.saveContact(testContact);
+
+      //WHEN
+      dao.clearAll();
+
+      //THEN
+      expect(dao.getContact(), null);
+    });
+
     test('Given dao is successfully disposed when onDispose is called, then saved contact should be null', () {
       //GIVEN
       dao.saveContact(testContact);

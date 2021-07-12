@@ -220,13 +220,11 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      repo.listenForEvents();
       mockWebSocketStream.add(welcomeEvent);
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
       verify(mockChatwootCallbacks.onWelcome?.call(welcomeEvent));
-      repo.dispose();
     });
 
     test('Given ping event is received when listening for events, then callback onPing event should be triggered', () async{
@@ -245,7 +243,6 @@ void main() {
 
       //THEN
       verify(mockChatwootCallbacks.onPing?.call(pingEvent));
-      repo.dispose();
     });
 
     test('Given confirm subscription event is received when listening for events, then callback onConfirmSubscription event should be triggered', () async{
@@ -259,13 +256,11 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      repo.listenForEvents();
       mockWebSocketStream.add(confirmSubscriptionEvent);
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
       verify(mockChatwootCallbacks.onConfirmedSubscription?.call(confirmSubscriptionEvent));
-      repo.dispose();
     });
 
     test('Given new message event is received when listening for events, then callback onMessageReceived event should be triggered', () async{
@@ -294,14 +289,12 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      repo.listenForEvents();
       mockWebSocketStream.add(messageReceivedEvent);
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
       final message = ChatwootMessage.fromJson(messageReceivedEvent["message"]["data"]);
       verify(mockChatwootCallbacks.onMessageReceived?.call(message));
-      repo.dispose();
     });
 
     test('Given new message event is sent when listening for events, then callback onMessageSent event should be triggered', () async{
@@ -337,7 +330,6 @@ void main() {
       //THEN
       final message = ChatwootMessage.fromJson(messageSentEvent["message"]["data"]);
       verify(mockChatwootCallbacks.onMessageDelivered?.call(message,messageSentEvent["message"]["echo_id"]));
-      repo.dispose();
     });
 
 
@@ -384,6 +376,10 @@ void main() {
 
     tearDown(()async{
       await mockWebSocketStream.close();
+    });
+
+    tearDownAll((){
+      repo.dispose();
     });
 
   });

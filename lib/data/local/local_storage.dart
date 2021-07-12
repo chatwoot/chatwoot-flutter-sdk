@@ -45,6 +45,13 @@ class LocalStorage{
     }
   }
 
+  Future<void> clearAll() async{
+    await conversationDao.clearAll();
+    await contactDao.clearAll();
+    await messagesDao.clearAll();
+    await userDao.clearAll();
+  }
+
   dispose(){
     userDao.onDispose();
     conversationDao.onDispose();

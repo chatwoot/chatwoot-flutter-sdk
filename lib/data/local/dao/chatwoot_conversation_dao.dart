@@ -8,6 +8,7 @@ abstract class ChatwootConversationDao{
   ChatwootConversation? getConversation();
   Future<void> deleteConversation();
   Future<void> onDispose();
+  Future<void> clearAll();
 }
 
 //Only used when persistence is enabled
@@ -81,6 +82,12 @@ class PersistedChatwootConversationDao extends ChatwootConversationDao{
     }
   }
 
+  @override
+  Future<void> clearAll() async{
+    await _box.clear();
+    await _clientInstanceIdToConversationIdentifierBox.clear();
+  }
+
 }
 
 class NonPersistedChatwootConversationDao extends ChatwootConversationDao{
@@ -105,6 +112,11 @@ class NonPersistedChatwootConversationDao extends ChatwootConversationDao{
   @override
   Future<void> saveConversation(ChatwootConversation conversation) async{
     _conversation = conversation;
+  }
+
+  @override
+  Future<void> clearAll() async{
+    _conversation = null;
   }
 
 

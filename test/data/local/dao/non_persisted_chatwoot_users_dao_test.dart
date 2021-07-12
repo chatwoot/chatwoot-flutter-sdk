@@ -51,6 +51,19 @@ void main() {
       expect(retrievedUser, testUser);
     });
 
+
+
+    test('Given users are successfully cleared when clearAll is called, then retrieving a user should be null', () {
+      //GIVEN
+      dao.saveUser(testUser);
+
+      //WHEN
+      dao.clearAll();
+
+      //THEN
+      expect(dao.getUser(), null);
+    });
+
     test('Given dao is successfully disposed when onDispose is called, then saved user should be null', () {
       //GIVEN
       dao.saveUser(testUser);

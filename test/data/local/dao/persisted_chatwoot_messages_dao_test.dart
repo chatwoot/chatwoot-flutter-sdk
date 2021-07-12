@@ -144,6 +144,18 @@ void main() {
       expect(hiveError != null, true);
     });
 
+
+    test('Given messages are successfully cleared when clearAll is called, then retrieving messages should be empty', () async{
+      //GIVEN
+      await dao.saveMessage(testMessage);
+
+      //WHEN
+      await dao.clearAll();
+
+      //THEN
+      expect(dao.getMessages().isEmpty, true);
+    });
+
     tearDown((){
       return Future(()async{
         try{

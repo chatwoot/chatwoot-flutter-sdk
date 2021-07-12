@@ -13,6 +13,8 @@ abstract class ChatwootMessagesDao{
   Future<void> clear();
   Future<void> deleteMessage(String messageId);
   Future<void> onDispose();
+
+  Future<void> clearAll();
 }
 
 //Only used when persistence is enabled
@@ -99,6 +101,12 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
     return _box.get(messageId,defaultValue: null);
   }
 
+  @override
+  Future<void> clearAll() async{
+    await _box.clear();
+    await _box.clear();
+  }
+
   static Future<void> openDB() async{
     for(ChatwootMessagesBoxNames boxName in ChatwootMessagesBoxNames.values){
       await Hive.openBox(boxName.toString());
@@ -149,6 +157,11 @@ class NonPersistedChatwootMessagesDao extends ChatwootMessagesDao{
   @override
   Future<void> saveMessage(ChatwootMessage message) async{
     _messages.update(message.id, (value) => message, ifAbsent: ()=>message);
+  }
+
+  @override
+  Future<void> clearAll() async{
+    _messages.clear();
   }
 
 }
