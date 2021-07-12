@@ -2,9 +2,9 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-part 'chatwoot_action_data.g.part';
+part 'chatwoot_action_data.g.dart';
 
-
+@JsonSerializable(explicitToJson: true)
 class ChatwootActionData{
   @JsonKey(
     toJson: actionTypeToJson,
@@ -30,7 +30,7 @@ String actionTypeToJson(ChatwootActionType actionType){
     case ChatwootActionType.conversation_typing_on:
       return "conversation.typing_on";
     case ChatwootActionType.update_presence:
-      return "update_presence";
+      return "presence.update";
     case ChatwootActionType.subscribe:
       return "subscribe";
   }
@@ -42,7 +42,7 @@ ChatwootActionType actionTypeFromJson(String? value){
       return ChatwootActionType.conversation_typing_on;
     case "conversation.typing_off":
       return ChatwootActionType.conversation_typing_on;
-    case "update_presence":
+    case "presence.update":
       return ChatwootActionType.update_presence;
     case "subscribe":
       return ChatwootActionType.subscribe;

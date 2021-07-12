@@ -222,6 +222,10 @@ String? eventMessageTypeToJson(ChatwootEventMessageType? actionType){
       return "conversation.typing_on";
     case ChatwootEventMessageType.conversation_typing_off:
       return "conversation.typing_off";
+    case ChatwootEventMessageType.presence_update:
+      return "presence.update";
+    case ChatwootEventMessageType.message_created:
+      return "message.created";
     default:
       return actionType.toString();
   }
@@ -229,13 +233,13 @@ String? eventMessageTypeToJson(ChatwootEventMessageType? actionType){
 
 ChatwootEventMessageType? eventMessageTypeFromJson(String? value){
   switch(value){
-    case "presence_update":
+    case "presence.update":
       return ChatwootEventMessageType.presence_update;
-    case "message_created":
+    case "message.created":
       return ChatwootEventMessageType.message_created;
-    case "conversation_typing_on":
+    case "conversation.typing_on":
       return ChatwootEventMessageType.conversation_typing_on;
-    case "conversation_typing_off":
+    case "conversation.typing_off":
       return ChatwootEventMessageType.conversation_typing_off;
     default:
       return null;

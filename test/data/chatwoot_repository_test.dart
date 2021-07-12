@@ -273,16 +273,15 @@ void main() {
         "message":{
           "event":"message.created",
           "data":{
-            "id": "id",
+            "id": 0,
             "content": "content",
             "echo_id": "echo_id",
-            "message_type": "0",
+            "message_type": 0,
             "content_type": "contentType",
             "content_attributes": "contentAttributes",
             "created_at": DateTime.now().toString(),
-            "conversation_id": "conversationId",
+            "conversation_id": 0,
             "attachments": [],
-            "sender": "sender"
           }
         }
       };
@@ -307,17 +306,16 @@ void main() {
         "type":"message",
         "message":{
           "event":"message.created",
-          "echo_id": "echoId",
           "data":{
-            "id": "id",
+            "id": 0,
             "content": "content",
-            "message_type": "1",
+            "echo_id": "echo_id",
+            "message_type": 1,
             "content_type": "contentType",
             "content_attributes": "contentAttributes",
             "created_at": DateTime.now().toString(),
-            "conversation_id": "conversationId",
+            "conversation_id": 0,
             "attachments": [],
-            "sender": "sender"
           }
         }
       };

@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'chatwoot_action_data.dart';
 
-part 'chatwoot_action.g.part';
+part 'chatwoot_action.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ChatwootAction{
