@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'chatwoot_new_message_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class ChatwootNewMessageRequest extends Equatable{
 
   @JsonKey()

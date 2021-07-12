@@ -6,6 +6,8 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_api_interceptor.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:dio/dio.dart';
@@ -42,6 +44,8 @@ abstract class ChatwootClientService{
       String contactPubsubToken,
       {WebSocketChannel Function(Uri)? onStartConnection}
   );
+
+  void sendAction(String contactPubsubToken, ChatwootActionType action);
 
 }
 
@@ -202,6 +206,32 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
         "pubsub_token": contactPubsubToken
       })
     }));
+  }
+
+  @override
+  void sendAction(String contactPubsubToken, ChatwootActionType actionType) {
+    final ChatwootAction action;
+    final identifier = jsonEncode({
+      "channel":"RoomChannel",
+      "pubsub_token": contactPubsubToken
+    });
+    switch(actionType){
+      case ChatwootActionType.subscribe:
+        action = ChatwootAction(
+            identifier: identifier,
+            data: ChatwootActionData(action: actionType),
+            command: "subscribe"
+        );
+        break;
+      default:
+        action = ChatwootAction(
+            identifier: identifier,
+            data: ChatwootActionData(action: actionType),
+            command: "message"
+        );
+        break;
+    }
+    connection?.sink.add(jsonEncode(action.toJson()));
   }
 
 

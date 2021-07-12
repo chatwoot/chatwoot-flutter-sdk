@@ -18,13 +18,13 @@ class ChatwootMessageAdapter extends TypeAdapter<ChatwootMessage> {
     };
     return ChatwootMessage(
       id: fields[0] as String,
-      content: fields[1] as String,
-      messageType: fields[2] as String,
-      contentType: fields[3] as String,
-      contentAttributes: fields[4] as String,
+      content: fields[1] as String?,
+      messageType: fields[2] as String?,
+      contentType: fields[3] as String?,
+      contentAttributes: fields[4] as String?,
       createdAt: fields[5] as String,
-      conversationId: fields[6] as String,
-      attachments: (fields[7] as List).cast<dynamic>(),
+      conversationId: fields[6] as String?,
+      attachments: (fields[7] as List?)?.cast<dynamic>(),
       sender: fields[8] as dynamic,
     );
   }
@@ -71,13 +71,13 @@ class ChatwootMessageAdapter extends TypeAdapter<ChatwootMessage> {
 ChatwootMessage _$ChatwootMessageFromJson(Map<String, dynamic> json) {
   return ChatwootMessage(
     id: json['id'] as String,
-    content: json['content'] as String,
-    messageType: json['message_type'] as String,
-    contentType: json['content_type'] as String,
-    contentAttributes: json['content_attributes'] as String,
-    createdAt: json['created_at'] as String,
-    conversationId: json['conversation_id'] as String,
-    attachments: json['attachments'] as List<dynamic>,
+    content: json['content'] as String?,
+    messageType: json['message_type'] as String?,
+    contentType: json['content_type'] as String?,
+    contentAttributes: json['content_attributes'] as String?,
+    createdAt: createdAtFromJson(json['created_at']),
+    conversationId: json['conversation_id'] as String?,
+    attachments: json['attachments'] as List<dynamic>?,
     sender: json['sender'],
   );
 }

@@ -3,11 +3,12 @@ import 'dart:async';
 import 'dart:core';
 
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
+import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:flutter/material.dart';
 
@@ -56,6 +57,9 @@ abstract class ChatwootRepository{
 
   ///Save user object to local storage
   Future<void> sendMessage(ChatwootNewMessageRequest request);
+
+  ///Send actions like user started typing
+  void sendAction(ChatwootActionType action);
 
   /// Clears all data related to current chatwoot client instance
   Future<void> clear();
@@ -132,20 +136,25 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   void listenForEvents() {
     clientService.startWebSocketConnection(localStorage.contactDao.getContact()!.pubsubToken);
     final newSubscription = clientService.connection!.stream.listen((event) {
-      if(event["type"] == "welcome"){
-        callbacks.onWelcome?.call(event);
-      }else if(event["type"] == "ping"){
-        callbacks.onPing?.call(event);
-      }else if(event["type"] == "confirm_subscription"){
-        callbacks.onConfirmedSubscription?.call(event);
-      }else if(event["message"]?["event"] == "message.created"){
+      ChatwootEvent chatwootEvent = ChatwootEvent.fromJson(event);
+      if(chatwootEvent.type == ChatwootEventType.welcome){
+        callbacks.onWelcome?.call(chatwootEvent);
+      }else if(chatwootEvent.type == ChatwootEventType.ping){
+        callbacks.onPing?.call(chatwootEvent);
+      }else if(chatwootEvent.type == ChatwootEventType.confirm_subscription){
+        callbacks.onConfirmedSubscription?.call(chatwootEvent);
+      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.message_created){
         print("here comes message: $event");
-        final message = ChatwootMessage.fromJson(event["message"]["data"]);
+        final message = chatwootEvent.message!.data!.getMessage();
         if(message.isMine){
-          callbacks.onMessageDelivered?.call(message, event["message"]["echo_id"]);
+          callbacks.onMessageDelivered?.call(message, chatwootEvent.message!.data!.echoId!);
         }else{
           callbacks.onMessageReceived?.call(message);
         }
+      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.conversation_typing_off){
+        callbacks.onConversationStoppedTyping?.call(chatwootEvent);
+      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.conversation_typing_off){
+        callbacks.onConversationStartedTyping?.call(chatwootEvent);
       }else{
         print("chatwoot unknown event: $event");
       }
@@ -163,6 +172,11 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     localStorage.dispose();
     callbacks = ChatwootCallbacks();
     _subscriptions.forEach((subs) { subs.cancel();});
+  }
+
+  @override
+  void sendAction(ChatwootActionType action) {
+    clientService.sendAction(localStorage.contactDao.getContact()!.pubsubToken, action);
   }
 
 }

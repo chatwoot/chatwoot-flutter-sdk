@@ -4,6 +4,8 @@ import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_client_sdk/di/modules.dart';
 import 'package:chatwoot_client_sdk/chatwoot_parameters.dart';
@@ -65,6 +67,10 @@ class ChatwootClient{
         echoId: echoId
     );
     await _repository.sendMessage(request);
+  }
+
+  Future<void> sendAction(ChatwootActionType action) async{
+    _repository.sendAction(action);
   }
 
 

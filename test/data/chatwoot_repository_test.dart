@@ -275,6 +275,7 @@ void main() {
           "data":{
             "id": "id",
             "content": "content",
+            "echo_id": "echo_id",
             "message_type": "0",
             "content_type": "contentType",
             "content_attributes": "contentAttributes",

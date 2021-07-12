@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'chatwoot_message.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 2)
 class ChatwootMessage extends Equatable{
 
@@ -15,31 +15,34 @@ class ChatwootMessage extends Equatable{
 
   @JsonKey()
   @HiveField(1)
-  final String content;
+  final String? content;
 
   @JsonKey(name:"message_type")
   @HiveField(2)
-  final String messageType;
+  final String? messageType;
 
   @JsonKey(name:"content_type")
   @HiveField(3)
-  final String contentType;
+  final String? contentType;
 
   @JsonKey(name:"content_attributes")
   @HiveField(4)
-  final String contentAttributes;
+  final String? contentAttributes;
 
-  @JsonKey(name:"created_at")
+  @JsonKey(
+    name:"created_at",
+    fromJson: createdAtFromJson
+  )
   @HiveField(5)
   final String createdAt;
 
   @JsonKey(name:"conversation_id")
   @HiveField(6)
-  final String conversationId;
+  final String? conversationId;
 
   @JsonKey()
   @HiveField(7)
-  final List<dynamic> attachments;
+  final List<dynamic>? attachments;
 
   @JsonKey(name:"sender")
   @HiveField(8)
@@ -77,4 +80,11 @@ class ChatwootMessage extends Equatable{
     sender
   ];
 
+}
+
+String createdAtFromJson(value){
+  if(value is int){
+    return DateTime.fromMillisecondsSinceEpoch(value).toString();
+  }
+  return value.toString();
 }

@@ -7,7 +7,7 @@ part 'chatwoot_conversation.g.dart';
 
 
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 1)
 class ChatwootConversation extends Equatable{
 

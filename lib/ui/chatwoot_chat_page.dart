@@ -106,7 +106,7 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
           firstName: message.sender["name"]?.name,
           imageUrl: message.sender["avatar_url"]?.avatarUrl,
         ),
-        text: message.content,
+        text: message.content ?? "",
         status: types.Status.seen
     );
   }

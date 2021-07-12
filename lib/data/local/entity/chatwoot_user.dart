@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'chatwoot_user.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 3)
 class ChatwootUser extends Equatable{
 
