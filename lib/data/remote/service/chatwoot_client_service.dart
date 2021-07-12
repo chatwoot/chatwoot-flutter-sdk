@@ -39,7 +39,8 @@ abstract class ChatwootClientService{
   Future<List<ChatwootMessage>> getAllMessages();
 
   void startWebSocketConnection(
-      String contactPubsubToken
+      String contactPubsubToken,
+      {WebSocketChannel Function(Uri)? onStartConnection}
   );
 
 }

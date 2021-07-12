@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
@@ -9,11 +11,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'chatwoot_client_service_test.mocks.dart';
 
 @GenerateMocks([
-  Dio
+  Dio,
+  WebSocketChannel,
+  WebSocketSink
 ])
 void main() {
   group("Client Service Tests", (){
@@ -461,6 +466,35 @@ void main() {
       verify(mockDio.patch(argThat(contains(testMessageId)),data: update));
       expect(chatwootClientException, isNotNull);
       expect(chatwootClientException!.type, equals(ChatwootClientExceptionType.UPDATE_MESSAGE_FAILED));
+
+    });
+
+    test('Given websocket connection is successful when startWebSocketConnection is called, then subscribe for events', () async{
+
+      //GIVEN
+      final testPubsubtoken = "testPubsubtoken";
+      final mockWebSocketChannel = MockWebSocketChannel();
+      final mockWebSocketSink = MockWebSocketSink();
+
+      final WebSocketChannel Function(Uri) startConnection = (Uri uri){
+        return mockWebSocketChannel;
+      };
+      when(mockWebSocketChannel.sink).thenReturn(mockWebSocketSink);
+      when(mockWebSocketSink.close()).thenAnswer((_) => Future.value({}));
+      when(mockWebSocketSink.add(any)).thenAnswer((_) => Future.value({}));
+
+      //WHEN
+      clientService.startWebSocketConnection(testPubsubtoken, onStartConnection: startConnection);
+
+      //THEN
+      final subscriptionPayload = jsonEncode({
+        "command":"subscribe",
+        "identifier": jsonEncode({
+          "channel":"RoomChannel",
+          "pubsub_token": testPubsubtoken
+        })});
+      verify(mockWebSocketSink.add(subscriptionPayload));
+      mockWebSocketSink.close();
 
     });
 
