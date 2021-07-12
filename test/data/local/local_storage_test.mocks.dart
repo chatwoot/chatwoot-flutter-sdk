@@ -11,7 +11,7 @@ import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_conversation_dao.dar
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_messages_dao.dart'
     as _i7;
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_user_dao.dart'
-    as _i10;
+    as _i9;
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart'
     as _i6;
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart'
@@ -19,8 +19,7 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart'
     as _i8;
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart'
-    as _i11;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i9;
+    as _i10;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: comment_references
@@ -250,111 +249,16 @@ class MockPersistedChatwootMessagesDao extends _i1.Mock
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
 }
 
-/// A class which mocks [FlutterSecureStorage].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockFlutterSecureStorage extends _i1.Mock
-    implements _i9.FlutterSecureStorage {
-  MockFlutterSecureStorage() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i3.Future<void> write(
-          {String? key,
-          String? value,
-          _i9.IOSOptions? iOptions = _i9.IOSOptions.defaultOptions,
-          _i9.AndroidOptions? aOptions,
-          _i9.LinuxOptions? lOptions}) =>
-      (super.noSuchMethod(
-          Invocation.method(#write, [], {
-            #key: key,
-            #value: value,
-            #iOptions: iOptions,
-            #aOptions: aOptions,
-            #lOptions: lOptions
-          }),
-          returnValue: Future<void>.value(null),
-          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
-  @override
-  _i3.Future<String?> read(
-          {String? key,
-          _i9.IOSOptions? iOptions = _i9.IOSOptions.defaultOptions,
-          _i9.AndroidOptions? aOptions,
-          _i9.LinuxOptions? lOptions}) =>
-      (super.noSuchMethod(
-          Invocation.method(#read, [], {
-            #key: key,
-            #iOptions: iOptions,
-            #aOptions: aOptions,
-            #lOptions: lOptions
-          }),
-          returnValue: Future<String?>.value('')) as _i3.Future<String?>);
-  @override
-  _i3.Future<bool> containsKey(
-          {String? key,
-          _i9.IOSOptions? iOptions = _i9.IOSOptions.defaultOptions,
-          _i9.AndroidOptions? aOptions,
-          _i9.LinuxOptions? lOptions}) =>
-      (super.noSuchMethod(
-          Invocation.method(#containsKey, [], {
-            #key: key,
-            #iOptions: iOptions,
-            #aOptions: aOptions,
-            #lOptions: lOptions
-          }),
-          returnValue: Future<bool>.value(false)) as _i3.Future<bool>);
-  @override
-  _i3.Future<void> delete(
-          {String? key,
-          _i9.IOSOptions? iOptions = _i9.IOSOptions.defaultOptions,
-          _i9.AndroidOptions? aOptions,
-          _i9.LinuxOptions? lOptions}) =>
-      (super.noSuchMethod(
-          Invocation.method(#delete, [], {
-            #key: key,
-            #iOptions: iOptions,
-            #aOptions: aOptions,
-            #lOptions: lOptions
-          }),
-          returnValue: Future<void>.value(null),
-          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
-  @override
-  _i3.Future<Map<String, String>> readAll(
-          {_i9.IOSOptions? iOptions = _i9.IOSOptions.defaultOptions,
-          _i9.AndroidOptions? aOptions,
-          _i9.LinuxOptions? lOptions}) =>
-      (super.noSuchMethod(
-              Invocation.method(#readAll, [], {
-                #iOptions: iOptions,
-                #aOptions: aOptions,
-                #lOptions: lOptions
-              }),
-              returnValue:
-                  Future<Map<String, String>>.value(<String, String>{}))
-          as _i3.Future<Map<String, String>>);
-  @override
-  _i3.Future<void> deleteAll(
-          {_i9.IOSOptions? iOptions = _i9.IOSOptions.defaultOptions,
-          _i9.AndroidOptions? aOptions,
-          _i9.LinuxOptions? lOptions}) =>
-      (super.noSuchMethod(
-          Invocation.method(#deleteAll, [],
-              {#iOptions: iOptions, #aOptions: aOptions, #lOptions: lOptions}),
-          returnValue: Future<void>.value(null),
-          returnValueForMissingStub: Future.value()) as _i3.Future<void>);
-}
-
 /// A class which mocks [ChatwootUserDao].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockChatwootUserDao extends _i1.Mock implements _i10.ChatwootUserDao {
+class MockChatwootUserDao extends _i1.Mock implements _i9.ChatwootUserDao {
   MockChatwootUserDao() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<void> saveUser(_i11.ChatwootUser? user) =>
+  _i3.Future<void> saveUser(_i10.ChatwootUser? user) =>
       (super.noSuchMethod(Invocation.method(#saveUser, [user]),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
@@ -379,7 +283,7 @@ class MockChatwootUserDao extends _i1.Mock implements _i10.ChatwootUserDao {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockPersistedChatwootUserDao extends _i1.Mock
-    implements _i10.PersistedChatwootUserDao {
+    implements _i9.PersistedChatwootUserDao {
   MockPersistedChatwootUserDao() {
     _i1.throwOnMissingStub(this);
   }
@@ -390,7 +294,7 @@ class MockPersistedChatwootUserDao extends _i1.Mock
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
   @override
-  _i3.Future<void> saveUser(_i11.ChatwootUser? user) =>
+  _i3.Future<void> saveUser(_i10.ChatwootUser? user) =>
       (super.noSuchMethod(Invocation.method(#saveUser, [user]),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);

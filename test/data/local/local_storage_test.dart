@@ -9,7 +9,6 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mockito/annotations.dart';
@@ -24,7 +23,6 @@ import 'local_storage_test.mocks.dart';
   PersistedChatwootConversationDao,
   PersistedChatwootContactDao,
   PersistedChatwootMessagesDao,
-  FlutterSecureStorage,
   ChatwootUserDao,
   PersistedChatwootUserDao
 ])
@@ -35,7 +33,6 @@ void main() {
     final mockConversationDao = MockChatwootConversationDao();
     final mockUserDao = MockChatwootUserDao();
     final mockMessagesDao = MockChatwootMessagesDao();
-    final mockSecureStorage = MockFlutterSecureStorage();
 
     late final LocalStorage localStorage;
 
@@ -51,7 +48,6 @@ void main() {
         ..registerAdapter(ChatwootUserAdapter());
 
       localStorage = LocalStorage(
-          secureStorage: mockSecureStorage,
           userDao: mockUserDao,
           conversationDao: mockConversationDao,
           contactDao: mockContactDao,
@@ -78,7 +74,6 @@ void main() {
     test('Given persisted db is successfully opened when openDB is called, then all hive boxes should be open', () async{
 
       final testLocalStorage = LocalStorage(
-          secureStorage: mockSecureStorage,
           userDao: MockPersistedChatwootUserDao(),
           conversationDao: MockPersistedChatwootConversationDao(),
           contactDao: MockPersistedChatwootContactDao(),

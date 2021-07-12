@@ -16,7 +16,6 @@ import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.
 import 'package:chatwoot_client_sdk/persistence_parameters.dart';
 import 'package:chatwoot_client_sdk/repository_parameters.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -62,8 +61,6 @@ final chatwootClientServiceProvider = Provider.family<ChatwootClientService,Chat
   );
 });
 
-///Provides flutter secure storage instance
-final secureStoreProvider = Provider((ref)=>FlutterSecureStorage());
 
 ///Provides hive box to store relations between chatwoot client instance and contact object,
 ///which is used when persistence is enabled. Client instances are distinguished using baseurl and inboxIdentifier
@@ -188,14 +185,12 @@ final localStorageProvider = Provider.family<LocalStorage, ChatwootParameters>((
   final conversationDao = ref.read(chatwootConversationDaoProvider(params));
   final userDao = ref.read(chatwootUserDaoProvider(params));
   final messagesDao = ref.read(chatwootMessagesDaoProvider(params));
-  final secureStore = ref.read(secureStoreProvider);
 
   return LocalStorage(
     contactDao: contactDao,
     conversationDao: conversationDao,
     userDao: userDao,
-    messagesDao: messagesDao,
-    secureStorage: secureStore
+    messagesDao: messagesDao
   );
 });
 
