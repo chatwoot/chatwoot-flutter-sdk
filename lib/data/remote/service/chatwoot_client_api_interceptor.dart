@@ -43,7 +43,7 @@ class ChatwootClientApiInterceptor extends Interceptor{
     }
 
     if(conversation == null){
-      final conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier);
+      conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier);
       await _localStorage.conversationDao.saveConversation(conversation);
     }
 
@@ -52,7 +52,7 @@ class ChatwootClientApiInterceptor extends Interceptor{
     }
     newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER, _inboxIdentifier);
     newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER, contact.contactIdentifier);
-    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER, "${conversation!.id}");
+    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER, "${conversation.id}");
 
     handler.next(newOptions);
 
