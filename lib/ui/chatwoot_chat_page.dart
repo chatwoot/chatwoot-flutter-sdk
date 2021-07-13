@@ -308,6 +308,9 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   ) {
     final index = _messages.indexWhere((element) => element.id == message.id);
 
+    if(_messages[index].status == types.Status.seen){
+      return;
+    }
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       setState(() {
         _messages[index] = message;
