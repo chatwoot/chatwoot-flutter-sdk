@@ -55,32 +55,11 @@ void main() {
       );
     });
 
-    test('Given non persisted db is successfully opened when openDB is called, then all hive boxes should be closed', () async{
-
-      //WHEN
-      await localStorage.openDB();
-
-      //THEN
-      expect(false, Hive.isBoxOpen(ChatwootContactBoxNames.CONTACTS.toString()));
-      expect(false, Hive.isBoxOpen(ChatwootContactBoxNames.CLIENT_INSTANCE_TO_CONTACTS.toString()));
-      expect(false, Hive.isBoxOpen(ChatwootConversationBoxNames.CONVERSATIONS.toString()));
-      expect(false, Hive.isBoxOpen(ChatwootConversationBoxNames.CLIENT_INSTANCE_TO_CONVERSATIONS.toString()));
-      expect(false, Hive.isBoxOpen(ChatwootMessagesBoxNames.MESSAGES.toString()));
-      expect(false, Hive.isBoxOpen(ChatwootMessagesBoxNames.MESSAGES_TO_CLIENT_INSTANCE_KEY.toString()));
-      expect(false, Hive.isBoxOpen(ChatwootUserBoxNames.USERS.toString()));
-      expect(false, Hive.isBoxOpen(ChatwootUserBoxNames.USERS.toString()));
-    });
-
     test('Given persisted db is successfully opened when openDB is called, then all hive boxes should be open', () async{
 
-      final testLocalStorage = LocalStorage(
-          userDao: MockPersistedChatwootUserDao(),
-          conversationDao: MockPersistedChatwootConversationDao(),
-          contactDao: MockPersistedChatwootContactDao(),
-          messagesDao: MockPersistedChatwootMessagesDao()
-      );
+
       //WHEN
-      await testLocalStorage.openDB();
+      await LocalStorage.openDB(onInitializeHive: (){});
 
       //THEN
       expect(true, Hive.isBoxOpen(ChatwootContactBoxNames.CONTACTS.toString()));

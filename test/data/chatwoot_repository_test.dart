@@ -189,7 +189,6 @@ void main() {
       await repo.initialize(testUser);
 
       //THEN
-      verify(mockLocalStorage.openDB());
       verify(mockChatwootClientService.updateContact(testUser.toJson()));
       verify(mockUserDao.saveUser(testUser));
       verify(mockContactDao.saveContact(testContact));
@@ -212,7 +211,6 @@ void main() {
       await repo.initialize(null);
 
       //THEN
-      verify(mockLocalStorage.openDB());
       verifyNever(mockUserDao.saveUser(testUser));
       verify(mockContactDao.saveContact(testContact));
       verify(mockConversationDao.saveConversation(testConversation));
@@ -290,6 +288,58 @@ void main() {
 
       //THEN
       verify(mockChatwootCallbacks.onConversationStartedTyping?.call());
+    });
+
+    test('Given online presence update event is received when listening for events, then callback onConversationIsOnline event should be triggered', () async{
+
+      //GIVEN
+      when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
+      when(mockChatwootCallbacks.onConversationIsOnline).thenAnswer((_)=>(){});
+      final dynamic typingOnEvent = {
+        "message": {
+          "data": {
+            "account_id":5,
+            "users": {
+              5: "online"
+            }
+          },
+          "event": "presence.update"
+        }
+      };
+      repo.listenForEvents();
+
+      //WHEN
+      mockWebSocketStream.add(typingOnEvent);
+      await Future.delayed(Duration(seconds: 1));
+
+      //THEN
+      verify(mockChatwootCallbacks.onConversationIsOnline?.call());
+    });
+
+    test('Given offline presence update event is received when listening for events, then callback onConversationIsOffline event should be triggered', () async{
+
+      //GIVEN
+      when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
+      when(mockChatwootCallbacks.onConversationIsOffline).thenAnswer((_)=>(){});
+      final dynamic typingOnEvent = {
+        "message": {
+          "data": {
+            "account_id":5,
+            "users": {
+              5: "offline"
+            }
+          },
+          "event": "presence.update"
+        }
+      };
+      repo.listenForEvents();
+
+      //WHEN
+      mockWebSocketStream.add(typingOnEvent);
+      await Future.delayed(Duration(seconds: 1));
+
+      //THEN
+      verify(mockChatwootCallbacks.onConversationIsOffline?.call());
     });
 
     test('Given typing off event is received when listening for events, then callback onConversationStoppedTyping event should be triggered', () async{

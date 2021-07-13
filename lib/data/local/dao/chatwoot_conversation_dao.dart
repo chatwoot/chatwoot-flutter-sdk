@@ -77,9 +77,8 @@ class PersistedChatwootConversationDao extends ChatwootConversationDao{
 
 
   static Future<void> openDB() async{
-    for(ChatwootConversationBoxNames boxName in ChatwootConversationBoxNames.values){
-      await Hive.openBox(boxName.toString());
-    }
+    await Hive.openBox<ChatwootConversation>(ChatwootConversationBoxNames.CONVERSATIONS.toString());
+    await Hive.openBox<String>(ChatwootConversationBoxNames.CLIENT_INSTANCE_TO_CONVERSATIONS.toString());
   }
 
   @override

@@ -1,13 +1,14 @@
 
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
-import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 
 class ChatwootCallbacks{
   void Function()? onWelcome;
   void Function()? onPing;
   void Function()? onConfirmedSubscription;
   void Function()? onConversationStartedTyping;
+  void Function()? onConversationIsOnline;
+  void Function()? onConversationIsOffline;
   void Function()? onConversationStoppedTyping;
   void Function(ChatwootMessage)? onMessageReceived;
   void Function(ChatwootMessage, String)? onMessageSent;
@@ -27,6 +28,8 @@ class ChatwootCallbacks{
     this.onMessagesRetrieved,
     this.onConversationStartedTyping,
     this.onConversationStoppedTyping,
+    this.onConversationIsOnline,
+    this.onConversationIsOffline,
     this.onError,
   });
 }

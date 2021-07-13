@@ -74,9 +74,8 @@ class PersistedChatwootUserDao extends ChatwootUserDao{
   }
 
   static Future<void> openDB() async{
-    for(ChatwootUserBoxNames boxName in ChatwootUserBoxNames.values){
-      await Hive.openBox(boxName.toString());
-    }
+    await Hive.openBox<ChatwootUser>(ChatwootUserBoxNames.USERS.toString());
+    await Hive.openBox<String>(ChatwootUserBoxNames.CLIENT_INSTANCE_TO_USER.toString());
   }
 
 }

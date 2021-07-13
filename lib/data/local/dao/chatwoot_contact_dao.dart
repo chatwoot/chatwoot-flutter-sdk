@@ -76,9 +76,8 @@ class PersistedChatwootContactDao extends ChatwootContactDao{
 
 
   static Future<void> openDB() async{
-    for(ChatwootContactBoxNames boxName in ChatwootContactBoxNames.values){
-      await Hive.openBox(boxName.toString());
-    }
+    await Hive.openBox<ChatwootContact>(ChatwootContactBoxNames.CONTACTS.toString());
+    await Hive.openBox<String>(ChatwootContactBoxNames.CLIENT_INSTANCE_TO_CONTACTS.toString());
   }
 
 }

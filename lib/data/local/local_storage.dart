@@ -4,6 +4,14 @@ import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_contact_dao.dart';
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_conversation_dao.dart';
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_messages_dao.dart';
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_user_dao.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import 'entity/chatwoot_contact.dart';
+import 'entity/chatwoot_conversation.dart';
+import 'entity/chatwoot_message.dart';
+import 'entity/chatwoot_user.dart';
 
 class LocalStorage{
   ChatwootUserDao userDao;
@@ -18,19 +26,24 @@ class LocalStorage{
     required this.messagesDao,
   });
 
-  Future<void> openDB() async{
-    if(contactDao is PersistedChatwootContactDao){
-      await PersistedChatwootContactDao.openDB();
+  static Future<void> openDB({void Function()? onInitializeHive}) async{
+
+    if(onInitializeHive == null){
+      await Hive.initFlutter();
+      Hive
+        ..registerAdapter(ChatwootContactAdapter())
+        ..registerAdapter(ChatwootConversationAdapter())
+        ..registerAdapter(ChatwootMessageAdapter())
+        ..registerAdapter(ChatwootEventMessageUserAdapter())
+        ..registerAdapter(ChatwootUserAdapter());
+    }else{
+      onInitializeHive();
     }
-    if(conversationDao is PersistedChatwootConversationDao){
-      await PersistedChatwootConversationDao.openDB();
-    }
-    if(messagesDao is PersistedChatwootMessagesDao){
-      await PersistedChatwootMessagesDao.openDB();
-    }
-    if(userDao is PersistedChatwootUserDao){
-      await PersistedChatwootUserDao.openDB();
-    }
+
+    await PersistedChatwootContactDao.openDB();
+    await PersistedChatwootConversationDao.openDB();
+    await PersistedChatwootMessagesDao.openDB();
+    await PersistedChatwootUserDao.openDB();
   }
 
   Future<void> clear({bool clearChatwootUserStorage = true}) async{

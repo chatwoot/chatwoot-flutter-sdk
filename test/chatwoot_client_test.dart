@@ -17,7 +17,7 @@ import 'data/chatwoot_repository_test.mocks.dart';
   ChatwootRepository
 ])
 void main() {
-  group("Client Api Interceptor Test", (){
+  group("Chatwoot Client Test", (){
     late ChatwootClient client ;
     final testInboxIdentifier = "testIdentifier";
     final testBaseUrl = "https://testbaseurl.com";
@@ -171,7 +171,7 @@ void main() {
 
     });
 
-    test('Given client is successfully initialized when a create is called, then repository should be initialized', () async{
+    test('Given client is successfully initialized when a create is called without persistence enabled, then repository should be initialized', () async{
 
       //GIVEN
 
@@ -179,7 +179,27 @@ void main() {
       final result = await ChatwootClient.create(
           baseUrl: testBaseUrl,
           inboxIdentifier: testInboxIdentifier,
-          user: testUser
+          user: testUser,
+          enableMessagesPersistence: false
+      );
+
+      //THEN
+      verify(mockRepository.initialize(testUser));
+      expect(result.baseUrl, equals(testBaseUrl));
+      expect(result.inboxIdentifier, equals(testInboxIdentifier));
+
+    });
+
+    test('Given client is successfully initialized when a create is called with persistence enabled, then repository should be initialized', () async{
+
+      //GIVEN
+
+      //WHEN
+      final result = await ChatwootClient.create(
+          baseUrl: testBaseUrl,
+          inboxIdentifier: testInboxIdentifier,
+          user: testUser,
+          enableMessagesPersistence: true
       );
 
       //THEN

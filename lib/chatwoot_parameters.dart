@@ -1,6 +1,8 @@
 
 
-class ChatwootParameters{
+import 'package:equatable/equatable.dart';
+
+class ChatwootParameters extends Equatable{
   bool isPersistenceEnabled;
   String baseUrl;
   String clientInstanceKey;
@@ -14,4 +16,13 @@ class ChatwootParameters{
     required this.clientInstanceKey,
     this.userIdentifier
   });
+
+  @override
+  List<Object?> get props => [
+    isPersistenceEnabled,
+    baseUrl,
+    clientInstanceKey,
+    inboxIdentifier,
+    userIdentifier
+  ];
 }

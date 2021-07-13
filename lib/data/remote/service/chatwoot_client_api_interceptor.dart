@@ -55,10 +55,10 @@ class ChatwootClientApiInterceptor extends Interceptor{
 
   @override
   Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async{
-    if(response.statusCode == 401){
+    if(response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 404){
       await _localStorage.clear();
 
-      // create new contact from user if unauthorized
+      // create new contact from user if unauthorized,forbidden or not found
       final contact = await _authService.createNewContact(_inboxIdentifier, _localStorage.userDao.getUser());
       final conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
       await _localStorage.contactDao.saveContact(contact);

@@ -116,6 +116,9 @@ class ChatwootEventMessageData{
   @JsonKey()
   final ChatwootEventMessageUser? user;
 
+  @JsonKey()
+  final dynamic users;
+
   ChatwootEventMessageData({
     this.id,
     this.user,
@@ -135,7 +138,8 @@ class ChatwootEventMessageData{
     this.accountId,
     this.externalSourceIds,
     this.private,
-    this.senderId
+    this.senderId,
+    this.users
   });
 
 

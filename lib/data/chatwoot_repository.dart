@@ -104,8 +104,6 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   }
 
   Future<void> initialize(ChatwootUser? user) async{
-    await localStorage.openDB();
-
 
     if(user != null){
       await localStorage.userDao.saveUser(user);
@@ -164,6 +162,14 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
         callbacks.onConversationStoppedTyping?.call();
       }else if(chatwootEvent.message?.event == ChatwootEventMessageType.conversation_typing_on){
         callbacks.onConversationStartedTyping?.call();
+      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.presence_update){
+        final presenceStatuses = (chatwootEvent.message!.data!.users as Map<dynamic, dynamic>).values;
+        final isOnline = presenceStatuses.contains("online");
+        if(isOnline){
+          callbacks.onConversationIsOnline?.call();
+        }else{
+          callbacks.onConversationIsOffline?.call();
+        }
       }else{
         print("chatwoot unknown event: $event");
       }
