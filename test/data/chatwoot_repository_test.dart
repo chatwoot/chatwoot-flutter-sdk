@@ -240,7 +240,8 @@ void main() {
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
       when(mockChatwootCallbacks.onPing).thenAnswer((_)=>(){});
       final dynamic pingEvent = {
-        "type":"ping"
+        "type":"ping",
+        "message": 12243849943
       };
       repo.listenForEvents();
 

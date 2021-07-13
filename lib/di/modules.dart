@@ -21,7 +21,7 @@ import 'package:riverpod/riverpod.dart';
 
 
 ///Provides an instance of [Dio]
-final unauthenticatedDioProvider = Provider.family<Dio,ChatwootParameters>((ref,params) {
+final unauthenticatedDioProvider = Provider.family.autoDispose<Dio,ChatwootParameters>((ref,params) {
   return Dio(BaseOptions(baseUrl: params.baseUrl));
 });
 
@@ -37,7 +37,7 @@ final chatwootClientApiInterceptorProvider = Provider.family<ChatwootClientApiIn
 });
 
 ///Provides an instance of Dio with interceptors set to authenticate all requests called with this dio instance
-final authenticatedDioProvider = Provider.family<Dio,ChatwootParameters>((ref,params) {
+final authenticatedDioProvider = Provider.family.autoDispose<Dio,ChatwootParameters>((ref,params) {
   final authenticatedDio = ref.read(unauthenticatedDioProvider(params));
   final interceptor = ref.read(chatwootClientApiInterceptorProvider(params));
   authenticatedDio.interceptors.add(interceptor);

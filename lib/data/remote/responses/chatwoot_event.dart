@@ -19,7 +19,9 @@ class ChatwootEvent{
   @JsonKey()
   final String? identifier;
 
-  @JsonKey()
+  @JsonKey(
+    fromJson: eventMessageFromJson
+  )
   final ChatwootEventMessage? message;
 
   ChatwootEvent({
@@ -32,6 +34,18 @@ class ChatwootEvent{
 
   Map<String, dynamic> toJson() => _$ChatwootEventToJson(this);
 
+}
+
+ChatwootEventMessage? eventMessageFromJson(value){
+  if(value == null){
+    return null;
+  }else if(value is num){
+    return ChatwootEventMessage();
+  }else if(value is String){
+    return ChatwootEventMessage();
+  }else{
+    return ChatwootEventMessage.fromJson(value as Map<String,dynamic>);
+  }
 }
 
 @JsonSerializable(explicitToJson: true)
