@@ -106,13 +106,17 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   Future<void> initialize(ChatwootUser? user) async{
     await localStorage.openDB();
 
+
     if(user != null){
       await localStorage.userDao.saveUser(user);
+      //refresh contact
+      final contact = await clientService.updateContact(user.toJson());
+      localStorage.contactDao.saveContact(contact);
+    }else{
+      //refresh contact
+      final contact = await clientService.getContact();
+      localStorage.contactDao.saveContact(contact);
     }
-
-    //refresh contact
-    final contact = await clientService.getContact();
-    localStorage.contactDao.saveContact(contact);
 
     //refresh conversation
     final conversations = await clientService.getConversations();
@@ -143,11 +147,11 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     final newSubscription = clientService.connection!.stream.listen((event) {
       ChatwootEvent chatwootEvent = ChatwootEvent.fromJson(event);
       if(chatwootEvent.type == ChatwootEventType.welcome){
-        callbacks.onWelcome?.call(chatwootEvent);
+        callbacks.onWelcome?.call();
       }else if(chatwootEvent.type == ChatwootEventType.ping){
-        callbacks.onPing?.call(chatwootEvent);
+        callbacks.onPing?.call();
       }else if(chatwootEvent.type == ChatwootEventType.confirm_subscription){
-        callbacks.onConfirmedSubscription?.call(chatwootEvent);
+        callbacks.onConfirmedSubscription?.call();
       }else if(chatwootEvent.message?.event == ChatwootEventMessageType.message_created){
         print("here comes message: $event");
         final message = chatwootEvent.message!.data!.getMessage();
@@ -157,9 +161,9 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
           callbacks.onMessageReceived?.call(message);
         }
       }else if(chatwootEvent.message?.event == ChatwootEventMessageType.conversation_typing_off){
-        callbacks.onConversationStoppedTyping?.call(chatwootEvent);
-      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.conversation_typing_off){
-        callbacks.onConversationStartedTyping?.call(chatwootEvent);
+        callbacks.onConversationStoppedTyping?.call();
+      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.conversation_typing_on){
+        callbacks.onConversationStartedTyping?.call();
       }else{
         print("chatwoot unknown event: $event");
       }

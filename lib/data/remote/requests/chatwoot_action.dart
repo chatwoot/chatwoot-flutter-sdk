@@ -20,7 +20,7 @@ class ChatwootAction{
 
   ChatwootAction({
     required this.identifier,
-    required this.data,
+    this.data,
     required this.command
   });
 

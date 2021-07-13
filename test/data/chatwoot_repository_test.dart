@@ -10,6 +10,7 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -172,10 +173,10 @@ void main() {
       verifyNever(mockMessagesDao.saveMessage(any));
     });
 
-    test('Given repo is initialized successfully when initialize is called, then client should be properly initialized', () async{
+    test('Given repo is initialized with user successfully when initialize is called, then client should be properly initialized', () async{
 
       //GIVEN
-      when(mockChatwootClientService.getContact()).thenAnswer((_)=>Future.value(testContact));
+      when(mockChatwootClientService.updateContact(any)).thenAnswer((_)=>Future.value(testContact));
       when(mockContactDao.getContact()).thenReturn(testContact);
       when(mockConversationDao.getConversation()).thenReturn(testConversation);
       when(mockChatwootClientService.getConversations()).thenAnswer((_)=>Future.value([testConversation]));
@@ -189,7 +190,30 @@ void main() {
 
       //THEN
       verify(mockLocalStorage.openDB());
+      verify(mockChatwootClientService.updateContact(testUser.toJson()));
       verify(mockUserDao.saveUser(testUser));
+      verify(mockContactDao.saveContact(testContact));
+      verify(mockConversationDao.saveConversation(testConversation));
+    });
+
+    test('Given repo is initialized with null user successfully when initialize is called, then client should be properly initialized', () async{
+
+      //GIVEN
+      when(mockChatwootClientService.getContact()).thenAnswer((_)=>Future.value(testContact));
+      when(mockContactDao.getContact()).thenReturn(testContact);
+      when(mockConversationDao.getConversation()).thenReturn(testConversation);
+      when(mockChatwootClientService.getConversations()).thenAnswer((_)=>Future.value([testConversation]));
+      when(mockUserDao.saveUser(any)).thenAnswer((_)=>Future.microtask((){}));
+      when(mockContactDao.saveContact(any)).thenAnswer((_)=>Future.microtask((){}));
+      when(mockConversationDao.saveConversation(any)).thenAnswer((_)=>Future.microtask((){}));
+      when(mockChatwootClientService.startWebSocketConnection(any)).thenAnswer((_)=>(){});
+
+      //WHEN
+      await repo.initialize(null);
+
+      //THEN
+      verify(mockLocalStorage.openDB());
+      verifyNever(mockUserDao.saveUser(testUser));
       verify(mockContactDao.saveContact(testContact));
       verify(mockConversationDao.saveConversation(testConversation));
     });
@@ -198,7 +222,7 @@ void main() {
 
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
-      when(mockChatwootCallbacks.onWelcome).thenAnswer((_)=>(_){});
+      when(mockChatwootCallbacks.onWelcome).thenAnswer((_)=>(){});
       final dynamic welcomeEvent = {
         "type":"welcome"
       };
@@ -209,14 +233,14 @@ void main() {
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
-      verify(mockChatwootCallbacks.onWelcome?.call(welcomeEvent));
+      verify(mockChatwootCallbacks.onWelcome?.call());
     });
 
     test('Given ping event is received when listening for events, then callback onPing event should be triggered', () async{
 
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
-      when(mockChatwootCallbacks.onPing).thenAnswer((_)=>(_){});
+      when(mockChatwootCallbacks.onPing).thenAnswer((_)=>(){});
       final dynamic pingEvent = {
         "type":"ping"
       };
@@ -227,14 +251,14 @@ void main() {
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
-      verify(mockChatwootCallbacks.onPing?.call(pingEvent));
+      verify(mockChatwootCallbacks.onPing?.call());
     });
 
     test('Given confirm subscription event is received when listening for events, then callback onConfirmSubscription event should be triggered', () async{
 
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
-      when(mockChatwootCallbacks.onConfirmedSubscription).thenAnswer((_)=>(_){});
+      when(mockChatwootCallbacks.onConfirmedSubscription).thenAnswer((_)=>(){});
       final dynamic confirmSubscriptionEvent = {
         "type":"confirm_subscription"
       };
@@ -245,7 +269,47 @@ void main() {
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
-      verify(mockChatwootCallbacks.onConfirmedSubscription?.call(confirmSubscriptionEvent));
+      verify(mockChatwootCallbacks.onConfirmedSubscription?.call());
+    });
+
+    test('Given typing on event is received when listening for events, then callback onConversationStartedTyping event should be triggered', () async{
+
+      //GIVEN
+      when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
+      when(mockChatwootCallbacks.onConversationStartedTyping).thenAnswer((_)=>(){});
+      final dynamic typingOnEvent = {
+        "message": {
+          "event": "conversation.typing_on"
+        }
+      };
+      repo.listenForEvents();
+
+      //WHEN
+      mockWebSocketStream.add(typingOnEvent);
+      await Future.delayed(Duration(seconds: 1));
+
+      //THEN
+      verify(mockChatwootCallbacks.onConversationStartedTyping?.call());
+    });
+
+    test('Given typing off event is received when listening for events, then callback onConversationStoppedTyping event should be triggered', () async{
+
+      //GIVEN
+      when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
+      when(mockChatwootCallbacks.onConversationStoppedTyping).thenAnswer((_)=>(){});
+      final dynamic typingOnEvent = {
+        "message": {
+          "event": "conversation.typing_off"
+        }
+      };
+      repo.listenForEvents();
+
+      //WHEN
+      mockWebSocketStream.add(typingOnEvent);
+      await Future.delayed(Duration(seconds: 1));
+
+      //THEN
+      verify(mockChatwootCallbacks.onConversationStoppedTyping?.call());
     });
 
     test('Given new message event is received when listening for events, then callback onMessageReceived event should be triggered', () async{
@@ -334,6 +398,18 @@ void main() {
       //THEN
       verifyZeroInteractions(mockChatwootCallbacks);
       repo.dispose();
+    });
+
+    test('Given action is successfully sent when sendAction is called, then client service sendAction should be triggered', () {
+      //GIVEN
+      when(mockContactDao.getContact()).thenReturn(testContact);
+      when(mockChatwootClientService.sendAction(any, any)).thenAnswer((realInvocation)=> Future.microtask((){}));
+
+      //WHEN
+      repo.sendAction(ChatwootActionType.update_presence);
+
+      //THEN
+      verify(mockChatwootClientService.sendAction(testContact.pubsubToken, ChatwootActionType.update_presence));
     });
 
     test('Given repository is successfully disposed when dispose is called, then localStorage should be disposed', () {

@@ -50,9 +50,15 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
     }
 
     chatwootCallbacks = ChatwootCallbacks(
-      onWelcome: (event){},
-      onPing: (event){},
-      onConfirmedSubscription: (event){},
+      onWelcome: (){},
+      onPing: (){},
+      onConfirmedSubscription: (){},
+      onConversationStartedTyping: (){
+
+      },
+      onConversationStoppedTyping: (){
+
+      },
       onPersistedMessagesRetrieved: (persistedMessages){
         if(widget.enablePersisitence){
           setState(() {

@@ -219,7 +219,6 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
       case ChatwootActionType.subscribe:
         action = ChatwootAction(
             identifier: identifier,
-            data: ChatwootActionData(action: actionType),
             command: "subscribe"
         );
         break;

@@ -4,11 +4,11 @@ import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 
 class ChatwootCallbacks{
-  void Function(ChatwootEvent)? onWelcome;
-  void Function(ChatwootEvent)? onPing;
-  void Function(ChatwootEvent)? onConfirmedSubscription;
-  void Function(ChatwootEvent)? onConversationStartedTyping;
-  void Function(ChatwootEvent)? onConversationStoppedTyping;
+  void Function()? onWelcome;
+  void Function()? onPing;
+  void Function()? onConfirmedSubscription;
+  void Function()? onConversationStartedTyping;
+  void Function()? onConversationStoppedTyping;
   void Function(ChatwootMessage)? onMessageReceived;
   void Function(ChatwootMessage, String)? onMessageSent;
   void Function(ChatwootMessage, String)? onMessageDelivered;

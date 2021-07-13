@@ -5,6 +5,7 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:dio/dio.dart';
@@ -445,6 +446,27 @@ void main() {
         })});
       verify(mockWebSocketSink.add(subscriptionPayload));
       mockWebSocketSink.close();
+
+    });
+
+
+    test('Given action is sent successfully when sendAction is called, then websocket sink should be triggered', () async{
+
+      //GIVEN
+      final testPubsubtoken = "testPubsubtoken";
+      final mockWebSocketChannel = MockWebSocketChannel();
+      final mockWebSocketSink = MockWebSocketSink();
+
+      when(mockWebSocketChannel.sink).thenReturn(mockWebSocketSink);
+      when(mockWebSocketSink.close()).thenAnswer((_) => Future.value({}));
+      when(mockWebSocketSink.add(any)).thenAnswer((_) => Future.value({}));
+      clientService.connection = mockWebSocketChannel;
+
+      //WHEN
+      clientService.sendAction(testPubsubtoken,ChatwootActionType.conversation_typing_on);
+
+      //THEN
+      verify(mockWebSocketSink.add(any));
 
     });
 

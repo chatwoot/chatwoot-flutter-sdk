@@ -2,6 +2,7 @@
 import 'package:chatwoot_client_sdk/chatwoot_client.dart';
 import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_client_sdk/di/modules.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -154,6 +155,19 @@ void main() {
       //THEN
       verify(mockRepository.getPersistedMessages());
       verify(mockRepository.getMessages());
+
+    });
+
+    test('Given action is sent successfully when a sendAction is called, then repository should be called', () async{
+
+      //GIVEN
+      when(mockRepository.sendAction(any)).thenAnswer((_)=>Future.microtask((){}));
+
+      //WHEN
+      client.sendAction(ChatwootActionType.update_presence);
+
+      //THEN
+      verify(mockRepository.sendAction(ChatwootActionType.update_presence));
 
     });
 
