@@ -102,9 +102,9 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
     return types.TextMessage(
         id: echoId ?? idGen.v4(),
         author: message.isMine ? _user : types.User(
-          id: message.sender["id"]?.identifier ?? idGen.v4(),
-          firstName: message.sender["name"]?.name,
-          imageUrl: message.sender["avatar_url"]?.avatarUrl,
+          id: message.sender?.id.toString() ?? idGen.v4(),
+          firstName: message.sender?.name,
+          imageUrl: message.sender?.avatarUrl ?? message.sender?.thumbnail,
         ),
         text: message.content ?? "",
         status: types.Status.seen

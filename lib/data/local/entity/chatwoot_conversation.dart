@@ -1,5 +1,7 @@
 
 
+import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -17,15 +19,15 @@ class ChatwootConversation extends Equatable{
 
   @JsonKey(name: "inbox_id")
   @HiveField(1)
-  final String inboxId;
+  final int inboxId;
 
   @JsonKey()
   @HiveField(2)
-  final String messages;
+  final List<ChatwootMessage> messages;
 
   @JsonKey()
   @HiveField(3)
-  final String contact;
+  final ChatwootContact contact;
 
   ChatwootConversation({
     required this.id,

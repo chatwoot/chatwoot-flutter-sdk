@@ -13,6 +13,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../../utils/test_resources_util.dart';
 import 'chatwoot_client_service_test.mocks.dart';
 
 @GenerateMocks([
@@ -49,17 +50,7 @@ void main() {
     test('Given message is successfully sent when createMessage is called, then return sent message', () async{
 
       //GIVEN
-      final responseBody = {
-        "id": "id",
-        "content": "content",
-        "message_type": "1",
-        "content_type": "contentType",
-        "content_attributes": "contentAttributes",
-        "created_at": DateTime.now().toString(),
-        "conversation_id": "conversationId",
-        "attachments": [],
-        "sender": "sender"
-      };
+      final responseBody = await TestResourceUtil.readJsonResource(fileName: "message");
       final request = ChatwootNewMessageRequest(content: "test message",echoId: "id");
       when(mockDio.post(any, data: request.toJson())).thenAnswer((_) => Future.value(_createSuccessResponse(responseBody)));
 
@@ -119,19 +110,7 @@ void main() {
     test('Given messages are successfully fetched when getAllMessages is called, then return fetched messages', () async{
 
       //GIVEN
-      final dynamic responseBody = [
-        {
-          "id": "id",
-          "content": "content",
-          "message_type": "1",
-          "content_type": "contentType",
-          "content_attributes": "contentAttributes",
-          "created_at": DateTime.now().toString(),
-          "conversation_id": "conversationId",
-          "attachments": [],
-          "sender": "sender"
-        }
-      ];
+      final dynamic responseBody = await TestResourceUtil.readJsonResource(fileName: "messages");
       when(mockDio.get(any)).thenAnswer((_) => Future.value(_createSuccessResponse(responseBody)));
 
       //WHEN
@@ -189,13 +168,7 @@ void main() {
     test('Given contact is successfully fetched when getContact is called, then return fetched contact', () async{
 
       //GIVEN
-      final responseBody = {
-        "id": 0,
-        "source_id": "contactIdentifier",
-        "pubsub_token": "pubsubToken",
-        "name": "name",
-        "email": "email"
-      };
+      final responseBody = await TestResourceUtil.readJsonResource(fileName: "contact");
       when(mockDio.get(any)).thenAnswer((_) => Future.value(_createSuccessResponse(responseBody)));
 
       //WHEN
@@ -252,14 +225,7 @@ void main() {
     test('Given conversations are successfully fetched when getConversations is called, then return fetched conversations', () async{
 
       //GIVEN
-      final dynamic responseBody = [
-        {
-          "id": 0,
-          "inbox_id": "",
-          "messages": "",
-          "contact": ""
-        }
-      ];
+      final dynamic responseBody = await TestResourceUtil.readJsonResource(fileName: "conversations");
       when(mockDio.get(any)).thenAnswer((_) => Future.value(_createSuccessResponse(responseBody)));
 
       //WHEN
@@ -318,13 +284,7 @@ void main() {
     test('Given contact is successfully updated when updateContact is called, then return updated contact', () async{
 
       //GIVEN
-      final responseBody = {
-        "id": 0,
-        "source_id": "contactIdentifier",
-        "pubsub_token": "pubsubToken",
-        "name": "name",
-        "email": "email"
-      };
+      final responseBody = await TestResourceUtil.readJsonResource(fileName: "contact");
       final update = {
         "name":"Updated name"
       };
@@ -391,17 +351,7 @@ void main() {
     test('Given message is successfully updated when updateMessage is called, then return updated message', () async{
 
       //GIVEN
-      final responseBody = {
-        "id": "id",
-        "content": "content",
-        "message_type": "1",
-        "content_type": "contentType",
-        "content_attributes": "contentAttributes",
-        "created_at": DateTime.now().toString(),
-        "conversation_id": "conversationId",
-        "attachments": [],
-        "sender": "sender"
-      };
+      final responseBody = await TestResourceUtil.readJsonResource(fileName: "message");
       final testMessageId = "id";
       final update = {
         "content":"Updated content"

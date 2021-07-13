@@ -1,4 +1,5 @@
 
+import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -9,17 +10,22 @@ part 'chatwoot_message.g.dart';
 @HiveType(typeId: 2)
 class ChatwootMessage extends Equatable{
 
-  @JsonKey()
+  @JsonKey(
+    fromJson: idFromJson
+  )
   @HiveField(0)
-  final String id;
+  final int id;
 
   @JsonKey()
   @HiveField(1)
   final String? content;
 
-  @JsonKey(name:"message_type")
+  @JsonKey(
+      name:"message_type",
+    fromJson: messageTypeFromJson
+  )
   @HiveField(2)
-  final String? messageType;
+  final int? messageType;
 
   @JsonKey(name:"content_type")
   @HiveField(3)
@@ -27,7 +33,7 @@ class ChatwootMessage extends Equatable{
 
   @JsonKey(name:"content_attributes")
   @HiveField(4)
-  final String? contentAttributes;
+  final dynamic contentAttributes;
 
   @JsonKey(
     name:"created_at",
@@ -36,9 +42,12 @@ class ChatwootMessage extends Equatable{
   @HiveField(5)
   final String createdAt;
 
-  @JsonKey(name:"conversation_id")
+  @JsonKey(
+    name:"conversation_id",
+    fromJson: idFromJson
+  )
   @HiveField(6)
-  final String? conversationId;
+  final int? conversationId;
 
   @JsonKey()
   @HiveField(7)
@@ -46,9 +55,9 @@ class ChatwootMessage extends Equatable{
 
   @JsonKey(name:"sender")
   @HiveField(8)
-  final dynamic sender;
+  final ChatwootEventMessageUser? sender;
 
-  bool get isMine => messageType == "1";
+  bool get isMine => messageType == 1;
 
   ChatwootMessage({
     required this.id,
@@ -80,6 +89,20 @@ class ChatwootMessage extends Equatable{
     sender
   ];
 
+}
+
+int idFromJson(value){
+  if(value is String){
+    return int.tryParse(value) ?? 0;
+  }
+  return value;
+}
+
+int messageTypeFromJson(value){
+  if(value is String){
+    return int.tryParse(value) ?? 0;
+  }
+  return value;
 }
 
 String createdAtFromJson(value){

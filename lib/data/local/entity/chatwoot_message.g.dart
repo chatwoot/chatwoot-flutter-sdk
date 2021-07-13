@@ -17,15 +17,15 @@ class ChatwootMessageAdapter extends TypeAdapter<ChatwootMessage> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ChatwootMessage(
-      id: fields[0] as String,
+      id: fields[0] as int,
       content: fields[1] as String?,
-      messageType: fields[2] as String?,
+      messageType: fields[2] as int?,
       contentType: fields[3] as String?,
-      contentAttributes: fields[4] as String?,
+      contentAttributes: fields[4] as dynamic,
       createdAt: fields[5] as String,
-      conversationId: fields[6] as String?,
+      conversationId: fields[6] as int?,
       attachments: (fields[7] as List?)?.cast<dynamic>(),
-      sender: fields[8] as dynamic,
+      sender: fields[8] as ChatwootEventMessageUser?,
     );
   }
 
@@ -70,15 +70,18 @@ class ChatwootMessageAdapter extends TypeAdapter<ChatwootMessage> {
 
 ChatwootMessage _$ChatwootMessageFromJson(Map<String, dynamic> json) {
   return ChatwootMessage(
-    id: json['id'] as String,
+    id: idFromJson(json['id']),
     content: json['content'] as String?,
-    messageType: json['message_type'] as String?,
+    messageType: messageTypeFromJson(json['message_type']),
     contentType: json['content_type'] as String?,
-    contentAttributes: json['content_attributes'] as String?,
+    contentAttributes: json['content_attributes'],
     createdAt: createdAtFromJson(json['created_at']),
-    conversationId: json['conversation_id'] as String?,
+    conversationId: idFromJson(json['conversation_id']),
     attachments: json['attachments'] as List<dynamic>?,
-    sender: json['sender'],
+    sender: json['sender'] == null
+        ? null
+        : ChatwootEventMessageUser.fromJson(
+            json['sender'] as Map<String, dynamic>),
   );
 }
 
@@ -92,5 +95,5 @@ Map<String, dynamic> _$ChatwootMessageToJson(ChatwootMessage instance) =>
       'created_at': instance.createdAt,
       'conversation_id': instance.conversationId,
       'attachments': instance.attachments,
-      'sender': instance.sender,
+      'sender': instance.sender?.toJson(),
     };

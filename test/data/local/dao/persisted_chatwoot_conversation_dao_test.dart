@@ -1,9 +1,14 @@
 import 'dart:io';
 
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_conversation_dao.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import '../../../utils/test_resources_util.dart';
 
 void main() {
 
@@ -14,20 +19,19 @@ void main() {
     late Box<ChatwootConversation> mockConversationBox;
     final testClientInstanceKey = "testKey";
 
-    final testConversation = ChatwootConversation(
-        id: 0,
-        inboxId: "",
-        messages: "",
-        contact: ""
-    );
+    late final ChatwootConversation testConversation;
 
     setUpAll((){
       return Future(()async{
 
+        testConversation = ChatwootConversation.fromJson(await TestResourceUtil.readJsonResource(fileName: "conversation"));
+
         final hiveTestPath = Directory.current.path + '/test/hive_testing_path';
         Hive
           ..init(hiveTestPath)
-          ..registerAdapter(ChatwootConversationAdapter());
+          ..registerAdapter(ChatwootConversationAdapter())
+          ..registerAdapter(ChatwootContactAdapter())
+          ..registerAdapter(ChatwootMessageAdapter());
 
       });
     });

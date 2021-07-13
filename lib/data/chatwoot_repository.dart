@@ -115,8 +115,13 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     localStorage.contactDao.saveContact(contact);
 
     //refresh conversation
-    final conversation = await clientService.getConversations();
-    localStorage.conversationDao.saveConversation(conversation[0]);
+    final conversations = await clientService.getConversations();
+    final persistedConversation = localStorage.conversationDao.getConversation()!;
+    final refreshedConversation = conversations.firstWhere(
+            (element) => element.id == persistedConversation.id,
+            orElse: ()=>persistedConversation //highly unlikely orElse will be called but still added it just in case
+    );
+    localStorage.conversationDao.saveConversation(refreshedConversation);
 
     listenForEvents();
   }

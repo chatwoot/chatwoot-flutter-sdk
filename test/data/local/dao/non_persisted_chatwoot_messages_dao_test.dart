@@ -2,23 +2,16 @@ import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_messages_dao.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../utils/test_resources_util.dart';
+
 void main() {
 
   group("Non Persisted Chatwoot Messages Dao Test", (){
     late NonPersistedChatwootMessagesDao dao ;
-    final testMessage = ChatwootMessage(
-        id: "id",
-        content: "content",
-        messageType: "messageType",
-        contentType: "contentType",
-        contentAttributes: "contentAttributes",
-        createdAt: DateTime.now().toString(),
-        conversationId: "conversationId",
-        attachments: [],
-        sender: "sender"
-    );
+    late final ChatwootMessage testMessage;
 
-    setUp((){
+    setUpAll(() async{
+      testMessage = ChatwootMessage.fromJson(await TestResourceUtil.readJsonResource(fileName: "message"));
       dao = NonPersistedChatwootMessagesDao();
     });
 
@@ -122,6 +115,12 @@ void main() {
       //THEN
       final retrievedMessage = dao.getMessage(testMessage.id);
       expect(retrievedMessage, null);
+    });
+
+
+
+    tearDown((){
+      dao.clearAll();
     });
   });
 }

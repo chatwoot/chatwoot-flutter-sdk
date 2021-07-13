@@ -18,9 +18,9 @@ class ChatwootConversationAdapter extends TypeAdapter<ChatwootConversation> {
     };
     return ChatwootConversation(
       id: fields[0] as int,
-      inboxId: fields[1] as String,
-      messages: fields[2] as String,
-      contact: fields[3] as String,
+      inboxId: fields[1] as int,
+      messages: (fields[2] as List).cast<ChatwootMessage>(),
+      contact: fields[3] as ChatwootContact,
     );
   }
 
@@ -56,9 +56,11 @@ class ChatwootConversationAdapter extends TypeAdapter<ChatwootConversation> {
 ChatwootConversation _$ChatwootConversationFromJson(Map<String, dynamic> json) {
   return ChatwootConversation(
     id: json['id'] as int,
-    inboxId: json['inbox_id'] as String,
-    messages: json['messages'] as String,
-    contact: json['contact'] as String,
+    inboxId: json['inbox_id'] as int,
+    messages: (json['messages'] as List<dynamic>)
+        .map((e) => ChatwootMessage.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    contact: ChatwootContact.fromJson(json['contact'] as Map<String, dynamic>),
   );
 }
 
@@ -67,6 +69,6 @@ Map<String, dynamic> _$ChatwootConversationToJson(
     <String, dynamic>{
       'id': instance.id,
       'inbox_id': instance.inboxId,
-      'messages': instance.messages,
-      'contact': instance.contact,
+      'messages': instance.messages.map((e) => e.toJson()).toList(),
+      'contact': instance.contact.toJson(),
     };

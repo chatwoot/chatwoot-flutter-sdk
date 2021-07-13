@@ -8,10 +8,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 abstract class ChatwootMessagesDao{
   Future<void> saveMessage(ChatwootMessage message);
   Future<void> saveAllMessages(List<ChatwootMessage> messages);
-  ChatwootMessage? getMessage(String messageId);
+  ChatwootMessage? getMessage(int messageId);
   List<ChatwootMessage> getMessages();
   Future<void> clear();
-  Future<void> deleteMessage(String messageId);
+  Future<void> deleteMessage(int messageId);
   Future<void> onDispose();
 
   Future<void> clearAll();
@@ -65,9 +65,9 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
     final messageClientInstancekey = _clientInstanceKey;
 
     //filter current client instance message ids
-    Set<String> clientMessageIds = _messageIdToClientInstanceKeyBox
+    Set<int> clientMessageIds = _messageIdToClientInstanceKeyBox
         .keys
-        .map((e) => e.toString())
+        .map((e) => e as int)
         .where((key) => _messageIdToClientInstanceKeyBox.get(key) == messageClientInstancekey)
         .toSet();
 
@@ -91,13 +91,13 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
   }
 
   @override
-  Future<void> deleteMessage(String messageId) async{
+  Future<void> deleteMessage(int messageId) async{
     await _box.delete(messageId);
     await _messageIdToClientInstanceKeyBox.delete(messageId);
   }
 
   @override
-  ChatwootMessage? getMessage(String messageId) {
+  ChatwootMessage? getMessage(int messageId) {
     return _box.get(messageId,defaultValue: null);
   }
 
@@ -116,7 +116,7 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
 }
 
 class NonPersistedChatwootMessagesDao extends ChatwootMessagesDao{
-  HashMap<String, ChatwootMessage> _messages = new HashMap();
+  HashMap<int, ChatwootMessage> _messages = new HashMap();
 
   @override
   Future<void> clear() async{
@@ -124,12 +124,12 @@ class NonPersistedChatwootMessagesDao extends ChatwootMessagesDao{
   }
 
   @override
-  Future<void> deleteMessage(String messageId) async{
+  Future<void> deleteMessage(int messageId) async{
     _messages.remove(messageId);
   }
 
   @override
-  ChatwootMessage? getMessage(String messageId) {
+  ChatwootMessage? getMessage(int messageId) {
     return _messages[messageId];
   }
 

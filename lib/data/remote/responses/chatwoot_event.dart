@@ -1,6 +1,8 @@
 
 
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
+import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'chatwoot_event.g.dart';
@@ -146,41 +148,48 @@ class ChatwootEventMessageData{
   }
 }
 
+@HiveType(typeId: 4)
 @JsonSerializable(explicitToJson: true)
-class ChatwootEventMessageUser{
+class ChatwootEventMessageUser extends Equatable{
 
-  @JsonKey()
-  final String? type;
-
-  @JsonKey(name: "availability_status")
-  final String? availabilityStatus;
-
-  @JsonKey(name: "available_name")
-  final String? availableName;
-
-  @JsonKey(name: "avatar_url")
+  @JsonKey(
+    name: "avatar_url"
+  )
+  @HiveField(0)
   final String? avatarUrl;
 
   @JsonKey()
+  @HiveField(1)
   final int? id;
 
   @JsonKey()
+  @HiveField(2)
   final String? name;
+
+  @JsonKey()
+  @HiveField(3)
+  final String? thumbnail;
 
 
   ChatwootEventMessageUser({
     this.id,
-    this.type,
     this.avatarUrl,
     this.name,
-    this.availabilityStatus,
-    this.availableName
+    this.thumbnail
   });
 
 
   factory ChatwootEventMessageUser.fromJson(Map<String, dynamic> json) => _$ChatwootEventMessageUserFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootEventMessageUserToJson(this);
+
+  @override
+  List<Object?> get props => [
+    id,
+    avatarUrl,
+    name,
+    thumbnail
+  ];
 
 }
 

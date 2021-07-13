@@ -9,22 +9,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../utils/test_resources_util.dart';
 import '../chatwoot_repository_test.mocks.dart';
 import '../local/local_storage_test.mocks.dart';
 import 'chatwoot_client_api_interceptor_test.mocks.dart';
 import 'chatwoot_client_service_test.mocks.dart';
 
-class _HasAuthorizationHeader extends Matcher {
-  final String _authHeaderValue;
-  const _HasAuthorizationHeader(this._authHeaderValue);
 
-  @override
-  bool matches(item, Map matchState) => (item as RequestOptions).headers["AUTHORIZATION"] == _authHeaderValue;
-
-  @override
-  Description describe(Description description) =>
-      description.addDescriptionOf(_authHeaderValue);
-}
 
 class _HasPath extends Matcher {
   final String _pathValue;
@@ -55,20 +46,10 @@ void main() {
     final mockConversationDao = MockChatwootConversationDao();
     final mockResponseHandler = MockResponseInterceptorHandler();
     final mockRequestHandler = MockRequestInterceptorHandler();
-    final testContact = ChatwootContact(
-        id: 0,
-        contactIdentifier: "contactIdentifier",
-        pubsubToken: "pubsubToken",
-        name: "name",
-        email: "email"
-    );
 
-    final testConversation = ChatwootConversation(
-        id: 0,
-        inboxId: "",
-        messages: "",
-        contact: ""
-    );
+    late final testContact ;
+
+    late final testConversation ;
 
     final testUser = ChatwootUser(
         identifier: "identifier",
@@ -79,11 +60,13 @@ void main() {
         customAttributes: {}
     );
 
-    setUpAll((){
+    setUpAll(() async{
       when(mockLocalStorage.contactDao).thenReturn(mockContactDao);
       when(mockLocalStorage.userDao).thenReturn(mockUserDao);
       when(mockAuthService.dio).thenReturn(mockDio);
       when(mockLocalStorage.conversationDao).thenReturn(mockConversationDao);
+      testContact = ChatwootContact.fromJson(await TestResourceUtil.readJsonResource(fileName: "contact"));
+      testConversation = ChatwootConversation.fromJson(await TestResourceUtil.readJsonResource(fileName: "conversation"));
       interceptor = ChatwootClientApiInterceptor(
           testInboxIdentifier,
           mockLocalStorage,
@@ -146,32 +129,6 @@ void main() {
       verify(mockAuthService.createNewConversation(testInboxIdentifier, testContact.contactIdentifier));
       verify(mockConversationDao.saveConversation(testConversation));
       verify(mockRequestHandler.next(any));
-
-    });
-
-    test('Given persisted contact exists when a request that needs authorization is made, then attach auth token and submit request', () async{
-
-      //GIVEN
-      final testHeaders = new Map<String, dynamic>();
-      testHeaders.putIfAbsent("AUTHORIZATION", () => ChatwootClientApiInterceptor.INTERCEPTOR_AUTHORIZATION_PLACEHOLDER);
-      final testRequest = RequestOptions(path: "/",headers: testHeaders);
-
-      when(mockContactDao.getContact()).thenReturn(testContact);
-      when(mockConversationDao.getConversation()).thenReturn(testConversation);
-
-      //WHEN
-      await interceptor.onRequest(testRequest,mockRequestHandler);
-
-      //THEN
-      verifyNever(mockAuthService.createNewContact(testInboxIdentifier, testUser));
-      verifyNever(mockAuthService.createNewConversation(testInboxIdentifier, testContact.contactIdentifier));
-      verifyNever(mockContactDao.saveContact(testContact));
-      verifyNever(mockConversationDao.saveConversation(testConversation));
-      verify(
-          mockRequestHandler.next(
-              argThat(_HasAuthorizationHeader(testContact.pubsubToken))
-          )
-      );
 
     });
 

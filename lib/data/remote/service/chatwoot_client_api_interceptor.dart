@@ -14,7 +14,6 @@ class ChatwootClientApiInterceptor extends Interceptor{
   static const INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER = "{INBOX_IDENTIFIER}";
   static const INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER = "{CONTACT_IDENTIFIER}";
   static const INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER = "{CONVERSATION_IDENTIFIER}";
-  static const INTERCEPTOR_AUTHORIZATION_PLACEHOLDER = "{AUTHORIZATION}";
 
   final String _inboxIdentifier;
   final LocalStorage _localStorage;
@@ -30,28 +29,24 @@ class ChatwootClientApiInterceptor extends Interceptor{
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async{
     RequestOptions newOptions = options;
     ChatwootContact? contact =  _localStorage.contactDao.getContact();
-    String? token = contact?.pubsubToken;
     ChatwootConversation? conversation = _localStorage.conversationDao.getConversation();
 
     if(contact == null){
       // create new contact from user if no token found
       contact = await _authService.createNewContact(_inboxIdentifier, _localStorage.userDao.getUser());
-      conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier);
+      conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
       await _localStorage.conversationDao.saveConversation(conversation);
       await _localStorage.contactDao.saveContact(contact);
-      token = contact.pubsubToken;
     }
 
     if(conversation == null){
-      conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier);
+      conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
       await _localStorage.conversationDao.saveConversation(conversation);
     }
 
-    if(newOptions.headers["AUTHORIZATION"] == INTERCEPTOR_AUTHORIZATION_PLACEHOLDER){
-      newOptions.headers.update("AUTHORIZATION", (value) => token);
-    }
+
     newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER, _inboxIdentifier);
-    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER, contact.contactIdentifier);
+    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER, contact.contactIdentifier!);
     newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER, "${conversation.id}");
 
     handler.next(newOptions);
@@ -65,7 +60,7 @@ class ChatwootClientApiInterceptor extends Interceptor{
 
       // create new contact from user if unauthorized
       final contact = await _authService.createNewContact(_inboxIdentifier, _localStorage.userDao.getUser());
-      final conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier);
+      final conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
       await _localStorage.contactDao.saveContact(contact);
       await _localStorage.conversationDao.saveConversation(conversation);
 

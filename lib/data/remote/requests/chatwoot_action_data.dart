@@ -30,7 +30,7 @@ String actionTypeToJson(ChatwootActionType actionType){
     case ChatwootActionType.conversation_typing_on:
       return "conversation.typing_on";
     case ChatwootActionType.update_presence:
-      return "presence.update";
+      return "update_presence";
     case ChatwootActionType.subscribe:
       return "subscribe";
   }
@@ -42,7 +42,7 @@ ChatwootActionType actionTypeFromJson(String? value){
       return ChatwootActionType.conversation_typing_on;
     case "conversation.typing_off":
       return ChatwootActionType.conversation_typing_on;
-    case "presence.update":
+    case "update_presence":
       return ChatwootActionType.update_presence;
     case "subscribe":
       return ChatwootActionType.subscribe;

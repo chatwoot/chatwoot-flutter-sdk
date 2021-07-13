@@ -1,0 +1,22 @@
+{
+  "id": 2,
+  "inbox_id": 1,
+  "contact_last_seen_at": 0,
+  "status": "open",
+  "messages": [],
+  "contact": {
+    "id": 1,
+    "name": "test",
+    "email": "test@test.com",
+    "phone_number": null,
+    "account_id": 5,
+    "created_at": "2021-07-12T16:09:34.854Z",
+    "updated_at": "2021-07-12T16:34:14.048Z",
+    "pubsub_token": "vxrAesh9TjFkEeQbSTyyBNYY",
+    "additional_attributes": {},
+    "identifier": null,
+    "custom_attributes": {},
+    "last_activity_at": "2021-07-12T16:34:13.924Z",
+    "label_list": []
+  }
+}

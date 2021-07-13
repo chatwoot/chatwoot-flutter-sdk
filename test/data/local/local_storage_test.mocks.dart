@@ -111,7 +111,7 @@ class MockChatwootMessagesDao extends _i1.Mock
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
   @override
-  _i8.ChatwootMessage? getMessage(String? messageId) =>
+  _i8.ChatwootMessage? getMessage(int? messageId) =>
       (super.noSuchMethod(Invocation.method(#getMessage, [messageId]))
           as _i8.ChatwootMessage?);
   @override
@@ -123,7 +123,7 @@ class MockChatwootMessagesDao extends _i1.Mock
       returnValue: Future<void>.value(null),
       returnValueForMissingStub: Future.value()) as _i3.Future<void>);
   @override
-  _i3.Future<void> deleteMessage(String? messageId) =>
+  _i3.Future<void> deleteMessage(int? messageId) =>
       (super.noSuchMethod(Invocation.method(#deleteMessage, [messageId]),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
@@ -234,12 +234,12 @@ class MockPersistedChatwootMessagesDao extends _i1.Mock
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
   @override
-  _i3.Future<void> deleteMessage(String? messageId) =>
+  _i3.Future<void> deleteMessage(int? messageId) =>
       (super.noSuchMethod(Invocation.method(#deleteMessage, [messageId]),
           returnValue: Future<void>.value(null),
           returnValueForMissingStub: Future.value()) as _i3.Future<void>);
   @override
-  _i8.ChatwootMessage? getMessage(String? messageId) =>
+  _i8.ChatwootMessage? getMessage(int? messageId) =>
       (super.noSuchMethod(Invocation.method(#getMessage, [messageId]))
           as _i8.ChatwootMessage?);
   @override

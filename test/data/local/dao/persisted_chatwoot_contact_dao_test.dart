@@ -5,6 +5,8 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../../utils/test_resources_util.dart';
+
 
 
 void main() {
@@ -15,17 +17,12 @@ void main() {
     late Box<ChatwootContact> mockContactBox;
     final testClientInstanceKey = "testKey";
 
-    final testContact = ChatwootContact(
-        id: 0,
-        contactIdentifier: "contactIdentifier",
-        pubsubToken: "pubsubToken",
-        name: "name",
-        email: "email"
-    );
+    late final ChatwootContact testContact;
 
     setUpAll((){
       return Future(()async{
 
+        testContact = ChatwootContact.fromJson(await TestResourceUtil.readJsonResource(fileName: "contact"));
         final hiveTestPath = Directory.current.path + '/test/hive_testing_path';
         Hive
           ..init(hiveTestPath)

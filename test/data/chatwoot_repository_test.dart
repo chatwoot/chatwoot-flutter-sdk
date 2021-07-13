@@ -17,6 +17,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../utils/test_resources_util.dart';
 import 'chatwoot_repository_test.mocks.dart';
 import 'local/local_storage_test.mocks.dart';
 
@@ -30,20 +31,9 @@ import 'local/local_storage_test.mocks.dart';
 void main() {
 
   group("Chatwoot Repository Tests", (){
-    final testContact = ChatwootContact(
-        id: 0,
-        contactIdentifier: "contactIdentifier",
-        pubsubToken: "pubsubToken",
-        name: "name",
-        email: "email"
-    );
+    late final ChatwootContact testContact;
 
-    final testConversation = ChatwootConversation(
-        id: 0,
-        inboxId: "",
-        messages: "",
-        contact: ""
-    );
+    late final ChatwootConversation testConversation;
     final testUser = ChatwootUser(
         identifier: "identifier",
         identifierHash: "identifierHash",
@@ -52,17 +42,7 @@ void main() {
         avatarUrl: "avatarUrl",
         customAttributes: {}
     );
-    final testMessage = ChatwootMessage(
-        id: "id",
-        content: "content",
-        messageType: "messageType",
-        contentType: "contentType",
-        contentAttributes: "contentAttributes",
-        createdAt: DateTime.now().toString(),
-        conversationId: "conversationId",
-        attachments: [],
-        sender: "sender"
-    );
+    late final ChatwootMessage testMessage;
 
     final mockLocalStorage = MockLocalStorage();
     final mockChatwootClientService = MockChatwootClientService();
@@ -76,7 +56,11 @@ void main() {
 
     late final ChatwootRepository repo;
 
-    setUpAll((){
+    setUpAll(() async{
+
+      testContact = ChatwootContact.fromJson(await TestResourceUtil.readJsonResource(fileName: "contact"));
+      testConversation = ChatwootConversation.fromJson(await TestResourceUtil.readJsonResource(fileName: "conversation"));
+      testMessage = ChatwootMessage.fromJson(await TestResourceUtil.readJsonResource(fileName: "message"));
 
       when(mockLocalStorage.messagesDao).thenReturn(mockMessagesDao);
       when(mockLocalStorage.contactDao).thenReturn(mockContactDao);
@@ -193,6 +177,7 @@ void main() {
       //GIVEN
       when(mockChatwootClientService.getContact()).thenAnswer((_)=>Future.value(testContact));
       when(mockContactDao.getContact()).thenReturn(testContact);
+      when(mockConversationDao.getConversation()).thenReturn(testConversation);
       when(mockChatwootClientService.getConversations()).thenAnswer((_)=>Future.value([testConversation]));
       when(mockUserDao.saveUser(any)).thenAnswer((_)=>Future.microtask((){}));
       when(mockContactDao.saveContact(any)).thenAnswer((_)=>Future.microtask((){}));

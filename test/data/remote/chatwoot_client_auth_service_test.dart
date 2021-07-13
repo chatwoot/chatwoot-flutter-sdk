@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../utils/test_resources_util.dart';
 import 'chatwoot_client_service_test.mocks.dart';
 
 @GenerateMocks([
@@ -52,13 +53,7 @@ void main() {
     test('Given contact is successfully created when createNewContact is called, then return created contact', () async{
 
       //GIVEN
-      final responseBody = {
-        "id": 0,
-        "source_id": "contactIdentifier",
-        "pubsub_token": "pubsubToken",
-        "name": "name",
-        "email": "email"
-      };
+      final responseBody = await TestResourceUtil.readJsonResource(fileName: "contact");
       when(mockDio.post(any, data: testUser.toJson())).thenAnswer((_) => Future.value(_createSuccessResponse(responseBody)));
 
       //WHEN
@@ -115,12 +110,7 @@ void main() {
     test('Given conversation is successfully created when createNewConversation is called, then return created conversation', () async{
 
       //GIVEN
-      final responseBody = {
-        "id": 0,
-        "inbox_id": "",
-        "messages": "",
-        "contact": ""
-      };
+      final responseBody = await TestResourceUtil.readJsonResource(fileName: "conversation");
       when(mockDio.post(any)).thenAnswer((_) => Future.value(_createSuccessResponse(responseBody)));
 
       //WHEN

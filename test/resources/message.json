@@ -1,0 +1,20 @@
+{
+  "id": 8,
+  "content": "postman message",
+  "message_type": 0,
+  "content_type": "text",
+  "content_attributes": {},
+  "created_at": 1626155918,
+  "conversation_id": 2,
+  "sender": {
+    "additional_attributes": {},
+    "email": "test@test.com",
+    "id": 1,
+    "identifier": null,
+    "name": "test",
+    "phone_number": null,
+    "pubsub_token": "vxrAesh9TjFkEeQbSTyyBNYY",
+    "thumbnail": "https://www.gravatar.com/avatar/b642b4217b34b1e8d3bd915fc65c4452?d=404",
+    "type": "contact"
+  }
+}

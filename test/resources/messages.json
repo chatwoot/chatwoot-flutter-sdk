@@ -1,0 +1,39 @@
+[
+  {
+    "id": 8,
+    "content": "postman message",
+    "message_type": 0,
+    "content_type": "text",
+    "content_attributes": {},
+    "created_at": 1626155918,
+    "conversation_id": 2,
+    "sender": {
+      "additional_attributes": {},
+      "email": "test@test.com",
+      "id": 1,
+      "identifier": null,
+      "name": "test",
+      "phone_number": null,
+      "pubsub_token": "vxrAesh9TjFkEeQbSTyyBNYY",
+      "thumbnail": "https://www.gravatar.com/avatar/b642b4217b34b1e8d3bd915fc65c4452?d=404",
+      "type": "contact"
+    }
+  },
+  {
+    "id": 9,
+    "content": "Reply to postman",
+    "message_type": 1,
+    "content_type": null,
+    "content_attributes": {},
+    "created_at": 1626156303,
+    "conversation_id": 2,
+    "sender": {
+      "id": 5,
+      "name": "Ephraim Nartey",
+      "available_name": "Ephraim Nartey",
+      "avatar_url": "https://www.gravatar.com/avatar/4dfa265292bd0da849b08559e9c905b1?d=404",
+      "type": "user",
+      "availability_status": "online"
+    }
+  }
+]

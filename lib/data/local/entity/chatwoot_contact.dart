@@ -17,7 +17,7 @@ class ChatwootContact extends Equatable{
 
   @JsonKey(name: "source_id")
   @HiveField(1)
-  final String contactIdentifier;
+  final String? contactIdentifier;
 
   @JsonKey(name: "pubsub_token")
   @HiveField(2)
