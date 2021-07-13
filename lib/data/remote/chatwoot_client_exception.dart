@@ -6,6 +6,7 @@ class ChatwootClientException implements Exception {
 }
 
 enum ChatwootClientExceptionType{
+  CREATE_CLIENT_FAILED,
   SEND_MESSAGE_FAILED,
   CREATE_CONTACT_FAILED,
   CREATE_CONVERSATION_FAILED,

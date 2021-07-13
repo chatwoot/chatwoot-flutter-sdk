@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:core';
 
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
@@ -29,43 +30,24 @@ abstract class ChatwootRepository{
     this.callbacks
   );
 
-  /// Initializes client contact
   Future<void> initialize(ChatwootUser? user);
 
-  /// Fetches persisted messages.
-  ///
-  /// Calls [callbacks.onPersistedMessagesRetrieved] if persisted messages are found
+
   void getPersistedMessages();
 
 
-  /// Fetches persisted messages.
-  ///
-  /// Calls [callbacks.onMessagesRetrieved] when [clientService.getAllMessages] is successful
-  /// Calls [callbacks.onError] when [clientService.getAllMessages] fails
   Future<void> getMessages();
 
-  /// Connects to chatwoot websocket and starts listening for updates
-  ///
-  /// Calls [callbacks.onWelcome] when websocket welcome event is received
-  /// Calls [callbacks.onPing] when websocket ping event is received
-  /// Calls [callbacks.onConfirmedSubscription] when websocket subscription confirmation event is received
-  /// Calls [callbacks.onMessageCreated] when websocket message created event is received, and
-  /// message doesn't belong to current user
-  /// Calls [callbacks.onMyMessageSent] when websocket message created event is received, and message belongs
-  /// to current user
+
   void listenForEvents();
 
-  ///Save user object to local storage
   Future<void> sendMessage(ChatwootNewMessageRequest request);
 
-  ///Send actions like user started typing
   void sendAction(ChatwootActionType action);
 
-  /// Clears all data related to current chatwoot client instance
   Future<void> clear();
 
 
-  /// Cancels websocket stream subscriptions and disposes [localStorage]
   void dispose();
 
 }
@@ -84,6 +66,11 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
       streamCallbacks
   );
 
+
+  /// Fetches persisted messages.
+  ///
+  /// Calls [callbacks.onMessagesRetrieved] when [clientService.getAllMessages] is successful
+  /// Calls [callbacks.onError] when [clientService.getAllMessages] fails
   @override
   Future<void> getMessages() async{
     try{
@@ -95,6 +82,10 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     }
   }
 
+
+  /// Fetches persisted messages.
+  ///
+  /// Calls [callbacks.onPersistedMessagesRetrieved] if persisted messages are found
   @override
   void getPersistedMessages() {
     final persistedMessages = localStorage.messagesDao.getMessages();
@@ -103,18 +94,16 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     }
   }
 
+  /// Initializes client contact
   Future<void> initialize(ChatwootUser? user) async{
 
     if(user != null){
       await localStorage.userDao.saveUser(user);
-      //refresh contact
-      final contact = await clientService.updateContact(user.toJson());
-      localStorage.contactDao.saveContact(contact);
-    }else{
-      //refresh contact
-      final contact = await clientService.getContact();
-      localStorage.contactDao.saveContact(contact);
     }
+
+    //refresh contact
+    final contact = await clientService.getContact();
+    localStorage.contactDao.saveContact(contact);
 
     //refresh conversation
     final conversations = await clientService.getConversations();
@@ -129,6 +118,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   }
 
 
+  ///Sends message to chatwoot inbox
   Future<void> sendMessage(ChatwootNewMessageRequest request) async{
     try{
       final createdMessage = await clientService.createMessage(request);
@@ -139,11 +129,21 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     }
   }
 
+
+  /// Connects to chatwoot websocket and starts listening for updates
+  ///
+  /// Calls [callbacks.onWelcome] when websocket welcome event is received
+  /// Calls [callbacks.onPing] when websocket ping event is received
+  /// Calls [callbacks.onConfirmedSubscription] when websocket subscription confirmation event is received
+  /// Calls [callbacks.onMessageCreated] when websocket message created event is received, and
+  /// message doesn't belong to current user
+  /// Calls [callbacks.onMyMessageSent] when websocket message created event is received, and message belongs
+  /// to current user
   @override
   void listenForEvents() {
     clientService.startWebSocketConnection(localStorage.contactDao.getContact()!.pubsubToken);
     final newSubscription = clientService.connection!.stream.listen((event) {
-      ChatwootEvent chatwootEvent = ChatwootEvent.fromJson(event);
+      ChatwootEvent chatwootEvent = ChatwootEvent.fromJson(jsonDecode(event));
       if(chatwootEvent.type == ChatwootEventType.welcome){
         callbacks.onWelcome?.call();
       }else if(chatwootEvent.type == ChatwootEventType.ping){
@@ -153,6 +153,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
       }else if(chatwootEvent.message?.event == ChatwootEventMessageType.message_created){
         print("here comes message: $event");
         final message = chatwootEvent.message!.data!.getMessage();
+        localStorage.messagesDao.saveMessage(message);
         if(message.isMine){
           callbacks.onMessageDelivered?.call(message, chatwootEvent.message!.data!.echoId!);
         }else{
@@ -177,11 +178,13 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     _subscriptions.add(newSubscription);
   }
 
+  /// Clears all data related to current chatwoot client instance
   @override
   Future<void> clear() async {
     await localStorage.clear();
   }
 
+  /// Cancels websocket stream subscriptions and disposes [localStorage]
   @override
   void dispose() {
     localStorage.dispose();
@@ -189,6 +192,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     _subscriptions.forEach((subs) { subs.cancel();});
   }
 
+  ///Send actions like user started typing
   @override
   void sendAction(ChatwootActionType action) {
     clientService.sendAction(localStorage.contactDao.getContact()!.pubsubToken, action);

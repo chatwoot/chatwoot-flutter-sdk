@@ -65,7 +65,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
   ) async{
     try{
       final createResponse = await _dio.post(
-          "public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations/${ChatwootClientApiInterceptor.INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER}/messages",
+          "/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations/${ChatwootClientApiInterceptor.INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER}/messages",
           data: request.toJson()
       );
       if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
@@ -88,7 +88,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
   Future<List<ChatwootMessage>> getAllMessages() async{
     try{
       final createResponse = await _dio.get(
-          "public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations/${ChatwootClientApiInterceptor.INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER}/messages"
+          "/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations/${ChatwootClientApiInterceptor.INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER}/messages"
       );
       if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
         return (createResponse.data as List<dynamic>)
@@ -109,7 +109,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
   Future<ChatwootContact> getContact() async{
     try{
       final createResponse = await _dio.get(
-          "public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}"
+          "/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}"
       );
       if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
         return ChatwootContact.fromJson(createResponse.data);
@@ -127,7 +127,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
   @override
   Future<List<ChatwootConversation>> getConversations() async{
     try{
-      final createResponse = await _dio.get("public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations");
+      final createResponse = await _dio.get("/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations");
       if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
         return (createResponse.data as List<dynamic>)
             .map(((json)=>ChatwootConversation.fromJson(json)))
@@ -149,7 +149,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
   ) async{
     try{
       final updateResponse = await _dio.patch(
-          "public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}",
+          "/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}",
           data: update
       );
       if((updateResponse.statusCode ?? 0).isBetween(199, 300) ){
@@ -172,7 +172,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
   ) async{
     try{
       final updateResponse = await _dio.patch(
-          "public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations/${ChatwootClientApiInterceptor.INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER}/messages/$messageIdentifier",
+          "/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations/${ChatwootClientApiInterceptor.INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER}/messages/$messageIdentifier",
           data: update
       );
       if((updateResponse.statusCode ?? 0).isBetween(199, 300) ){
@@ -199,7 +199,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
       final socketUrl = Uri.parse(_baseUrl.replaceFirst("http", "ws")+"/cable");
       this.connection = onStartConnection == null ? WebSocketChannel.connect(socketUrl): onStartConnection(socketUrl);
     }
-    connection?.sink.add(jsonEncode({
+    connection!.sink.add(jsonEncode({
       "command":"subscribe",
       "identifier": jsonEncode({
         "channel":"RoomChannel",

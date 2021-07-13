@@ -38,7 +38,7 @@ final chatwootClientApiInterceptorProvider = Provider.family<ChatwootClientApiIn
 
 ///Provides an instance of Dio with interceptors set to authenticate all requests called with this dio instance
 final authenticatedDioProvider = Provider.family.autoDispose<Dio,ChatwootParameters>((ref,params) {
-  final authenticatedDio = ref.read(unauthenticatedDioProvider(params));
+  final authenticatedDio = Dio(BaseOptions(baseUrl: params.baseUrl));
   final interceptor = ref.read(chatwootClientApiInterceptorProvider(params));
   authenticatedDio.interceptors.add(interceptor);
   return authenticatedDio;

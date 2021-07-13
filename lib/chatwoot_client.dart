@@ -1,5 +1,6 @@
 
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
+import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
 import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
@@ -45,8 +46,12 @@ class ChatwootClient{
     );
   }
 
-  Future<void> _init() async{
-    await _repository.initialize(user);
+  void _init() {
+    try{
+      _repository.initialize(user);
+    }on ChatwootClientException catch(e){
+      callbacks?.onError?.call(e);
+    }
   }
 
   void loadMessages() async{
@@ -96,7 +101,7 @@ class ChatwootClient{
   }) async {
 
     if(enableMessagesPersistence){
-      LocalStorage.openDB();
+      await LocalStorage.openDB();
     }
 
     final chatwootParams = ChatwootParameters(
@@ -113,7 +118,7 @@ class ChatwootClient{
         user: user
     );
 
-    await client._init();
+    client._init();
 
     return client;
   }

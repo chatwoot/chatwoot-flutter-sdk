@@ -61,6 +61,10 @@ class PersistedChatwootContactDao extends ChatwootContactDao{
         _clientInstanceKey
     );
 
+    if(contactIdentifier == null){
+      return null;
+    }
+
     return _box.get(contactIdentifier,defaultValue: null);
   }
 

@@ -107,7 +107,7 @@ class ChatwootEventMessageData{
   final int? messageType;
 
   @JsonKey(name: "private")
-  final int? private;
+  final bool? private;
 
   @JsonKey()
   final ChatwootEventMessageUser? sender;

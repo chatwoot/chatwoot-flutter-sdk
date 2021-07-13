@@ -36,7 +36,7 @@ class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService{
   Future<ChatwootContact> createNewContact(String inboxIdentifier, ChatwootUser? user) async{
     try{
       final createResponse = await dio.post(
-          "public/api/v1/inboxes/$inboxIdentifier/contacts",
+          "/public/api/v1/inboxes/$inboxIdentifier/contacts",
           data: user?.toJson()
       );
       if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
@@ -58,7 +58,7 @@ class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService{
   Future<ChatwootConversation> createNewConversation(String inboxIdentifier, String contactIdentifier) async{
     try{
       final createResponse = await dio.post(
-          "public/api/v1/inboxes/$inboxIdentifier/contacts/$contactIdentifier/conversations"
+          "/public/api/v1/inboxes/$inboxIdentifier/contacts/$contactIdentifier/conversations"
       );
       if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
         //creating contact successful continue with request

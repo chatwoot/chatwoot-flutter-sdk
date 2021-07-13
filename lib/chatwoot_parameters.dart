@@ -3,11 +3,11 @@
 import 'package:equatable/equatable.dart';
 
 class ChatwootParameters extends Equatable{
-  bool isPersistenceEnabled;
-  String baseUrl;
-  String clientInstanceKey;
-  String inboxIdentifier;
-  String? userIdentifier;
+  final bool isPersistenceEnabled;
+  final String baseUrl;
+  final String clientInstanceKey;
+  final String inboxIdentifier;
+  final String? userIdentifier;
 
   ChatwootParameters({
     required this.isPersistenceEnabled,

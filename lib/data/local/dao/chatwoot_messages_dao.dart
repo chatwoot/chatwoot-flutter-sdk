@@ -79,7 +79,7 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
 
     //sort message using creation dates
     sortedMessages.sort((a,b){
-      return a.createdAt.compareTo(b.createdAt);
+      return b.createdAt.compareTo(a.createdAt);
     });
 
     return sortedMessages;

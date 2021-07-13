@@ -1,6 +1,7 @@
 
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
@@ -176,7 +177,7 @@ void main() {
     test('Given repo is initialized with user successfully when initialize is called, then client should be properly initialized', () async{
 
       //GIVEN
-      when(mockChatwootClientService.updateContact(any)).thenAnswer((_)=>Future.value(testContact));
+      when(mockChatwootClientService.getContact()).thenAnswer((_)=>Future.value(testContact));
       when(mockContactDao.getContact()).thenReturn(testContact);
       when(mockConversationDao.getConversation()).thenReturn(testConversation);
       when(mockChatwootClientService.getConversations()).thenAnswer((_)=>Future.value([testConversation]));
@@ -189,7 +190,7 @@ void main() {
       await repo.initialize(testUser);
 
       //THEN
-      verify(mockChatwootClientService.updateContact(testUser.toJson()));
+      verify(mockChatwootClientService.getContact());
       verify(mockUserDao.saveUser(testUser));
       verify(mockContactDao.saveContact(testContact));
       verify(mockConversationDao.saveConversation(testConversation));
@@ -227,7 +228,7 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(welcomeEvent);
+      mockWebSocketStream.add(jsonEncode(welcomeEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
@@ -246,7 +247,7 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(pingEvent);
+      mockWebSocketStream.add(jsonEncode(pingEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
@@ -264,7 +265,7 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(confirmSubscriptionEvent);
+      mockWebSocketStream.add(jsonEncode(confirmSubscriptionEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
@@ -284,7 +285,7 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(typingOnEvent);
+      mockWebSocketStream.add(jsonEncode(typingOnEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
@@ -296,12 +297,12 @@ void main() {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
       when(mockChatwootCallbacks.onConversationIsOnline).thenAnswer((_)=>(){});
-      final dynamic typingOnEvent = {
+      final dynamic presenceUpdateOnlineEvent = {
         "message": {
           "data": {
             "account_id":5,
             "users": {
-              5: "online"
+              "5": "online"
             }
           },
           "event": "presence.update"
@@ -310,7 +311,7 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(typingOnEvent);
+      mockWebSocketStream.add(jsonEncode(presenceUpdateOnlineEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
@@ -322,12 +323,12 @@ void main() {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
       when(mockChatwootCallbacks.onConversationIsOffline).thenAnswer((_)=>(){});
-      final dynamic typingOnEvent = {
+      final dynamic presenceUpdateOfflineEvent = {
         "message": {
           "data": {
             "account_id":5,
             "users": {
-              5: "offline"
+              "5": "offline"
             }
           },
           "event": "presence.update"
@@ -336,7 +337,7 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(typingOnEvent);
+      mockWebSocketStream.add(jsonEncode(presenceUpdateOfflineEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
@@ -348,7 +349,7 @@ void main() {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
       when(mockChatwootCallbacks.onConversationStoppedTyping).thenAnswer((_)=>(){});
-      final dynamic typingOnEvent = {
+      final dynamic typingOffEvent = {
         "message": {
           "event": "conversation.typing_off"
         }
@@ -356,7 +357,7 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(typingOnEvent);
+      mockWebSocketStream.add(jsonEncode(typingOffEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
@@ -367,42 +368,9 @@ void main() {
 
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
+      when(mockMessagesDao.saveMessage(any)).thenAnswer((_)=>Future.microtask((){}));
       when(mockChatwootCallbacks.onMessageReceived).thenAnswer((_)=>(_){});
       final dynamic messageReceivedEvent = {
-        "type":"message",
-        "message":{
-          "event":"message.created",
-          "data":{
-            "id": 0,
-            "content": "content",
-            "echo_id": "echo_id",
-            "message_type": 0,
-            "content_type": "contentType",
-            "content_attributes": "contentAttributes",
-            "created_at": DateTime.now().toString(),
-            "conversation_id": 0,
-            "attachments": [],
-          }
-        }
-      };
-
-      repo.listenForEvents();
-
-      //WHEN
-      mockWebSocketStream.add(messageReceivedEvent);
-      await Future.delayed(Duration(seconds: 1));
-
-      //THEN
-      final message = ChatwootMessage.fromJson(messageReceivedEvent["message"]["data"]);
-      verify(mockChatwootCallbacks.onMessageReceived?.call(message));
-    });
-
-    test('Given new message event is sent when listening for events, then callback onMessageSent event should be triggered', () async{
-
-      //GIVEN
-      when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
-      when(mockChatwootCallbacks.onMessageDelivered).thenAnswer((_)=>(_,__){});
-      final dynamic messageSentEvent = {
         "type":"message",
         "message":{
           "event":"message.created",
@@ -423,7 +391,42 @@ void main() {
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(messageSentEvent);
+      mockWebSocketStream.add(jsonEncode(messageReceivedEvent));
+      await Future.delayed(Duration(seconds: 1));
+
+      //THEN
+      final message = ChatwootMessage.fromJson(messageReceivedEvent["message"]["data"]);
+      verify(mockChatwootCallbacks.onMessageReceived?.call(message));
+    });
+
+    test('Given new message event is sent when listening for events, then callback onMessageSent event should be triggered', () async{
+
+      //GIVEN
+      when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
+      when(mockChatwootCallbacks.onMessageDelivered).thenAnswer((_)=>(_,__){});
+      when(mockMessagesDao.saveMessage(any)).thenAnswer((_)=>Future.microtask((){}));
+      final dynamic messageSentEvent = {
+        "type":"message",
+        "message":{
+          "event":"message.created",
+          "data":{
+            "id": 0,
+            "content": "content",
+            "echo_id": "echo_id",
+            "message_type": 0,
+            "content_type": "contentType",
+            "content_attributes": "contentAttributes",
+            "created_at": DateTime.now().toString(),
+            "conversation_id": 0,
+            "attachments": [],
+          }
+        }
+      };
+
+      repo.listenForEvents();
+
+      //WHEN
+      mockWebSocketStream.add(jsonEncode(messageSentEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
@@ -437,13 +440,13 @@ void main() {
 
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_)=>(_){});
-      final dynamic welcomeEvent = {
+      final dynamic unknownEvent = {
         "type":"unknown"
       };
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(welcomeEvent);
+      mockWebSocketStream.add(jsonEncode(unknownEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN

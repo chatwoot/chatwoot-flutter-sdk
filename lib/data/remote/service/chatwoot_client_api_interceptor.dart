@@ -4,6 +4,7 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart
 import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_auth_service.dart';
 import 'package:dio/dio.dart';
+import 'package:synchronized/synchronized.dart' as synchronized;
 
 
 ///Intercepts network requests and attaches inbox identifier, contact identifiers, conversation identifiers
@@ -18,6 +19,8 @@ class ChatwootClientApiInterceptor extends Interceptor{
   final String _inboxIdentifier;
   final LocalStorage _localStorage;
   final ChatwootClientAuthService _authService;
+  final requestLock = synchronized.Lock();
+  final responseLock = synchronized.Lock();
 
   ChatwootClientApiInterceptor(
     this._inboxIdentifier,
@@ -27,51 +30,56 @@ class ChatwootClientApiInterceptor extends Interceptor{
 
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async{
-    RequestOptions newOptions = options;
-    ChatwootContact? contact =  _localStorage.contactDao.getContact();
-    ChatwootConversation? conversation = _localStorage.conversationDao.getConversation();
+    await requestLock.synchronized(() async{
+      RequestOptions newOptions = options;
+      ChatwootContact? contact =  _localStorage.contactDao.getContact();
+      ChatwootConversation? conversation = _localStorage.conversationDao.getConversation();
 
-    if(contact == null){
-      // create new contact from user if no token found
-      contact = await _authService.createNewContact(_inboxIdentifier, _localStorage.userDao.getUser());
-      conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
-      await _localStorage.conversationDao.saveConversation(conversation);
-      await _localStorage.contactDao.saveContact(contact);
-    }
+      if(contact == null){
+        // create new contact from user if no token found
+        contact = await _authService.createNewContact(_inboxIdentifier, _localStorage.userDao.getUser());
+        conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
+        await _localStorage.conversationDao.saveConversation(conversation);
+        await _localStorage.contactDao.saveContact(contact);
+      }
 
-    if(conversation == null){
-      conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
-      await _localStorage.conversationDao.saveConversation(conversation);
-    }
+      if(conversation == null){
+        conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
+        await _localStorage.conversationDao.saveConversation(conversation);
+      }
 
 
-    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER, _inboxIdentifier);
-    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER, contact.contactIdentifier!);
-    newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER, "${conversation.id}");
+      newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER, _inboxIdentifier);
+      newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER, contact.contactIdentifier!);
+      newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER, "${conversation.id}");
 
-    handler.next(newOptions);
+      handler.next(newOptions);
+    });
 
   }
 
   @override
   Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async{
-    if(response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 404){
-      await _localStorage.clear();
+    await responseLock.synchronized(()async{
+      if(response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 404){
+        await _localStorage.clear();
 
-      // create new contact from user if unauthorized,forbidden or not found
-      final contact = await _authService.createNewContact(_inboxIdentifier, _localStorage.userDao.getUser());
-      final conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
-      await _localStorage.contactDao.saveContact(contact);
-      await _localStorage.conversationDao.saveConversation(conversation);
+        // create new contact from user if unauthorized,forbidden or not found
+        final contact = await _authService.createNewContact(_inboxIdentifier, _localStorage.userDao.getUser());
+        final conversation = await _authService.createNewConversation(_inboxIdentifier,contact.contactIdentifier!);
+        await _localStorage.contactDao.saveContact(contact);
+        await _localStorage.conversationDao.saveConversation(conversation);
 
-      RequestOptions newOptions = response.requestOptions;
-      newOptions.headers.update("AUTHORIZATION", (value) => contact.pubsubToken, ifAbsent: () => contact.pubsubToken);
+        RequestOptions newOptions = response.requestOptions;
+        newOptions.headers.update("AUTHORIZATION", (value) => contact.pubsubToken, ifAbsent: () => contact.pubsubToken);
 
-      handler.next(await _authService.dio.fetch(newOptions));
+        handler.next(await _authService.dio.fetch(newOptions));
 
-    }else{
-      handler.next(response);
-    }
+      }else{
+        handler.next(response);
+      }
+    });
+
   }
 
 }

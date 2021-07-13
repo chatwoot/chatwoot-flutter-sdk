@@ -57,7 +57,7 @@ class ChatwootMessage extends Equatable{
   @HiveField(8)
   final ChatwootEventMessageUser? sender;
 
-  bool get isMine => messageType == 1;
+  bool get isMine => messageType != 1;
 
   ChatwootMessage({
     required this.id,
@@ -107,7 +107,7 @@ int messageTypeFromJson(value){
 
 String createdAtFromJson(value){
   if(value is int){
-    return DateTime.fromMillisecondsSinceEpoch(value).toString();
+    return DateTime.fromMicrosecondsSinceEpoch(value,isUtc: true).toString();
   }
   return value.toString();
 }
