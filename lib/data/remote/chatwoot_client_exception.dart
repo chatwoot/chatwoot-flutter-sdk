@@ -1,8 +1,9 @@
 
 class ChatwootClientException implements Exception {
   String cause;
+  dynamic data;
   ChatwootClientExceptionType type;
-  ChatwootClientException(this.cause, this.type);
+  ChatwootClientException(this.cause, this.type, {this.data});
 }
 
 enum ChatwootClientExceptionType{

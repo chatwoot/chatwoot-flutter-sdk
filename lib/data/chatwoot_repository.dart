@@ -55,6 +55,7 @@ abstract class ChatwootRepository{
 
 class ChatwootRepositoryImpl extends ChatwootRepository{
 
+  bool _isListeningForEvents = false;
 
   ChatwootRepositoryImpl({
     required ChatwootClientService clientService,
@@ -97,22 +98,27 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   /// Initializes client contact
   Future<void> initialize(ChatwootUser? user) async{
 
-    if(user != null){
-      await localStorage.userDao.saveUser(user);
+    try{
+      if(user != null){
+        await localStorage.userDao.saveUser(user);
+      }
+
+      //refresh contact
+      final contact = await clientService.getContact();
+      localStorage.contactDao.saveContact(contact);
+
+      //refresh conversation
+      final conversations = await clientService.getConversations();
+      final persistedConversation = localStorage.conversationDao.getConversation()!;
+      final refreshedConversation = conversations.firstWhere(
+              (element) => element.id == persistedConversation.id,
+          orElse: ()=>persistedConversation //highly unlikely orElse will be called but still added it just in case
+      );
+      localStorage.conversationDao.saveConversation(refreshedConversation);
+    }on ChatwootClientException catch(e){
+      callbacks.onError?.call(e);
     }
 
-    //refresh contact
-    final contact = await clientService.getContact();
-    localStorage.contactDao.saveContact(contact);
-
-    //refresh conversation
-    final conversations = await clientService.getConversations();
-    final persistedConversation = localStorage.conversationDao.getConversation()!;
-    final refreshedConversation = conversations.firstWhere(
-            (element) => element.id == persistedConversation.id,
-            orElse: ()=>persistedConversation //highly unlikely orElse will be called but still added it just in case
-    );
-    localStorage.conversationDao.saveConversation(refreshedConversation);
 
     listenForEvents();
   }
@@ -124,8 +130,11 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
       final createdMessage = await clientService.createMessage(request);
       await localStorage.messagesDao.saveMessage(createdMessage);
       callbacks.onMessageSent?.call(createdMessage, request.echoId);
+      if(clientService.connection != null && !_isListeningForEvents){
+        listenForEvents();
+      }
     }on ChatwootClientException catch(e){
-      callbacks.onError?.call(e);
+      callbacks.onError?.call(ChatwootClientException(e.cause, e.type, data: request.echoId));
     }
   }
 
@@ -141,14 +150,23 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   /// to current user
   @override
   void listenForEvents() {
+    final token = localStorage.contactDao.getContact()?.pubsubToken;
+    if(token == null){
+      return;
+    }
     clientService.startWebSocketConnection(localStorage.contactDao.getContact()!.pubsubToken);
+
     final newSubscription = clientService.connection!.stream.listen((event) {
+
       ChatwootEvent chatwootEvent = ChatwootEvent.fromJson(jsonDecode(event));
       if(chatwootEvent.type == ChatwootEventType.welcome){
         callbacks.onWelcome?.call();
       }else if(chatwootEvent.type == ChatwootEventType.ping){
         callbacks.onPing?.call();
       }else if(chatwootEvent.type == ChatwootEventType.confirm_subscription){
+        if(!_isListeningForEvents){
+          _isListeningForEvents = true;
+        }
         callbacks.onConfirmedSubscription?.call();
       }else if(chatwootEvent.message?.event == ChatwootEventMessageType.message_created){
         print("here comes message: $event");

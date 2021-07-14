@@ -5,10 +5,12 @@ import 'package:chatwoot_client_sdk/chatwoot_client.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_client_sdk/ui/chatwoot_chat_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
 
@@ -61,6 +63,15 @@ class ChatwootChatPage extends StatefulWidget {
   final bool showUserNames;
 
   final ChatTheme? theme;
+
+  /// See [ChatL10n]
+  final ChatL10n? l10n;
+
+  /// See [Chat.timeFormat]
+  final DateFormat? timeFormat;
+
+  /// See [Chat.dateFormat]
+  final DateFormat? dateFormat;
 
   ///See [ChatwootCallbacks.onWelcome]
   final void Function()? onWelcome;
@@ -119,6 +130,9 @@ class ChatwootChatPage extends StatefulWidget {
     this.showUserAvatars = true,
     this.showUserNames = true,
     this.theme,
+    this.l10n,
+    this.timeFormat,
+    this.dateFormat,
     this.onWelcome,
     this.onPing,
     this.onConfirmedSubscription,
@@ -237,6 +251,9 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
         widget.onMessageSent?.call(chatwootMessage);
       },
       onError: (error){
+        if(error.type == ChatwootClientExceptionType.SEND_MESSAGE_FAILED){
+          _handleSendMessageFailed(error.data);
+        }
         print("Ooops! Something went wrong. Error Cause: ${error.cause}");
         widget.onError?.call(error);
       },
@@ -262,12 +279,19 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   }
 
   types.TextMessage _chatwootMessageToTextMessage(ChatwootMessage message, {String? echoId}){
+    String? avatarUrl = message.sender?.avatarUrl ?? message.sender?.thumbnail;
+
+    //Sets avatar url to null if its a gravatar not found url
+    //This enables placeholder for avatar to show
+    if(avatarUrl?.contains("?d=404") ?? false){
+      avatarUrl = null;
+    }
     return types.TextMessage(
         id: echoId ?? message.id.toString(),
         author: message.isMine ? _user : types.User(
           id: message.sender?.id.toString() ?? idGen.v4(),
           firstName: message.sender?.name,
-          imageUrl: message.sender?.avatarUrl ?? message.sender?.thumbnail,
+          imageUrl: avatarUrl,
         ),
         text: message.content ?? "",
         status: types.Status.seen
@@ -281,9 +305,25 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
     });
   }
 
+  void _handleSendMessageFailed(String echoId) async {
+    final index = _messages.indexWhere((element) => element.id == echoId);
+    setState(() {
+      _messages[index]= _messages[index].copyWith(status: types.Status.error);
+    });
+  }
+
+  void _handleResendMessage(types.TextMessage message) async {
+    chatwootClient.sendMessage(content: message.text, echoId: message.id);
+    final index = _messages.indexWhere((element) => element.id == message.id);
+    setState(() {
+      _messages[index]= message.copyWith(status: types.Status.sending);
+    });
+  }
 
   void _handleMessageTap(types.Message message) async {
-    if (message is types.FileMessage) {
+    if(message.status == types.Status.error && message is types.TextMessage){
+      _handleResendMessage(message);
+    } else if (message is types.FileMessage) {
       await OpenFile.open(message.uri);
     }
     widget.onMessageTap?.call(message);
@@ -325,6 +365,7 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
       createdAt: DateTime.now().microsecondsSinceEpoch,
       id: const Uuid().v4(),
       text: message.text,
+      status: types.Status.sending
     );
 
     _addMessage(textMessage);
@@ -338,8 +379,9 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget.appBar ,
+      backgroundColor: CHATWOOT_BG_COLOR,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
         child: Chat(
           messages: _messages,
           onMessageTap: _handleMessageTap,
@@ -352,16 +394,24 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
           onTextChanged: widget.onTextChanged,
           showUserAvatars: widget.showUserAvatars,
           showUserNames: widget.showUserNames,
-          theme: widget.theme ?? DefaultChatTheme(
-            inputBackgroundColor: Colors.blue.withOpacity(0.5),
-            inputTextColor: Colors.black,
+          timeFormat: DateFormat.Hm(),
+          dateFormat: DateFormat.yMMMMEEEEd(),
+          theme: widget.theme ?? ChatwootChatTheme(
+            //sendButtonIcon: Image.asset("assets/send.png"),
           ),
-          l10n: ChatL10nEn(
+          l10n: widget.l10n ?? ChatL10nEn(
             emptyChatPlaceholder: "",
+            inputPlaceholder: "Type your message"
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    chatwootClient.dispose();
   }
 }
 

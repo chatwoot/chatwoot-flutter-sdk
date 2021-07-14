@@ -27,7 +27,7 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
 
   final String _clientInstanceKey;
 
-  //box with many to one relation
+  //box with one to many relation
   final Box<String> _messageIdToClientInstanceKeyBox;
 
   PersistedChatwootMessagesDao(

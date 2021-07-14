@@ -195,10 +195,9 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
   void startWebSocketConnection(
       String contactPubsubToken,
       {WebSocketChannel Function(Uri)? onStartConnection}) {
-    if(this.connection == null){
-      final socketUrl = Uri.parse(_baseUrl.replaceFirst("http", "ws")+"/cable");
-      this.connection = onStartConnection == null ? WebSocketChannel.connect(socketUrl): onStartConnection(socketUrl);
-    }
+
+    final socketUrl = Uri.parse(_baseUrl.replaceFirst("http", "ws")+"/cable");
+    this.connection = onStartConnection == null ? WebSocketChannel.connect(socketUrl): onStartConnection(socketUrl);
     connection!.sink.add(jsonEncode({
       "command":"subscribe",
       "identifier": jsonEncode({
