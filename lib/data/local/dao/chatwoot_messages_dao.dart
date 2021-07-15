@@ -87,7 +87,7 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao{
 
   @override
   Future<void> onDispose() async{
-    await _box.close();
+
   }
 
   @override

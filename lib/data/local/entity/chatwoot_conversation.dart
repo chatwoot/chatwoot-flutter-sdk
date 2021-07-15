@@ -2,6 +2,7 @@
 
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
+import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -10,7 +11,7 @@ part 'chatwoot_conversation.g.dart';
 
 
 @JsonSerializable(explicitToJson: true)
-@HiveType(typeId: 1)
+@HiveType(typeId: CHATWOOT_CONVERSATION_HIVE_TYPE_ID)
 class ChatwootConversation extends Equatable{
 
   ///The numeric ID of the conversation

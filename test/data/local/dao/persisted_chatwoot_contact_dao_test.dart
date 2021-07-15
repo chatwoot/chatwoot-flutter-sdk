@@ -76,22 +76,6 @@ void main() {
       expect(retrievedContact, testContact);
     });
 
-    test('Given dao is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
-
-      //WHEN
-      await dao.onDispose();
-
-      HiveError? hiveError;
-      try{
-        mockContactBox.get(testContact.id);
-        mockClientInstanceKeyToContactBox.get(testClientInstanceKey);
-      }on HiveError catch(e){
-        //THEN
-        hiveError = e;
-      }
-      expect(hiveError != null, true);
-    });
-
 
 
     test('Given contacts are successfully cleared when clearAll is called, then retrieved contact should be null', () async{
@@ -103,22 +87,6 @@ void main() {
 
       //THEN
       expect(dao.getContact(), null);
-    });
-
-    test('Given boxes is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
-
-      //WHEN
-      await dao.onDispose();
-
-      HiveError? hiveError;
-      try{
-        mockContactBox.get(testContact.id);
-        mockClientInstanceKeyToContactBox.get(testClientInstanceKey);
-      }on HiveError catch(e){
-        //THEN
-        hiveError = e;
-      }
-      expect(hiveError != null, true);
     });
 
     tearDown((){

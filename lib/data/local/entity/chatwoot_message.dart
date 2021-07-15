@@ -4,11 +4,13 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../local_storage.dart';
+
 part 'chatwoot_message.g.dart';
 
 /// {@category FlutterClientSdk}
 @JsonSerializable(explicitToJson: true)
-@HiveType(typeId: 2)
+@HiveType(typeId: CHATWOOT_MESSAGE_HIVE_TYPE_ID)
 class ChatwootMessage extends Equatable{
 
   ///unique identifier of the message

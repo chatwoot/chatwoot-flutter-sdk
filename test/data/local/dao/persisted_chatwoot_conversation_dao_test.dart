@@ -92,22 +92,6 @@ void main() {
       expect(dao.getConversation(), null);
     });
 
-    test('Given dao is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
-
-      //WHEN
-      await dao.onDispose();
-
-      HiveError? hiveError;
-      try{
-        mockConversationBox.get(testConversation.id);
-        mockClientInstanceKeyToConversationBox.get(testClientInstanceKey);
-      }on HiveError catch(e){
-        //THEN
-        hiveError = e;
-      }
-      expect(hiveError != null, true);
-    });
-
     tearDown((){
       return Future(()async{
         try{

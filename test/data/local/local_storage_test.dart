@@ -121,7 +121,7 @@ void main() {
       verify(mockUserDao.onDispose());
     });
 
-    tearDown(()async{
+    tearDownAll(()async{
       await Hive.close();
     });
 

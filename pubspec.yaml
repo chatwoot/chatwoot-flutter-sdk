@@ -1,8 +1,7 @@
 name: chatwoot_client_sdk
-description: A flutter client sdk for chatwoot
-version: 0.0.2
-author: Ephraim Nartey
-homepage: https://github.com/EphraimNetWorks/chatwoot_flutter_client
+description: A flutter client sdk for chatwoot. Integrate Chatwoot flutter client into your flutter app and talk to your visitors/users in real time.
+version: 0.0.3
+homepage: https://github.com/EphraimNetWorks/test_cw_flutter_client
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -24,7 +23,7 @@ dependencies:
   synchronized: ^3.0.0
   intl: ^0.17.0
   flutter_chat_types: ^2.4.0
-  streams_channel: ^0.3.0
+  streams_channel: ^2.1.0
   async: ^2.5.0
 
 dev_dependencies:

@@ -367,7 +367,7 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget.appBar ,
-      backgroundColor: CHATWOOT_BG_COLOR,
+      backgroundColor: widget.theme?.backgroundColor ?? CHATWOOT_BG_COLOR,
       body: Padding(
         padding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
         child: Chat(

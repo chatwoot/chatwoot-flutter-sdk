@@ -72,7 +72,7 @@ class PersistedChatwootConversationDao extends ChatwootConversationDao{
 
   @override
   Future<void> onDispose() async{
-    await _box.close();
+
   }
 
 

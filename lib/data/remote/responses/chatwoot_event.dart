@@ -1,6 +1,7 @@
 
 
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
+import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -167,7 +168,7 @@ class ChatwootEventMessageData{
 }
 
 /// {@category FlutterClientSdk}
-@HiveType(typeId: 4)
+@HiveType(typeId: CHATWOOT_EVENT_USER_HIVE_TYPE_ID)
 @JsonSerializable(explicitToJson: true)
 class ChatwootEventMessageUser extends Equatable{
 

@@ -124,22 +124,6 @@ void main() {
       expect(retrievedMessages.length, 0);
     });
 
-    test('Given dao is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
-
-      //WHEN
-      await dao.onDispose();
-
-      HiveError? hiveError;
-      try{
-        mockMessageBox.get(testMessage.id);
-        mockClientInstanceKeyToMessageBox.get(testClientInstanceKey);
-      }on HiveError catch(e){
-        //THEN
-        hiveError = e;
-      }
-      expect(hiveError != null, true);
-    });
-
 
     test('Given messages are successfully cleared when clearAll is called, then retrieving messages should be empty', () async{
       //GIVEN

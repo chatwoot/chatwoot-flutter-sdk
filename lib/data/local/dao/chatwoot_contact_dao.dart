@@ -71,7 +71,7 @@ class PersistedChatwootContactDao extends ChatwootContactDao{
 
   @override
   Future<void> onDispose() async{
-    await _box.close();
+
   }
 
   Future<void> clearAll() async{

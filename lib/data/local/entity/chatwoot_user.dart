@@ -3,11 +3,13 @@ import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../local_storage.dart';
+
 part 'chatwoot_user.g.dart';
 
 ///
 @JsonSerializable(explicitToJson: true)
-@HiveType(typeId: 3)
+@HiveType(typeId: CHATWOOT_USER_HIVE_TYPE_ID)
 class ChatwootUser extends Equatable{
 
   ///custom chatwoot user identifier
