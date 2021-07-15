@@ -3,24 +3,23 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-
-  group("Non Persisted Chatwoot Users Dao Test", (){
-
-    late NonPersistedChatwootUserDao dao ;
+  group("Non Persisted Chatwoot Users Dao Test", () {
+    late NonPersistedChatwootUserDao dao;
     final testUser = ChatwootUser(
         identifier: "identifier",
         identifierHash: "identifierHash",
         name: "name",
         email: "email",
         avatarUrl: "avatarUrl",
-        customAttributes: {}
-    );
+        customAttributes: {});
 
-    setUp((){
+    setUp(() {
       dao = NonPersistedChatwootUserDao();
     });
 
-    test('Given user is successfully deleted when deleteUser is called, then getUser should return null', () {
+    test(
+        'Given user is successfully deleted when deleteUser is called, then getUser should return null',
+        () {
       //GIVEN
       dao.saveUser(testUser);
 
@@ -31,8 +30,9 @@ void main() {
       expect(dao.getUser(), null);
     });
 
-    test('Given user is successfully saved when saveUser is called, then getUser should return saved user', () {
-
+    test(
+        'Given user is successfully saved when saveUser is called, then getUser should return saved user',
+        () {
       //WHEN
       dao.saveUser(testUser);
 
@@ -40,7 +40,9 @@ void main() {
       expect(dao.getUser(), testUser);
     });
 
-    test('Given user is successfully retrieved when getUser is called, then retrieved user should not be null', () {
+    test(
+        'Given user is successfully retrieved when getUser is called, then retrieved user should not be null',
+        () {
       //GIVEN
       dao.saveUser(testUser);
 
@@ -51,9 +53,9 @@ void main() {
       expect(retrievedUser, testUser);
     });
 
-
-
-    test('Given users are successfully cleared when clearAll is called, then retrieving a user should be null', () {
+    test(
+        'Given users are successfully cleared when clearAll is called, then retrieving a user should be null',
+        () {
       //GIVEN
       dao.saveUser(testUser);
 
@@ -64,7 +66,9 @@ void main() {
       expect(dao.getUser(), null);
     });
 
-    test('Given dao is successfully disposed when onDispose is called, then saved user should be null', () {
+    test(
+        'Given dao is successfully disposed when onDispose is called, then saved user should be null',
+        () {
       //GIVEN
       dao.saveUser(testUser);
 

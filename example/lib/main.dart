@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChatwootChatPage(
+    return ChatwootChat(
       baseUrl: "<<<your-chatwoot-base-url-here>>>",
       inboxIdentifier: "<<<your-inbox-identifier-here>>>",
       user: ChatwootUser(

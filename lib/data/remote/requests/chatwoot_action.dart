@@ -1,5 +1,3 @@
-
-
 import 'package:json_annotation/json_annotation.dart';
 
 import 'chatwoot_action_data.dart';
@@ -7,8 +5,7 @@ import 'chatwoot_action_data.dart';
 part 'chatwoot_action.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class ChatwootAction{
-
+class ChatwootAction {
   @JsonKey()
   final String identifier;
 
@@ -18,14 +15,10 @@ class ChatwootAction{
   @JsonKey()
   final ChatwootActionData? data;
 
-  ChatwootAction({
-    required this.identifier,
-    this.data,
-    required this.command
-  });
+  ChatwootAction({required this.identifier, this.data, required this.command});
 
-  factory ChatwootAction.fromJson(Map<String, dynamic> json) => _$ChatwootActionFromJson(json);
+  factory ChatwootAction.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootActionFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootActionToJson(this);
-
 }

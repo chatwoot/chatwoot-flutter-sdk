@@ -1,15 +1,15 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../local_storage.dart';
 
 part 'chatwoot_user.g.dart';
 
 ///
 @JsonSerializable(explicitToJson: true)
-@HiveType(typeId: 3)
-class ChatwootUser extends Equatable{
-
+@HiveType(typeId: CHATWOOT_USER_HIVE_TYPE_ID)
+class ChatwootUser extends Equatable {
   ///custom chatwoot user identifier
   @JsonKey()
   @HiveField(0)
@@ -40,28 +40,20 @@ class ChatwootUser extends Equatable{
   @HiveField(5)
   final dynamic customAttributes;
 
-  ChatwootUser({
-    this.identifier,
-    this.identifierHash,
-    this.name,
-    this.email,
-    this.avatarUrl,
-    this.customAttributes
-  });
+  ChatwootUser(
+      {this.identifier,
+      this.identifierHash,
+      this.name,
+      this.email,
+      this.avatarUrl,
+      this.customAttributes});
 
   @override
-  List<Object?> get props => [
-    identifier,
-    identifierHash,
-    name,
-    email,
-    avatarUrl,
-    customAttributes
-  ];
+  List<Object?> get props =>
+      [identifier, identifierHash, name, email, avatarUrl, customAttributes];
 
-
-  factory ChatwootUser.fromJson(Map<String, dynamic> json) => _$ChatwootUserFromJson(json);
+  factory ChatwootUser.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootUserFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootUserToJson(this);
-
 }

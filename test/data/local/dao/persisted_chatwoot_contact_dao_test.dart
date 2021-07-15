@@ -7,45 +7,41 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../utils/test_resources_util.dart';
 
-
-
 void main() {
-  group("Persisted Chatwoot Contact Dao Tests", (){
-
-    late PersistedChatwootContactDao dao ;
-    late Box<String> mockClientInstanceKeyToContactBox ;
+  group("Persisted Chatwoot Contact Dao Tests", () {
+    late PersistedChatwootContactDao dao;
+    late Box<String> mockClientInstanceKeyToContactBox;
     late Box<ChatwootContact> mockContactBox;
     final testClientInstanceKey = "testKey";
 
     late final ChatwootContact testContact;
 
-    setUpAll((){
-      return Future(()async{
-
-        testContact = ChatwootContact.fromJson(await TestResourceUtil.readJsonResource(fileName: "contact"));
+    setUpAll(() {
+      return Future(() async {
+        testContact = ChatwootContact.fromJson(
+            await TestResourceUtil.readJsonResource(fileName: "contact"));
         final hiveTestPath = Directory.current.path + '/test/hive_testing_path';
         Hive
           ..init(hiveTestPath)
           ..registerAdapter(ChatwootContactAdapter());
-
       });
     });
 
-    setUp((){
-      return Future(()async{
+    setUp(() {
+      return Future(() async {
+        mockContactBox =
+            await Hive.openBox(ChatwootContactBoxNames.CONTACTS.toString());
+        mockClientInstanceKeyToContactBox = await Hive.openBox(
+            ChatwootContactBoxNames.CLIENT_INSTANCE_TO_CONTACTS.toString());
 
-        mockContactBox = await Hive.openBox(ChatwootContactBoxNames.CONTACTS.toString());
-        mockClientInstanceKeyToContactBox = await Hive.openBox(ChatwootContactBoxNames.CLIENT_INSTANCE_TO_CONTACTS.toString());
-
-        dao = PersistedChatwootContactDao(
-            mockContactBox,
-            mockClientInstanceKeyToContactBox,
-            testClientInstanceKey
-        );
+        dao = PersistedChatwootContactDao(mockContactBox,
+            mockClientInstanceKeyToContactBox, testClientInstanceKey);
       });
     });
 
-    test('Given contact is successfully deleted when deleteContact is called, then getContact should return null', () async{
+    test(
+        'Given contact is successfully deleted when deleteContact is called, then getContact should return null',
+        () async {
       //GIVEN
       await dao.saveContact(testContact);
 
@@ -56,8 +52,9 @@ void main() {
       expect(dao.getContact(), null);
     });
 
-    test('Given contact is successfully save when saveContact is called, then getContact should return saved contact', () async{
-
+    test(
+        'Given contact is successfully save when saveContact is called, then getContact should return saved contact',
+        () async {
       //WHEN
       await dao.saveContact(testContact);
 
@@ -65,7 +62,9 @@ void main() {
       expect(dao.getContact(), testContact);
     });
 
-    test('Given contact is successfully retrieved when getContact is called, then retrieved contact should not be null', () async{
+    test(
+        'Given contact is successfully retrieved when getContact is called, then retrieved contact should not be null',
+        () async {
       //GIVEN
       await dao.saveContact(testContact);
 
@@ -76,25 +75,9 @@ void main() {
       expect(retrievedContact, testContact);
     });
 
-    test('Given dao is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
-
-      //WHEN
-      await dao.onDispose();
-
-      HiveError? hiveError;
-      try{
-        mockContactBox.get(testContact.id);
-        mockClientInstanceKeyToContactBox.get(testClientInstanceKey);
-      }on HiveError catch(e){
-        //THEN
-        hiveError = e;
-      }
-      expect(hiveError != null, true);
-    });
-
-
-
-    test('Given contacts are successfully cleared when clearAll is called, then retrieved contact should be null', () async{
+    test(
+        'Given contacts are successfully cleared when clearAll is called, then retrieved contact should be null',
+        () async {
       //GIVEN
       await dao.saveContact(testContact);
 
@@ -105,40 +88,22 @@ void main() {
       expect(dao.getContact(), null);
     });
 
-    test('Given boxes is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
-
-      //WHEN
-      await dao.onDispose();
-
-      HiveError? hiveError;
-      try{
-        mockContactBox.get(testContact.id);
-        mockClientInstanceKeyToContactBox.get(testClientInstanceKey);
-      }on HiveError catch(e){
-        //THEN
-        hiveError = e;
-      }
-      expect(hiveError != null, true);
-    });
-
-    tearDown((){
-      return Future(()async{
-        try{
+    tearDown(() {
+      return Future(() async {
+        try {
           await mockContactBox.clear();
           await mockClientInstanceKeyToContactBox.clear();
-        }on HiveError catch(e){
+        } on HiveError catch (e) {
           print(e);
         }
       });
     });
 
-    tearDownAll((){
-      return Future(()async{
+    tearDownAll(() {
+      return Future(() async {
         await mockContactBox.close();
         await mockClientInstanceKeyToContactBox.close();
       });
     });
-
   });
-
 }
