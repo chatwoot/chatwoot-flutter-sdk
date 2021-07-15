@@ -13,6 +13,8 @@ import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_re
 import 'package:dio/dio.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+/// Service for handling chatwoot api calls
+/// See [ChatwootClientServiceImpl]
 abstract class ChatwootClientService{
 
   final String _baseUrl;
@@ -59,6 +61,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
   ) : super(baseUrl, dio);
 
 
+  ///Sends message to chatwoot inbox
   @override
   Future<ChatwootMessage> createMessage(
       ChatwootNewMessageRequest request
@@ -84,6 +87,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
     }
   }
 
+  ///Gets all messages of current chatwoot client instance's conversation
   @override
   Future<List<ChatwootMessage>> getAllMessages() async{
     try{
@@ -105,6 +109,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
     }
   }
 
+  ///Gets contact of current chatwoot client instance
   @override
   Future<ChatwootContact> getContact() async{
     try{
@@ -124,6 +129,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
     }
   }
 
+  ///Gets all conversation of current chatwoot client instance
   @override
   Future<List<ChatwootConversation>> getConversations() async{
     try{
@@ -143,6 +149,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
     }
   }
 
+  ///Update current client instance's contact
   @override
   Future<ChatwootContact> updateContact(
       update
@@ -165,6 +172,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService{
     }
   }
 
+  ///Update message with id [messageIdentifier] with contents of [update]
   @override
   Future<ChatwootMessage> updateMessage(
       String messageIdentifier,

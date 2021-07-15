@@ -1,0 +1,17 @@
+dartdoc:
+  categories:
+    "Installation":
+      markdown: docs/index.md
+      name: Installation
+    "Client Api":
+      name: FlutterClientSdk
+  categoryOrder: ["Installation", "Flutter Client Sdk"]
+  examplePathPrefix: '/example'
+  nodoc: ['lib/sekret/*.dart']
+  showUndocumentedCategories: false
+  ignore:
+    - ambiguous-doc-reference
+  errors:
+    - unresolved-doc-reference
+  warnings:
+    - tool-error

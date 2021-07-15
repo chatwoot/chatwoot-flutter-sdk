@@ -13,18 +13,22 @@ part 'chatwoot_conversation.g.dart';
 @HiveType(typeId: 1)
 class ChatwootConversation extends Equatable{
 
+  ///The numeric ID of the conversation
   @JsonKey()
   @HiveField(0)
   final int id;
 
+  ///The numeric ID of the inbox
   @JsonKey(name: "inbox_id")
   @HiveField(1)
   final int inboxId;
 
+  ///List of all messages from the conversation
   @JsonKey()
   @HiveField(2)
   final List<ChatwootMessage> messages;
 
+  ///Contact of the conversation
   @JsonKey()
   @HiveField(3)
   final ChatwootContact contact;

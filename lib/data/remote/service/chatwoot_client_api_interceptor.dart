@@ -8,9 +8,6 @@ import 'package:synchronized/synchronized.dart' as synchronized;
 
 
 ///Intercepts network requests and attaches inbox identifier, contact identifiers, conversation identifiers
-///
-/// Creates a new contact and conversation when no persisted contact is found
-/// Clears and recreates contact when a 401 (Unauthorized) response is returned from chatwoot api
 class ChatwootClientApiInterceptor extends Interceptor{
   static const INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER = "{INBOX_IDENTIFIER}";
   static const INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER = "{CONTACT_IDENTIFIER}";
@@ -28,6 +25,7 @@ class ChatwootClientApiInterceptor extends Interceptor{
     this._authService
   );
 
+  /// Creates a new contact and conversation when no persisted contact is found when an api call is made
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async{
     await requestLock.synchronized(() async{
@@ -58,6 +56,8 @@ class ChatwootClientApiInterceptor extends Interceptor{
 
   }
 
+  /// Clears and recreates contact when a 401 (Unauthorized), 403 (Forbidden) or 404 (Not found)
+  /// response is returned from chatwoot public client api
   @override
   Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async{
     await responseLock.synchronized(()async{
@@ -71,11 +71,17 @@ class ChatwootClientApiInterceptor extends Interceptor{
         await _localStorage.conversationDao.saveConversation(conversation);
 
         RequestOptions newOptions = response.requestOptions;
-        newOptions.headers.update("AUTHORIZATION", (value) => contact.pubsubToken, ifAbsent: () => contact.pubsubToken);
 
+        newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER, _inboxIdentifier);
+        newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER, contact.contactIdentifier!);
+        newOptions.path = newOptions.path.replaceAll(INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER, "${conversation.id}");
+
+        //use authservice's dio without the interceptor for subsequent call
         handler.next(await _authService.dio.fetch(newOptions));
 
       }else{
+
+        // if response is not unauthorized, forbidden or not found forward response
         handler.next(response);
       }
     });

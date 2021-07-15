@@ -166,6 +166,7 @@ class ChatwootEventMessageData{
   }
 }
 
+/// {@category FlutterClientSdk}
 @HiveType(typeId: 4)
 @JsonSerializable(explicitToJson: true)
 class ChatwootEventMessageUser extends Equatable{

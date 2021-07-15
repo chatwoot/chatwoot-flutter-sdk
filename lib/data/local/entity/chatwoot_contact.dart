@@ -9,24 +9,28 @@ part 'chatwoot_contact.g.dart';
 @HiveType(typeId: 0)
 class ChatwootContact extends Equatable{
 
-  static const BOX_NAME = "ChatwootContact";
-
+  ///unique identifier of contact
   @JsonKey(name: "id")
   @HiveField(0)
   final int id;
 
+  ///Source id of contact obtained on contact create
   @JsonKey(name: "source_id")
   @HiveField(1)
   final String? contactIdentifier;
 
+  ///Token for subscribing to websocket stream events
   @JsonKey(name: "pubsub_token")
   @HiveField(2)
   final String pubsubToken;
 
+
+  ///Full name of contact
   @JsonKey()
   @HiveField(3)
   final String name;
 
+  ///Email of contact
   @JsonKey()
   @HiveField(4)
   final String email;

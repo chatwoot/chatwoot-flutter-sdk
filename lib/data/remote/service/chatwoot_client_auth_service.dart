@@ -9,6 +9,8 @@ import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_api_inte
 import 'package:dio/dio.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+/// Service for handling chatwoot user authentication api calls
+/// See [ChatwootClientAuthServiceImpl]
 abstract class ChatwootClientAuthService{
 
   WebSocketChannel? connection;
@@ -23,6 +25,7 @@ abstract class ChatwootClientAuthService{
 
 }
 
+/// Default Implementation for [ChatwootAuthService]
 class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService{
 
   ChatwootClientAuthServiceImpl(
@@ -32,6 +35,7 @@ class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService{
   ) : super(dio);
 
 
+  ///Creates new contact for inbox with [inboxIdentifier] and passes [user] body to be linked to created contact
   @override
   Future<ChatwootContact> createNewContact(String inboxIdentifier, ChatwootUser? user) async{
     try{
@@ -54,6 +58,7 @@ class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService{
     }
   }
 
+  ///Creates a new conversation for inbox with [inboxIdentifier] and contact with source id [contactIdentifier]
   @override
   Future<ChatwootConversation> createNewConversation(String inboxIdentifier, String contactIdentifier) async{
     try{

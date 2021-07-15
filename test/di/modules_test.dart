@@ -4,6 +4,7 @@
 import 'dart:io';
 
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
+import 'package:chatwoot_client_sdk/chatwoot_parameters.dart';
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_contact_dao.dart';
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_conversation_dao.dart';
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_messages_dao.dart';

@@ -16,7 +16,10 @@ import 'data/local/local_storage.dart';
 
 
 /// Represents a chatwoot client instance. All chatwoot operations (Example: sendMessages) are
-/// passed through chatwoot client
+/// passed through chatwoot client. For more info visit
+/// https://www.chatwoot.com/docs/product/channels/api/client-apis
+///
+/// {@category FlutterClientSdk}
 class ChatwootClient{
 
   late final ChatwootRepository _repository;

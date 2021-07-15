@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
 
+/// {@category FlutterClientSdk}
 class ChatwootChatPage extends StatefulWidget {
 
   /// Specifies a custom app bar for chatwoot page widget

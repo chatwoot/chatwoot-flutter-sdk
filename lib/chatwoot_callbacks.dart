@@ -7,6 +7,9 @@ import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 
 ///Chatwoot callback are specified for each created client instance. Methods are triggered
 ///when a method satisfying their respective conditions occur.
+///
+///
+/// {@category FlutterClientSdk}
 class ChatwootCallbacks{
 
 

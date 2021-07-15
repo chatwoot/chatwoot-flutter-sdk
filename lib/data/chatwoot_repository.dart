@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:core';
 
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
+import 'package:chatwoot_client_sdk/chatwoot_client.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
@@ -95,7 +96,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
     }
   }
 
-  /// Initializes client contact
+  /// Initializes chatwoot client repository
   Future<void> initialize(ChatwootUser? user) async{
 
     try{
@@ -141,13 +142,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
 
   /// Connects to chatwoot websocket and starts listening for updates
   ///
-  /// Calls [callbacks.onWelcome] when websocket welcome event is received
-  /// Calls [callbacks.onPing] when websocket ping event is received
-  /// Calls [callbacks.onConfirmedSubscription] when websocket subscription confirmation event is received
-  /// Calls [callbacks.onMessageCreated] when websocket message created event is received, and
-  /// message doesn't belong to current user
-  /// Calls [callbacks.onMyMessageSent] when websocket message created event is received, and message belongs
-  /// to current user
+  /// Received events/messages are pushed through [ChatwootClient.callbacks]
   @override
   void listenForEvents() {
     final token = localStorage.contactDao.getContact()?.pubsubToken;

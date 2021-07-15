@@ -5,30 +5,37 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'chatwoot_user.g.dart';
 
+///
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 3)
 class ChatwootUser extends Equatable{
 
+  ///custom chatwoot user identifier
   @JsonKey()
   @HiveField(0)
   final String? identifier;
 
+  ///custom user identifier hash
   @JsonKey()
   @HiveField(1)
   final String? identifierHash;
 
+  ///name of chatwoot user
   @JsonKey()
   @HiveField(2)
   final String? name;
 
+  ///email of chatwoot user
   @JsonKey()
   @HiveField(3)
   final String? email;
 
+  ///profile picture url of user
   @JsonKey(name: "avatar_url")
   @HiveField(4)
   final String? avatarUrl;
 
+  ///any other custom attributes to be linked to the user
   @JsonKey(name: "custom_attributes")
   @HiveField(5)
   final dynamic customAttributes;
