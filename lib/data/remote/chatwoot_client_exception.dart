@@ -1,14 +1,14 @@
-
 /// {@category FlutterClientSdk}
 class ChatwootClientException implements Exception {
   String cause;
   dynamic data;
   ChatwootClientExceptionType type;
+
   ChatwootClientException(this.cause, this.type, {this.data});
 }
 
 /// {@category FlutterClientSdk}
-enum ChatwootClientExceptionType{
+enum ChatwootClientExceptionType {
   CREATE_CLIENT_FAILED,
   SEND_MESSAGE_FAILED,
   CREATE_CONTACT_FAILED,

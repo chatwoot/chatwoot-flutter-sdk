@@ -1,30 +1,29 @@
-
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'chatwoot_action_data.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class ChatwootActionData{
-  @JsonKey(
-    toJson: actionTypeToJson,
-    fromJson: actionTypeFromJson
-  )
+class ChatwootActionData {
+  @JsonKey(toJson: actionTypeToJson, fromJson: actionTypeFromJson)
   final ChatwootActionType action;
 
   ChatwootActionData({required this.action});
 
-  factory ChatwootActionData.fromJson(Map<String, dynamic> json) => _$ChatwootActionDataFromJson(json);
+  factory ChatwootActionData.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootActionDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootActionDataToJson(this);
 }
 
-enum ChatwootActionType{
-  subscribe, update_presence, conversation_typing_on, conversation_typing_off
+enum ChatwootActionType {
+  subscribe,
+  update_presence,
+  conversation_typing_on,
+  conversation_typing_off
 }
 
-String actionTypeToJson(ChatwootActionType actionType){
-  switch(actionType){
+String actionTypeToJson(ChatwootActionType actionType) {
+  switch (actionType) {
     case ChatwootActionType.conversation_typing_off:
       return "conversation.typing_off";
     case ChatwootActionType.conversation_typing_on:
@@ -36,8 +35,8 @@ String actionTypeToJson(ChatwootActionType actionType){
   }
 }
 
-ChatwootActionType actionTypeFromJson(String? value){
-  switch(value){
+ChatwootActionType actionTypeFromJson(String? value) {
+  switch (value) {
     case "conversation.typing_on":
       return ChatwootActionType.conversation_typing_on;
     case "conversation.typing_off":

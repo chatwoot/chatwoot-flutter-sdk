@@ -415,13 +415,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.7"
-  open_file:
-    dependency: "direct main"
-    description:
-      name: open_file
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.2.1"
   package_config:
     dependency: transitive
     description:
@@ -589,7 +582,7 @@ packages:
     source: hosted
     version: "0.7.0"
   stream_channel:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: stream_channel
       url: "https://pub.dartlang.org"
@@ -602,13 +595,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  streams_channel:
-    dependency: "direct main"
-    description:
-      name: streams_channel
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0"
   string_scanner:
     dependency: transitive
     description:

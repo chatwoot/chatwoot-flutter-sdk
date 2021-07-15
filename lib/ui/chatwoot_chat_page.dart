@@ -1,5 +1,3 @@
-library chatwoot_client_sdk;
-
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_client_sdk/chatwoot_client.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
@@ -13,8 +11,9 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+///Chatwoot chat widget
 /// {@category FlutterClientSdk}
-class ChatwootChatPage extends StatefulWidget {
+class ChatwootChat extends StatefulWidget {
   /// Specifies a custom app bar for chatwoot page widget
   final PreferredSizeWidget? appBar;
 
@@ -111,7 +110,7 @@ class ChatwootChatPage extends StatefulWidget {
   ///See [ChatwootCallbacks.onError]
   final void Function(ChatwootClientException)? onError;
 
-  const ChatwootChatPage({
+  const ChatwootChat({
     Key? key,
     required this.baseUrl,
     required this.inboxIdentifier,
@@ -146,10 +145,10 @@ class ChatwootChatPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChatwootChatPageState createState() => _ChatwootChatPageState();
+  _ChatwootChatState createState() => _ChatwootChatState();
 }
 
-class _ChatwootChatPageState extends State<ChatwootChatPage> {
+class _ChatwootChatState extends State<ChatwootChat> {
   ///
   List<types.Message> _messages = [];
 
@@ -364,7 +363,7 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget.appBar,
-      backgroundColor: CHATWOOT_BG_COLOR,
+      backgroundColor: widget.theme?.backgroundColor ?? CHATWOOT_BG_COLOR,
       body: Padding(
         padding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
         child: Chat(

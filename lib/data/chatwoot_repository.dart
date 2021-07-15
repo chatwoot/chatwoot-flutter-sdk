@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
@@ -19,26 +18,22 @@ import 'package:flutter/material.dart';
 ///
 /// Results from repository operations are passed through [callbacks] to be handled
 /// appropriately
-abstract class ChatwootRepository{
-  @protected final ChatwootClientService clientService;
-  @protected final LocalStorage localStorage;
-  @protected ChatwootCallbacks callbacks;
+abstract class ChatwootRepository {
+  @protected
+  final ChatwootClientService clientService;
+  @protected
+  final LocalStorage localStorage;
+  @protected
+  ChatwootCallbacks callbacks;
   List<StreamSubscription> _subscriptions = [];
 
-  ChatwootRepository(
-    this.clientService,
-    this.localStorage,
-    this.callbacks
-  );
+  ChatwootRepository(this.clientService, this.localStorage, this.callbacks);
 
   Future<void> initialize(ChatwootUser? user);
 
-
   void getPersistedMessages();
 
-
   Future<void> getMessages();
-
 
   void listenForEvents();
 
@@ -48,59 +43,48 @@ abstract class ChatwootRepository{
 
   Future<void> clear();
 
-
   void dispose();
-
 }
 
-
-class ChatwootRepositoryImpl extends ChatwootRepository{
-
+class ChatwootRepositoryImpl extends ChatwootRepository {
   bool _isListeningForEvents = false;
 
-  ChatwootRepositoryImpl({
-    required ChatwootClientService clientService,
-    required LocalStorage localStorage,
-    required ChatwootCallbacks streamCallbacks
-  }):super(
-      clientService,
-      localStorage,
-      streamCallbacks
-  );
-
+  ChatwootRepositoryImpl(
+      {required ChatwootClientService clientService,
+      required LocalStorage localStorage,
+      required ChatwootCallbacks streamCallbacks})
+      : super(clientService, localStorage, streamCallbacks);
 
   /// Fetches persisted messages.
   ///
-  /// Calls [callbacks.onMessagesRetrieved] when [clientService.getAllMessages] is successful
-  /// Calls [callbacks.onError] when [clientService.getAllMessages] fails
+  /// Calls [ChatwootCallbacks.onMessagesRetrieved] when [ChatwootClientService.getAllMessages] is successful
+  /// Calls [ChatwootCallbacks.onError] when [ChatwootClientService.getAllMessages] fails
   @override
-  Future<void> getMessages() async{
-    try{
+  Future<void> getMessages() async {
+    try {
       final messages = await clientService.getAllMessages();
       await localStorage.messagesDao.saveAllMessages(messages);
       callbacks.onMessagesRetrieved?.call(messages);
-    }on ChatwootClientException catch(e){
+    } on ChatwootClientException catch (e) {
       callbacks.onError?.call(e);
     }
   }
 
-
   /// Fetches persisted messages.
   ///
-  /// Calls [callbacks.onPersistedMessagesRetrieved] if persisted messages are found
+  /// Calls [ChatwootCallbacks.onPersistedMessagesRetrieved] if persisted messages are found
   @override
   void getPersistedMessages() {
     final persistedMessages = localStorage.messagesDao.getMessages();
-    if(persistedMessages.isNotEmpty){
+    if (persistedMessages.isNotEmpty) {
       callbacks.onPersistedMessagesRetrieved?.call(persistedMessages);
     }
   }
 
   /// Initializes chatwoot client repository
-  Future<void> initialize(ChatwootUser? user) async{
-
-    try{
-      if(user != null){
+  Future<void> initialize(ChatwootUser? user) async {
+    try {
+      if (user != null) {
         await localStorage.userDao.saveUser(user);
       }
 
@@ -110,35 +94,35 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
 
       //refresh conversation
       final conversations = await clientService.getConversations();
-      final persistedConversation = localStorage.conversationDao.getConversation()!;
+      final persistedConversation =
+          localStorage.conversationDao.getConversation()!;
       final refreshedConversation = conversations.firstWhere(
-              (element) => element.id == persistedConversation.id,
-          orElse: ()=>persistedConversation //highly unlikely orElse will be called but still added it just in case
-      );
+          (element) => element.id == persistedConversation.id,
+          orElse: () =>
+              persistedConversation //highly unlikely orElse will be called but still added it just in case
+          );
       localStorage.conversationDao.saveConversation(refreshedConversation);
-    }on ChatwootClientException catch(e){
+    } on ChatwootClientException catch (e) {
       callbacks.onError?.call(e);
     }
-
 
     listenForEvents();
   }
 
-
   ///Sends message to chatwoot inbox
-  Future<void> sendMessage(ChatwootNewMessageRequest request) async{
-    try{
+  Future<void> sendMessage(ChatwootNewMessageRequest request) async {
+    try {
       final createdMessage = await clientService.createMessage(request);
       await localStorage.messagesDao.saveMessage(createdMessage);
       callbacks.onMessageSent?.call(createdMessage, request.echoId);
-      if(clientService.connection != null && !_isListeningForEvents){
+      if (clientService.connection != null && !_isListeningForEvents) {
         listenForEvents();
       }
-    }on ChatwootClientException catch(e){
-      callbacks.onError?.call(ChatwootClientException(e.cause, e.type, data: request.echoId));
+    } on ChatwootClientException catch (e) {
+      callbacks.onError?.call(
+          ChatwootClientException(e.cause, e.type, data: request.echoId));
     }
   }
-
 
   /// Connects to chatwoot websocket and starts listening for updates
   ///
@@ -146,45 +130,52 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   @override
   void listenForEvents() {
     final token = localStorage.contactDao.getContact()?.pubsubToken;
-    if(token == null){
+    if (token == null) {
       return;
     }
-    clientService.startWebSocketConnection(localStorage.contactDao.getContact()!.pubsubToken);
+    clientService.startWebSocketConnection(
+        localStorage.contactDao.getContact()!.pubsubToken);
 
     final newSubscription = clientService.connection!.stream.listen((event) {
-
       ChatwootEvent chatwootEvent = ChatwootEvent.fromJson(jsonDecode(event));
-      if(chatwootEvent.type == ChatwootEventType.welcome){
+      if (chatwootEvent.type == ChatwootEventType.welcome) {
         callbacks.onWelcome?.call();
-      }else if(chatwootEvent.type == ChatwootEventType.ping){
+      } else if (chatwootEvent.type == ChatwootEventType.ping) {
         callbacks.onPing?.call();
-      }else if(chatwootEvent.type == ChatwootEventType.confirm_subscription){
-        if(!_isListeningForEvents){
+      } else if (chatwootEvent.type == ChatwootEventType.confirm_subscription) {
+        if (!_isListeningForEvents) {
           _isListeningForEvents = true;
         }
         callbacks.onConfirmedSubscription?.call();
-      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.message_created){
+      } else if (chatwootEvent.message?.event ==
+          ChatwootEventMessageType.message_created) {
         print("here comes message: $event");
         final message = chatwootEvent.message!.data!.getMessage();
         localStorage.messagesDao.saveMessage(message);
-        if(message.isMine){
-          callbacks.onMessageDelivered?.call(message, chatwootEvent.message!.data!.echoId!);
-        }else{
+        if (message.isMine) {
+          callbacks.onMessageDelivered
+              ?.call(message, chatwootEvent.message!.data!.echoId!);
+        } else {
           callbacks.onMessageReceived?.call(message);
         }
-      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.conversation_typing_off){
+      } else if (chatwootEvent.message?.event ==
+          ChatwootEventMessageType.conversation_typing_off) {
         callbacks.onConversationStoppedTyping?.call();
-      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.conversation_typing_on){
+      } else if (chatwootEvent.message?.event ==
+          ChatwootEventMessageType.conversation_typing_on) {
         callbacks.onConversationStartedTyping?.call();
-      }else if(chatwootEvent.message?.event == ChatwootEventMessageType.presence_update){
-        final presenceStatuses = (chatwootEvent.message!.data!.users as Map<dynamic, dynamic>).values;
+      } else if (chatwootEvent.message?.event ==
+          ChatwootEventMessageType.presence_update) {
+        final presenceStatuses =
+            (chatwootEvent.message!.data!.users as Map<dynamic, dynamic>)
+                .values;
         final isOnline = presenceStatuses.contains("online");
-        if(isOnline){
+        if (isOnline) {
           callbacks.onConversationIsOnline?.call();
-        }else{
+        } else {
           callbacks.onConversationIsOffline?.call();
         }
-      }else{
+      } else {
         print("chatwoot unknown event: $event");
       }
     });
@@ -202,13 +193,15 @@ class ChatwootRepositoryImpl extends ChatwootRepository{
   void dispose() {
     localStorage.dispose();
     callbacks = ChatwootCallbacks();
-    _subscriptions.forEach((subs) { subs.cancel();});
+    _subscriptions.forEach((subs) {
+      subs.cancel();
+    });
   }
 
   ///Send actions like user started typing
   @override
   void sendAction(ChatwootActionType action) {
-    clientService.sendAction(localStorage.contactDao.getContact()!.pubsubToken, action);
+    clientService.sendAction(
+        localStorage.contactDao.getContact()!.pubsubToken, action);
   }
-
 }

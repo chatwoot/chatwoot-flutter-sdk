@@ -1,6 +1,3 @@
-
-
-
 import 'dart:io';
 
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
@@ -19,18 +16,16 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod/riverpod.dart';
 
 void main() {
-  group("Modules Test", (){
+  group("Modules Test", () {
     late ProviderContainer providerContainer;
 
     final testChatwootParameters = ChatwootParameters(
         isPersistenceEnabled: true,
         baseUrl: "https://testbaseUrl.com",
         inboxIdentifier: "testInboxIdentifier",
-        clientInstanceKey: "testInstanceKey"
-    );
+        clientInstanceKey: "testInstanceKey");
 
-    setUpAll(() async{
-
+    setUpAll(() async {
       providerContainer = ProviderContainer();
       final hiveTestPath = Directory.current.path + '/test/hive_testing_path';
       Hive
@@ -45,189 +40,189 @@ void main() {
       await PersistedChatwootConversationDao.openDB();
       await PersistedChatwootContactDao.openDB();
       await PersistedChatwootUserDao.openDB();
-
     });
 
-    test('Given Dio instance is successfully provided when a read unauthenticatedDioProvider is called, then instance should be constructed properly', () async{
-
-
+    test(
+        'Given Dio instance is successfully provided when a read unauthenticatedDioProvider is called, then instance should be constructed properly',
+        () async {
       //WHEN
-      final result = providerContainer.read(unauthenticatedDioProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(unauthenticatedDioProvider(testChatwootParameters));
 
       //THEN
       expect(result.options.baseUrl, equals(testChatwootParameters.baseUrl));
       expect(result.interceptors.isEmpty, equals(true));
     });
 
-    test('Given ChatwootClientAuthService instance is successfully provided when a read chatwootClientAuthServiceProvider is called, then instance should be constructed properly', () async{
-
-
+    test(
+        'Given ChatwootClientAuthService instance is successfully provided when a read chatwootClientAuthServiceProvider is called, then instance should be constructed properly',
+        () async {
       //WHEN
-      final result = providerContainer.read(chatwootClientAuthServiceProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootClientAuthServiceProvider(testChatwootParameters));
 
       //THEN
       expect(result.dio.interceptors.length, equals(0));
     });
 
-    test('Given Dio instance is successfully provided when a read authenticatedDioProvider is called, then instance should be constructed properly', () async{
-
-
+    test(
+        'Given Dio instance is successfully provided when a read authenticatedDioProvider is called, then instance should be constructed properly',
+        () async {
       //WHEN
-      final result = providerContainer.read(authenticatedDioProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(authenticatedDioProvider(testChatwootParameters));
 
       //THEN
       expect(result.options.baseUrl, equals(testChatwootParameters.baseUrl));
       expect(result.interceptors.length, equals(1));
     });
 
-    test('Given ChatwootContactDao instance is successfully provided when a read chatwootContactDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao', () async{
-
+    test(
+        'Given ChatwootContactDao instance is successfully provided when a read chatwootContactDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao',
+        () async {
       //GIVEN
       final testChatwootParameters = ChatwootParameters(
           isPersistenceEnabled: true,
           baseUrl: "https://testbaseUrl.com",
           inboxIdentifier: "testInboxIdentifier",
-          clientInstanceKey: "testInstanceKey"
-      );
-
+          clientInstanceKey: "testInstanceKey");
 
       //WHEN
-      final result = providerContainer.read(chatwootContactDaoProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootContactDaoProvider(testChatwootParameters));
 
       //THEN
       expect(result is PersistedChatwootContactDao, equals(true));
     });
 
-    test('Given ChatwootContactDao instance is successfully provided when a read chatwootContactDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao', () async{
-
+    test(
+        'Given ChatwootContactDao instance is successfully provided when a read chatwootContactDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao',
+        () async {
       //GIVEN
       final testChatwootParameters = ChatwootParameters(
           isPersistenceEnabled: false,
           baseUrl: "https://testbaseUrl.com",
           inboxIdentifier: "testInboxIdentifier",
-          clientInstanceKey: "testInstanceKey"
-      );
-
+          clientInstanceKey: "testInstanceKey");
 
       //WHEN
-      final result = providerContainer.read(chatwootContactDaoProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootContactDaoProvider(testChatwootParameters));
 
       //THEN
       expect(result is NonPersistedChatwootContactDao, equals(true));
     });
 
-    test('Given ChatwootConversationDao instance is successfully provided when a read chatwootConversationDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao', () async{
-
+    test(
+        'Given ChatwootConversationDao instance is successfully provided when a read chatwootConversationDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao',
+        () async {
       //GIVEN
       final testChatwootParameters = ChatwootParameters(
           isPersistenceEnabled: true,
           baseUrl: "https://testbaseUrl.com",
           inboxIdentifier: "testInboxIdentifier",
-          clientInstanceKey: "testInstanceKey"
-      );
-
+          clientInstanceKey: "testInstanceKey");
 
       //WHEN
-      final result = providerContainer.read(chatwootConversationDaoProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootConversationDaoProvider(testChatwootParameters));
 
       //THEN
       expect(result is PersistedChatwootConversationDao, equals(true));
     });
 
-    test('Given ChatwootConversationDao instance is successfully provided when a read chatwootConversationDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao', () async{
-
+    test(
+        'Given ChatwootConversationDao instance is successfully provided when a read chatwootConversationDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao',
+        () async {
       //GIVEN
       final testChatwootParameters = ChatwootParameters(
           isPersistenceEnabled: false,
           baseUrl: "https://testbaseUrl.com",
           inboxIdentifier: "testInboxIdentifier",
-          clientInstanceKey: "testInstanceKey"
-      );
-
+          clientInstanceKey: "testInstanceKey");
 
       //WHEN
-      final result = providerContainer.read(chatwootConversationDaoProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootConversationDaoProvider(testChatwootParameters));
 
       //THEN
       expect(result is NonPersistedChatwootConversationDao, equals(true));
     });
 
-    test('Given ChatwootMessagesDao instance is successfully provided when a read chatwootMessagesDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao', () async{
-
+    test(
+        'Given ChatwootMessagesDao instance is successfully provided when a read chatwootMessagesDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao',
+        () async {
       //GIVEN
       final testChatwootParameters = ChatwootParameters(
           isPersistenceEnabled: true,
           baseUrl: "https://testbaseUrl.com",
           inboxIdentifier: "testInboxIdentifier",
-          clientInstanceKey: "testInstanceKey"
-      );
-
+          clientInstanceKey: "testInstanceKey");
 
       //WHEN
-      final result = providerContainer.read(chatwootMessagesDaoProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootMessagesDaoProvider(testChatwootParameters));
 
       //THEN
       expect(result is PersistedChatwootMessagesDao, equals(true));
     });
 
-    test('Given ChatwootMessagesDao instance is successfully provided when a read chatwootMessagesDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao', () async{
-
+    test(
+        'Given ChatwootMessagesDao instance is successfully provided when a read chatwootMessagesDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao',
+        () async {
       //GIVEN
       final testChatwootParameters = ChatwootParameters(
           isPersistenceEnabled: false,
           baseUrl: "https://testbaseUrl.com",
           inboxIdentifier: "testInboxIdentifier",
-          clientInstanceKey: "testInstanceKey"
-      );
-
+          clientInstanceKey: "testInstanceKey");
 
       //WHEN
-      final result = providerContainer.read(chatwootMessagesDaoProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootMessagesDaoProvider(testChatwootParameters));
 
       //THEN
       expect(result is NonPersistedChatwootMessagesDao, equals(true));
     });
 
-    test('Given ChatwootUserDao instance is successfully provided when a read chatwootUserDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao', () async{
-
+    test(
+        'Given ChatwootUserDao instance is successfully provided when a read chatwootUserDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao',
+        () async {
       //GIVEN
       final testChatwootParameters = ChatwootParameters(
           isPersistenceEnabled: true,
           baseUrl: "https://testbaseUrl.com",
           inboxIdentifier: "testInboxIdentifier",
-          clientInstanceKey: "testInstanceKey"
-      );
-
+          clientInstanceKey: "testInstanceKey");
 
       //WHEN
-      final result = providerContainer.read(chatwootUserDaoProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootUserDaoProvider(testChatwootParameters));
 
       //THEN
       expect(result is PersistedChatwootUserDao, equals(true));
     });
 
-    test('Given ChatwootUserDao instance is successfully provided when a read chatwootUserDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao', () async{
-
+    test(
+        'Given ChatwootUserDao instance is successfully provided when a read chatwootUserDaoProvider is called with persistence enabled, then return instance of PersistedChatwootContactDao',
+        () async {
       //GIVEN
       final testChatwootParameters = ChatwootParameters(
           isPersistenceEnabled: false,
           baseUrl: "https://testbaseUrl.com",
           inboxIdentifier: "testInboxIdentifier",
-          clientInstanceKey: "testInstanceKey"
-      );
-
+          clientInstanceKey: "testInstanceKey");
 
       //WHEN
-      final result = providerContainer.read(chatwootUserDaoProvider(testChatwootParameters));
+      final result = providerContainer
+          .read(chatwootUserDaoProvider(testChatwootParameters));
 
       //THEN
       expect(result is NonPersistedChatwootUserDao, equals(true));
     });
 
-    tearDownAll(()async{
+    tearDownAll(() async {
       Hive.close();
     });
-
   });
-
 }

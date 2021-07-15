@@ -5,17 +5,19 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../utils/test_resources_util.dart';
 
 void main() {
-
-  group("Non Persisted Chatwoot Messages Dao Test", (){
-    late NonPersistedChatwootMessagesDao dao ;
+  group("Non Persisted Chatwoot Messages Dao Test", () {
+    late NonPersistedChatwootMessagesDao dao;
     late final ChatwootMessage testMessage;
 
-    setUpAll(() async{
-      testMessage = ChatwootMessage.fromJson(await TestResourceUtil.readJsonResource(fileName: "message"));
+    setUpAll(() async {
+      testMessage = ChatwootMessage.fromJson(
+          await TestResourceUtil.readJsonResource(fileName: "message"));
       dao = NonPersistedChatwootMessagesDao();
     });
 
-    test('Given message is successfully deleted when deleteMessage is called, then getMessage should return null', () {
+    test(
+        'Given message is successfully deleted when deleteMessage is called, then getMessage should return null',
+        () {
       //GIVEN
       dao.saveMessage(testMessage);
 
@@ -26,8 +28,9 @@ void main() {
       expect(dao.getMessage(testMessage.id), null);
     });
 
-    test('Given message is successfully saved when saveMessage is called, then getMessage should return saved message', () {
-
+    test(
+        'Given message is successfully saved when saveMessage is called, then getMessage should return saved message',
+        () {
       //WHEN
       dao.saveMessage(testMessage);
 
@@ -35,8 +38,9 @@ void main() {
       expect(dao.getMessage(testMessage.id), testMessage);
     });
 
-    test('Given messages are successfully saved when saveMessages is called, then getMessages should return saved messages', () {
-
+    test(
+        'Given messages are successfully saved when saveMessages is called, then getMessages should return saved messages',
+        () {
       final messages = [testMessage];
 
       //WHEN
@@ -46,7 +50,9 @@ void main() {
       expect(dao.getMessages(), messages);
     });
 
-    test('Given message is successfully retrieved when getMessage is called, then retrieved message should not be null', () {
+    test(
+        'Given message is successfully retrieved when getMessage is called, then retrieved message should not be null',
+        () {
       //GIVEN
       dao.saveMessage(testMessage);
 
@@ -57,7 +63,9 @@ void main() {
       expect(retrievedMessage, testMessage);
     });
 
-    test('Given messages exist in database when getMessages is called, then retrieved messages should not be empty', () {
+    test(
+        'Given messages exist in database when getMessages is called, then retrieved messages should not be empty',
+        () {
       //GIVEN
       dao.saveMessage(testMessage);
 
@@ -69,7 +77,9 @@ void main() {
       expect(retrievedMessages[0], testMessage);
     });
 
-    test('Given messages do not exist in database when getMessages is called, then retrieved messages should be empty', () {
+    test(
+        'Given messages do not exist in database when getMessages is called, then retrieved messages should be empty',
+        () {
       //GIVEN
       dao.clear();
 
@@ -80,7 +90,9 @@ void main() {
       expect(retrievedMessages.length, 0);
     });
 
-    test('Given messages are successfully cleared when clear is called, then no message should exist in database', () {
+    test(
+        'Given messages are successfully cleared when clear is called, then no message should exist in database',
+        () {
       //GIVEN
       dao.saveMessage(testMessage);
 
@@ -92,9 +104,9 @@ void main() {
       expect(retrievedMessages.length, 0);
     });
 
-
-
-    test('Given messages are successfully cleared when clearAll is called, then retrieving messages should be empty', () {
+    test(
+        'Given messages are successfully cleared when clearAll is called, then retrieving messages should be empty',
+        () {
       //GIVEN
       dao.saveMessage(testMessage);
 
@@ -105,7 +117,9 @@ void main() {
       expect(dao.getMessages().isEmpty, true);
     });
 
-    test('Given dao is successfully disposed when onDispose is called, then saved message should be null', () {
+    test(
+        'Given dao is successfully disposed when onDispose is called, then saved message should be null',
+        () {
       //GIVEN
       dao.saveMessage(testMessage);
 
@@ -117,9 +131,7 @@ void main() {
       expect(retrievedMessage, null);
     });
 
-
-
-    tearDown((){
+    tearDown(() {
       dao.clearAll();
     });
   });

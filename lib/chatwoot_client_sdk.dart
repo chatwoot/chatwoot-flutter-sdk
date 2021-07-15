@@ -1,4 +1,4 @@
-
+library chatwoot_client_sdk;
 
 export 'chatwoot_callbacks.dart';
 export 'chatwoot_client.dart';
