@@ -2,6 +2,9 @@
 
 Integrate Chatwoot flutter client into your flutter app and talk to your visitors in real time. [Chatwoot](https://github.com/chatwoot/chatwoot) helps you to chat with your visitors and provide exceptional support in real time. To use Chatwoot in your flutter app, follow the steps described below.
 
+![Screenshot_chatwoot](https://user-images.githubusercontent.com/22669874/125801289-14631c60-9788-4ff6-af2b-1c27dcc030af.png)
+
+
 ## 1. Create an Api inbox in Chatwoot
 
 Refer to [Website Channel](https://www.chatwoot.com/docs/product/channels/live-chat/create-website-channel) document.
@@ -14,7 +17,7 @@ or
 
 Add 
 `chatwoot_client_sdk:<<version>>` 
-to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/dartdoc) for the latest version.
+to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/chatwoot_client_sdk) for the latest version.
 
 NB: This library uses [Hive](https://pub.dev/packages/hive) for local storage and [Flutter Chat UI](https://pub.dev/packages/flutter_chat_ui) for its user interface.
 
