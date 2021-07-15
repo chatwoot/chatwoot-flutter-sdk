@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -7,11 +6,9 @@ import '../local_storage.dart';
 
 part 'chatwoot_contact.g.dart';
 
-
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: CHATWOOT_CONTACT_HIVE_TYPE_ID)
-class ChatwootContact extends Equatable{
-
+class ChatwootContact extends Equatable {
   ///unique identifier of contact
   @JsonKey(name: "id")
   @HiveField(0)
@@ -26,7 +23,6 @@ class ChatwootContact extends Equatable{
   @JsonKey(name: "pubsub_token")
   @HiveField(2)
   final String pubsubToken;
-
 
   ///Full name of contact
   @JsonKey()
@@ -46,17 +42,11 @@ class ChatwootContact extends Equatable{
     required this.email,
   });
 
-  factory ChatwootContact.fromJson(Map<String, dynamic> json) => _$ChatwootContactFromJson(json);
+  factory ChatwootContact.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootContactFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootContactToJson(this);
 
   @override
-  List<Object?> get props => [
-    id,
-    contactIdentifier,
-    pubsubToken,
-    name,
-    email
-  ];
-
+  List<Object?> get props => [id, contactIdentifier, pubsubToken, name, email];
 }

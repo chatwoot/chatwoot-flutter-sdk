@@ -1,5 +1,3 @@
-
-
 export 'chatwoot_callbacks.dart';
 export 'chatwoot_client.dart';
 export 'package:chatwoot_client_sdk/ui/chatwoot_chat_page.dart';

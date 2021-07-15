@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
@@ -11,76 +10,66 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 /// Service for handling chatwoot user authentication api calls
 /// See [ChatwootClientAuthServiceImpl]
-abstract class ChatwootClientAuthService{
-
+abstract class ChatwootClientAuthService {
   WebSocketChannel? connection;
   final Dio dio;
 
   ChatwootClientAuthService(this.dio);
 
-  Future<ChatwootContact> createNewContact(String inboxIdentifier, ChatwootUser? user);
+  Future<ChatwootContact> createNewContact(
+      String inboxIdentifier, ChatwootUser? user);
 
-  Future<ChatwootConversation> createNewConversation(String inboxIdentifier, String contactIdentifier);
-
-
+  Future<ChatwootConversation> createNewConversation(
+      String inboxIdentifier, String contactIdentifier);
 }
 
 /// Default Implementation for [ChatwootAuthService]
-class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService{
-
-  ChatwootClientAuthServiceImpl(
-      {
-        required Dio dio
-      }
-  ) : super(dio);
-
+class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService {
+  ChatwootClientAuthServiceImpl({required Dio dio}) : super(dio);
 
   ///Creates new contact for inbox with [inboxIdentifier] and passes [user] body to be linked to created contact
   @override
-  Future<ChatwootContact> createNewContact(String inboxIdentifier, ChatwootUser? user) async{
-    try{
+  Future<ChatwootContact> createNewContact(
+      String inboxIdentifier, ChatwootUser? user) async {
+    try {
       final createResponse = await dio.post(
           "/public/api/v1/inboxes/$inboxIdentifier/contacts",
-          data: user?.toJson()
-      );
-      if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
+          data: user?.toJson());
+      if ((createResponse.statusCode ?? 0).isBetween(199, 300)) {
         //creating contact successful continue with request
         final contact = ChatwootContact.fromJson(createResponse.data);
         return contact;
-      }else{
+      } else {
         throw ChatwootClientException(
             createResponse.statusMessage ?? "unknown error",
-            ChatwootClientExceptionType.CREATE_CONTACT_FAILED
-        );
+            ChatwootClientExceptionType.CREATE_CONTACT_FAILED);
       }
-    } on DioError catch(e){
-      throw ChatwootClientException(e.message,ChatwootClientExceptionType.CREATE_CONTACT_FAILED);
+    } on DioError catch (e) {
+      throw ChatwootClientException(
+          e.message, ChatwootClientExceptionType.CREATE_CONTACT_FAILED);
     }
   }
 
   ///Creates a new conversation for inbox with [inboxIdentifier] and contact with source id [contactIdentifier]
   @override
-  Future<ChatwootConversation> createNewConversation(String inboxIdentifier, String contactIdentifier) async{
-    try{
+  Future<ChatwootConversation> createNewConversation(
+      String inboxIdentifier, String contactIdentifier) async {
+    try {
       final createResponse = await dio.post(
-          "/public/api/v1/inboxes/$inboxIdentifier/contacts/$contactIdentifier/conversations"
-      );
-      if((createResponse.statusCode ?? 0).isBetween(199, 300) ){
+          "/public/api/v1/inboxes/$inboxIdentifier/contacts/$contactIdentifier/conversations");
+      if ((createResponse.statusCode ?? 0).isBetween(199, 300)) {
         //creating contact successful continue with request
-        final newConversation = ChatwootConversation.fromJson(createResponse.data);
+        final newConversation =
+            ChatwootConversation.fromJson(createResponse.data);
         return newConversation;
-      }else{
+      } else {
         throw ChatwootClientException(
             createResponse.statusMessage ?? "unknown error",
-            ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED
-        );
+            ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
       }
-    } on DioError catch(e){
+    } on DioError catch (e) {
       throw ChatwootClientException(
-          e.message,ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED
-      );
+          e.message, ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
     }
   }
-
-
 }

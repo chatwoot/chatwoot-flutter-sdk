@@ -9,45 +9,43 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../utils/test_resources_util.dart';
 
 void main() {
-
-  group("Persisted Chatwoot Message Dao Tests", (){
-
-    late PersistedChatwootMessagesDao dao ;
-    late Box<String> mockClientInstanceKeyToMessageBox ;
+  group("Persisted Chatwoot Message Dao Tests", () {
+    late PersistedChatwootMessagesDao dao;
+    late Box<String> mockClientInstanceKeyToMessageBox;
     late Box<ChatwootMessage> mockMessageBox;
     final testClientInstanceKey = "testKey";
 
     late final ChatwootMessage testMessage;
 
-    setUpAll((){
-      return Future(()async{
-
+    setUpAll(() {
+      return Future(() async {
         final hiveTestPath = Directory.current.path + '/test/hive_testing_path';
         Hive
           ..init(hiveTestPath)
           ..registerAdapter(ChatwootMessageAdapter())
           ..registerAdapter(ChatwootEventMessageUserAdapter());
 
-        testMessage = ChatwootMessage.fromJson(await TestResourceUtil.readJsonResource(fileName: "message"));
-
+        testMessage = ChatwootMessage.fromJson(
+            await TestResourceUtil.readJsonResource(fileName: "message"));
       });
     });
 
-    setUp((){
-      return Future(()async{
+    setUp(() {
+      return Future(() async {
+        mockMessageBox =
+            await Hive.openBox(ChatwootMessagesBoxNames.MESSAGES.toString());
+        mockClientInstanceKeyToMessageBox = await Hive.openBox(
+            ChatwootMessagesBoxNames.MESSAGES_TO_CLIENT_INSTANCE_KEY
+                .toString());
 
-        mockMessageBox = await Hive.openBox(ChatwootMessagesBoxNames.MESSAGES.toString());
-        mockClientInstanceKeyToMessageBox = await Hive.openBox(ChatwootMessagesBoxNames.MESSAGES_TO_CLIENT_INSTANCE_KEY.toString());
-
-        dao = PersistedChatwootMessagesDao(
-            mockMessageBox,
-            mockClientInstanceKeyToMessageBox,
-            testClientInstanceKey
-        );
+        dao = PersistedChatwootMessagesDao(mockMessageBox,
+            mockClientInstanceKeyToMessageBox, testClientInstanceKey);
       });
     });
 
-    test('Given message is successfully deleted when deleteMessage is called, then getMessage should return null', () async{
+    test(
+        'Given message is successfully deleted when deleteMessage is called, then getMessage should return null',
+        () async {
       //GIVEN
       await dao.saveMessage(testMessage);
 
@@ -58,8 +56,9 @@ void main() {
       expect(dao.getMessage(testMessage.id), null);
     });
 
-    test('Given message is successfully save when saveMessage is called, then getMessage should return saved message', () async{
-
+    test(
+        'Given message is successfully save when saveMessage is called, then getMessage should return saved message',
+        () async {
       //WHEN
       await dao.saveMessage(testMessage);
 
@@ -67,8 +66,9 @@ void main() {
       expect(dao.getMessage(testMessage.id), testMessage);
     });
 
-    test('Given messages are successfully saved when saveMessages is called, then getMessages should return saved messages', () async{
-
+    test(
+        'Given messages are successfully saved when saveMessages is called, then getMessages should return saved messages',
+        () async {
       final messages = [testMessage];
 
       //WHEN
@@ -78,7 +78,9 @@ void main() {
       expect(dao.getMessages(), messages);
     });
 
-    test('Given message is successfully retrieved when getMessage is called, then retrieved message should not be null', () async{
+    test(
+        'Given message is successfully retrieved when getMessage is called, then retrieved message should not be null',
+        () async {
       //GIVEN
       await dao.saveMessage(testMessage);
 
@@ -89,7 +91,9 @@ void main() {
       expect(retrievedMessage, testMessage);
     });
 
-    test('Given messages exist in database when getMessages is called, then retrieved messages should not be empty', () async{
+    test(
+        'Given messages exist in database when getMessages is called, then retrieved messages should not be empty',
+        () async {
       //GIVEN
       await dao.saveMessage(testMessage);
 
@@ -101,7 +105,9 @@ void main() {
       expect(retrievedMessages[0], testMessage);
     });
 
-    test('Given messages do not exist in database when getMessages is called, then retrieved messages should be empty', () async{
+    test(
+        'Given messages do not exist in database when getMessages is called, then retrieved messages should be empty',
+        () async {
       //GIVEN
       await dao.clear();
 
@@ -112,7 +118,9 @@ void main() {
       expect(retrievedMessages.length, 0);
     });
 
-    test('Given messages are successfully cleared when clear is called, then no message should exist in database', () async{
+    test(
+        'Given messages are successfully cleared when clear is called, then no message should exist in database',
+        () async {
       //GIVEN
       await dao.saveMessage(testMessage);
 
@@ -124,8 +132,9 @@ void main() {
       expect(retrievedMessages.length, 0);
     });
 
-
-    test('Given messages are successfully cleared when clearAll is called, then retrieving messages should be empty', () async{
+    test(
+        'Given messages are successfully cleared when clearAll is called, then retrieving messages should be empty',
+        () async {
       //GIVEN
       await dao.saveMessage(testMessage);
 
@@ -136,23 +145,22 @@ void main() {
       expect(dao.getMessages().isEmpty, true);
     });
 
-    tearDown((){
-      return Future(()async{
-        try{
+    tearDown(() {
+      return Future(() async {
+        try {
           await mockMessageBox.clear();
           await mockClientInstanceKeyToMessageBox.clear();
-        }on HiveError catch(e){
+        } on HiveError catch (e) {
           print(e);
         }
       });
     });
 
-    tearDownAll((){
-      return Future(()async{
+    tearDownAll(() {
+      return Future(() async {
         await mockMessageBox.close();
         await mockClientInstanceKeyToMessageBox.close();
       });
     });
-
   });
 }

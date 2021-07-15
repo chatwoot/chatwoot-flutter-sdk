@@ -27,8 +27,7 @@ import 'local_storage_test.mocks.dart';
   PersistedChatwootUserDao
 ])
 void main() {
-
-  group("Local Storage Tests", (){
+  group("Local Storage Tests", () {
     final mockContactDao = MockChatwootContactDao();
     final mockConversationDao = MockChatwootConversationDao();
     final mockUserDao = MockChatwootUserDao();
@@ -36,8 +35,7 @@ void main() {
 
     late final LocalStorage localStorage;
 
-    setUpAll((){
-
+    setUpAll(() {
       final hiveTestPath = Directory.current.path + '/test/hive_testing_path';
 
       Hive
@@ -51,30 +49,44 @@ void main() {
           userDao: mockUserDao,
           conversationDao: mockConversationDao,
           contactDao: mockContactDao,
-          messagesDao: mockMessagesDao
-      );
+          messagesDao: mockMessagesDao);
     });
 
-    test('Given persisted db is successfully opened when openDB is called, then all hive boxes should be open', () async{
-
-
-
+    test(
+        'Given persisted db is successfully opened when openDB is called, then all hive boxes should be open',
+        () async {
       //WHEN
-      await LocalStorage.openDB(onInitializeHive: (){});
+      await LocalStorage.openDB(onInitializeHive: () {});
 
       //THEN
       expect(true, Hive.isBoxOpen(ChatwootContactBoxNames.CONTACTS.toString()));
-      expect(true, Hive.isBoxOpen(ChatwootContactBoxNames.CLIENT_INSTANCE_TO_CONTACTS.toString()));
-      expect(true, Hive.isBoxOpen(ChatwootConversationBoxNames.CONVERSATIONS.toString()));
-      expect(true, Hive.isBoxOpen(ChatwootConversationBoxNames.CLIENT_INSTANCE_TO_CONVERSATIONS.toString()));
-      expect(true, Hive.isBoxOpen(ChatwootMessagesBoxNames.MESSAGES.toString()));
-      expect(true, Hive.isBoxOpen(ChatwootMessagesBoxNames.MESSAGES_TO_CLIENT_INSTANCE_KEY.toString()));
+      expect(
+          true,
+          Hive.isBoxOpen(
+              ChatwootContactBoxNames.CLIENT_INSTANCE_TO_CONTACTS.toString()));
+      expect(
+          true,
+          Hive.isBoxOpen(
+              ChatwootConversationBoxNames.CONVERSATIONS.toString()));
+      expect(
+          true,
+          Hive.isBoxOpen(ChatwootConversationBoxNames
+              .CLIENT_INSTANCE_TO_CONVERSATIONS
+              .toString()));
+      expect(
+          true, Hive.isBoxOpen(ChatwootMessagesBoxNames.MESSAGES.toString()));
+      expect(
+          true,
+          Hive.isBoxOpen(ChatwootMessagesBoxNames
+              .MESSAGES_TO_CLIENT_INSTANCE_KEY
+              .toString()));
       expect(true, Hive.isBoxOpen(ChatwootUserBoxNames.USERS.toString()));
       expect(true, Hive.isBoxOpen(ChatwootUserBoxNames.USERS.toString()));
     });
 
-    test('Given localStorage is successfully cleared when clear is called, then daos should be cleared', () async{
-
+    test(
+        'Given localStorage is successfully cleared when clear is called, then daos should be cleared',
+        () async {
       //WHEN
       await localStorage.clear(clearChatwootUserStorage: true);
 
@@ -85,8 +97,9 @@ void main() {
       verify(mockUserDao.deleteUser());
     });
 
-    test('Given localStorage is successfully cleared except user db when clear is called, then daos should be cleared except user db', () async{
-
+    test(
+        'Given localStorage is successfully cleared except user db when clear is called, then daos should be cleared except user db',
+        () async {
       //WHEN
       await localStorage.clear(clearChatwootUserStorage: false);
 
@@ -97,8 +110,9 @@ void main() {
       verifyNever(mockUserDao.deleteUser());
     });
 
-    test('Given all data is successfully cleared when clearAll is called, then all data daos should be cleared', () async{
-
+    test(
+        'Given all data is successfully cleared when clearAll is called, then all data daos should be cleared',
+        () async {
       //WHEN
       await localStorage.clearAll();
 
@@ -109,8 +123,9 @@ void main() {
       verify(mockUserDao.clearAll());
     });
 
-    test('Given localStorage is successfully disposed when dispose is called, then all daos should be disposed', () {
-
+    test(
+        'Given localStorage is successfully disposed when dispose is called, then all daos should be disposed',
+        () {
       //WHEN
       localStorage.dispose();
 
@@ -121,11 +136,8 @@ void main() {
       verify(mockUserDao.onDispose());
     });
 
-    tearDownAll(()async{
+    tearDownAll(() async {
       await Hive.close();
     });
-
   });
-
-
 }
