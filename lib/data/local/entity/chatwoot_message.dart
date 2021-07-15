@@ -120,7 +120,7 @@ int messageTypeFromJson(value){
 
 String createdAtFromJson(value){
   if(value is int){
-    return DateTime.fromMicrosecondsSinceEpoch(value,isUtc: true).toString();
+    return DateTime.fromMillisecondsSinceEpoch(value * 1000).toString();
   }
   return value.toString();
 }

@@ -211,7 +211,7 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
         setState(() {
           final chatMessages = messages.map((message)=> _chatwootMessageToTextMessage(message)).toList();
           final mergedMessages = <types.Message>[..._messages,...chatMessages].toSet().toList();
-          final now = DateTime.now().microsecondsSinceEpoch;
+          final now = DateTime.now().millisecondsSinceEpoch;
           mergedMessages.sort((a,b){
             return (b.createdAt ?? now).compareTo(a.createdAt ?? now);
           });
@@ -281,7 +281,8 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
           imageUrl: avatarUrl,
         ),
         text: message.content ?? "",
-        status: types.Status.seen
+        status: types.Status.seen,
+        createdAt: DateTime.parse(message.createdAt).millisecondsSinceEpoch
     );
   }
 
@@ -349,7 +350,7 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   void _handleSendPressed(types.PartialText message) {
     final textMessage = types.TextMessage(
       author: _user,
-      createdAt: DateTime.now().microsecondsSinceEpoch,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
       id: const Uuid().v4(),
       text: message.text,
       status: types.Status.sending
@@ -382,10 +383,8 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
           showUserAvatars: widget.showUserAvatars,
           showUserNames: widget.showUserNames,
           timeFormat: widget.timeFormat ?? DateFormat.Hm(),
-          dateFormat: widget.timeFormat ?? DateFormat.yMMMMEEEEd(),
-          theme: widget.theme ?? ChatwootChatTheme(
-            //sendButtonIcon: Image.asset("assets/send.png"),
-          ),
+          dateFormat: widget.timeFormat ?? DateFormat("EEEE MMMM d"),
+          theme: widget.theme ?? ChatwootChatTheme(),
           l10n: widget.l10n ?? ChatL10nEn(
             emptyChatPlaceholder: "",
             inputPlaceholder: "Type your message"

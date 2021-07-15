@@ -2,7 +2,7 @@ name: chatwoot_client_sdk
 description: A flutter client sdk for chatwoot
 version: 0.0.1
 author: Ephraim Nartey
-homepage: https://github.com/EphraimNetWorks/test_cw_flutter_client.git
+homepage: https://github.com/EphraimNetWorks/chatwoot_flutter_client
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
