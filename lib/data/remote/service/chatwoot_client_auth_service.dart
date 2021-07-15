@@ -23,7 +23,7 @@ abstract class ChatwootClientAuthService {
       String inboxIdentifier, String contactIdentifier);
 }
 
-/// Default Implementation for [ChatwootAuthService]
+/// Default Implementation for [ChatwootClientAuthService]
 class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService {
   ChatwootClientAuthServiceImpl({required Dio dio}) : super(dio);
 

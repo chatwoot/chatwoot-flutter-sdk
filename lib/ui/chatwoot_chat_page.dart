@@ -1,5 +1,3 @@
-library chatwoot_client_sdk;
-
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_client_sdk/chatwoot_client.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
@@ -11,11 +9,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:intl/intl.dart';
-import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
 
+///Chatwoot chat widget
 /// {@category FlutterClientSdk}
-class ChatwootChatPage extends StatefulWidget {
+class ChatwootChat extends StatefulWidget {
   /// Specifies a custom app bar for chatwoot page widget
   final PreferredSizeWidget? appBar;
 
@@ -112,7 +110,7 @@ class ChatwootChatPage extends StatefulWidget {
   ///See [ChatwootCallbacks.onError]
   final void Function(ChatwootClientException)? onError;
 
-  const ChatwootChatPage({
+  const ChatwootChat({
     Key? key,
     required this.baseUrl,
     required this.inboxIdentifier,
@@ -147,10 +145,10 @@ class ChatwootChatPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChatwootChatPageState createState() => _ChatwootChatPageState();
+  _ChatwootChatState createState() => _ChatwootChatState();
 }
 
-class _ChatwootChatPageState extends State<ChatwootChatPage> {
+class _ChatwootChatState extends State<ChatwootChat> {
   ///
   List<types.Message> _messages = [];
 
@@ -312,8 +310,6 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   void _handleMessageTap(types.Message message) async {
     if (message.status == types.Status.error && message is types.TextMessage) {
       _handleResendMessage(message);
-    } else if (message is types.FileMessage) {
-      await OpenFile.open(message.uri);
     }
     widget.onMessageTap?.call(message);
   }

@@ -23,8 +23,8 @@ NB: This library uses [Hive](https://pub.dev/packages/hive) for local storage an
 ## 3. How to use
 Replace `baseUrl` and `inboxIdentifier` with appropriate values. See [](https://www.chatwoot.com/docs/product/channels/api/client-apis) for more information on how to obtain your `baseUrl` and `inboxIdentifier`
 
-### a. Using ChatwootChatPage Widget
-Use ChatwootChatPage widget, for faster simpler integration with out of the box chat ui. Customize chat UI theme by passing a `ChatwootChatTheme` with your custom theme colors and more.
+### a. Using ChatwootChat Widget
+Use ChatwootChat widget, for faster simpler integration with out of the box chat ui. Customize chat UI theme by passing a `ChatwootChatTheme` with your custom theme colors and more.
 
 ```
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChatwootChatPage(
+    return ChatwootChat(
       baseUrl: "<<<your-chatwoot-base-url-here>>>",
       inboxIdentifier: "<<<your-inbox-identifier-here>>>",
       user: ChatwootUser(

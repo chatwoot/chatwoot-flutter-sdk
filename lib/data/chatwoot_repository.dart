@@ -57,8 +57,8 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
 
   /// Fetches persisted messages.
   ///
-  /// Calls [callbacks.onMessagesRetrieved] when [clientService.getAllMessages] is successful
-  /// Calls [callbacks.onError] when [clientService.getAllMessages] fails
+  /// Calls [ChatwootCallbacks.onMessagesRetrieved] when [ChatwootClientService.getAllMessages] is successful
+  /// Calls [ChatwootCallbacks.onError] when [ChatwootClientService.getAllMessages] fails
   @override
   Future<void> getMessages() async {
     try {
@@ -72,7 +72,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
 
   /// Fetches persisted messages.
   ///
-  /// Calls [callbacks.onPersistedMessagesRetrieved] if persisted messages are found
+  /// Calls [ChatwootCallbacks.onPersistedMessagesRetrieved] if persisted messages are found
   @override
   void getPersistedMessages() {
     final persistedMessages = localStorage.messagesDao.getMessages();

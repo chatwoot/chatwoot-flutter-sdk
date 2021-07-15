@@ -8,5 +8,6 @@
 
 ## [0.0.3] - Jul 15,2021
 
-* Fixed Hive initialization bug
-* Fixed theme background bug
+* Fixed multiple Hive adapter registration issue
+* Fixed theme background issue
+* Resolved pub analysis issues
