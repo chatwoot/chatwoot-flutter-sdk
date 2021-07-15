@@ -14,7 +14,7 @@ or
 
 Add 
 `chatwoot_client_sdk:<<version>>` 
-to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/dartdoc) for the latest version.
+to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/chatwoot_client_sdk) for the latest version.
 
 NB: This library uses [Hive](https://pub.dev/packages/hive) for local storage and [Flutter Chat UI](https://pub.dev/packages/flutter_chat_ui) for its user interface.
 

@@ -124,7 +124,7 @@ packages:
       name: flutter_chat_types
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.4.0"
   flutter_chat_ui:
     dependency: transitive
     description:
@@ -364,6 +364,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  streams_channel:
+    dependency: transitive
+    description:
+      name: streams_channel
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   string_scanner:
     dependency: transitive
     description:

@@ -1,6 +1,6 @@
 name: chatwoot_client_sdk
 description: A flutter client sdk for chatwoot
-version: 0.0.1
+version: 0.0.2
 author: Ephraim Nartey
 homepage: https://github.com/EphraimNetWorks/chatwoot_flutter_client
 
@@ -23,6 +23,9 @@ dependencies:
   riverpod: ^0.14.0+3
   synchronized: ^3.0.0
   intl: ^0.17.0
+  flutter_chat_types: ^2.4.0
+  streams_channel: ^0.3.0
+  async: ^2.5.0
 
 dev_dependencies:
   flutter_test:
