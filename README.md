@@ -21,9 +21,10 @@ NB: This library uses [Hive](https://pub.dev/packages/hive) for local storage an
 ## 3. How to use
 Replace `baseUrl` and `inboxIdentifier` with appropriate values. See [](https://www.chatwoot.com/docs/product/channels/api/client-apis) for more information on how to obtain your `baseUrl` and `inboxIdentifier`
 
-### Using ChatwootChatPage Widget
+### a. Using ChatwootChatPage Widget
 Use ChatwootChatPage widget, for faster simpler integration with out of the box chat ui. Customize chat UI theme by passing a `ChatwootChatTheme` with your custom theme colors and more.
-`
+
+```
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
 import 'package:flutter/material.dart';
 
@@ -106,16 +107,16 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-`
+```
+
 Horray! You're done.
 
 You also find a sample implementation [here](https://github.com/EphraimNetWorks/chatwoot_flutter_client/blob/main/example/lib/main.dart)
 
-### Using Chatwoot Client
-You can also create a customized chat ui with a `ChatwootClient`. Messaging events like `onMessageSent` and `onMessageReceived` will be triggered on `ChatwootCallback` passed when creating the client instance.
+### b. Using Chatwoot Client
+You can also create a customized chat ui and use `ChatwootClient` to load and sendMessages. Messaging events like `onMessageSent` and `onMessageReceived` will be triggered on `ChatwootCallback` passed when creating the client instance.
 
-`
-
+```
 final chatwootCallbacks = ChatwootCallbacks(
       onWelcome: (){
         print("on welcome");
@@ -163,8 +164,7 @@ final chatwootCallbacks = ChatwootCallbacks(
     }).onError((error, stackTrace) {
       print("chatwoot client creation failed with error $error: $stackTrace");
     });
-    
-`
+    ```
 
 
 
