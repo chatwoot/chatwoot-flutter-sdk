@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../entity/chatwoot_contact.dart';
 
+///Data access object for retriving chatwoot contact from local storage
 abstract class ChatwootContactDao{
   Future<void> saveContact(ChatwootContact contact);
   ChatwootContact? getContact();

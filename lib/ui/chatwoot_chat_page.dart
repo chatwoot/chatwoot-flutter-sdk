@@ -62,7 +62,7 @@ class ChatwootChatPage extends StatefulWidget {
   /// shown only on text messages.
   final bool showUserNames;
 
-  final ChatTheme? theme;
+  final ChatwootChatTheme? theme;
 
   /// See [ChatL10n]
   final ChatL10n? l10n;
@@ -157,10 +157,6 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   ///
   List<types.Message> _messages = [];
 
-  final onlineStatus= "online";
-  final typingStatus= "typing...";
-  final awayStatus= "We're away at the moment";
-
   late String status;
 
   final idGen = Uuid();
@@ -172,8 +168,6 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
   @override
   void initState() {
     super.initState();
-
-    status = awayStatus;
 
     if(widget.user == null){
       _user = types.User(id: idGen.v4());
@@ -196,17 +190,9 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
         widget.onConfirmedSubscription?.call();
       },
       onConversationStartedTyping: (){
-        setState(() {
-          status = typingStatus;
-        });
         widget.onConversationStoppedTyping?.call();
       },
       onConversationStoppedTyping: (){
-        setState(() {
-          if(status != awayStatus){
-            status = onlineStatus;
-          }
-        });
         widget.onConversationStartedTyping?.call();
       },
       onPersistedMessagesRetrieved: (persistedMessages){
@@ -264,7 +250,7 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
         baseUrl: widget.baseUrl,
         inboxIdentifier: widget.inboxIdentifier,
         user: widget.user,
-        enableMessagesPersistence: widget.enablePersistence,
+        enablePersistence: widget.enablePersistence,
         callbacks: chatwootCallbacks
     ).then((client) {
       setState(() {
@@ -394,8 +380,8 @@ class _ChatwootChatPageState extends State<ChatwootChatPage> {
           onTextChanged: widget.onTextChanged,
           showUserAvatars: widget.showUserAvatars,
           showUserNames: widget.showUserNames,
-          timeFormat: DateFormat.Hm(),
-          dateFormat: DateFormat.yMMMMEEEEd(),
+          timeFormat: widget.timeFormat ?? DateFormat.Hm(),
+          dateFormat: widget.timeFormat ?? DateFormat.yMMMMEEEEd(),
           theme: widget.theme ?? ChatwootChatTheme(
             //sendButtonIcon: Image.asset("assets/send.png"),
           ),

@@ -58,6 +58,7 @@ void main() {
     test('Given persisted db is successfully opened when openDB is called, then all hive boxes should be open', () async{
 
 
+
       //WHEN
       await LocalStorage.openDB(onInitializeHive: (){});
 
@@ -120,10 +121,8 @@ void main() {
       verify(mockUserDao.onDispose());
     });
 
-    tearDown((){
-      return Future(()async{
-        await Hive.close();
-      });
+    tearDown(()async{
+      await Hive.close();
     });
 
   });

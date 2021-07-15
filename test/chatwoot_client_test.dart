@@ -53,7 +53,8 @@ void main() {
       client = await ChatwootClient.create(
           baseUrl: testBaseUrl,
         inboxIdentifier: testInboxIdentifier,
-        user: testUser
+        user: testUser,
+        enablePersistence: false
       );
     });
 
@@ -180,7 +181,7 @@ void main() {
           baseUrl: testBaseUrl,
           inboxIdentifier: testInboxIdentifier,
           user: testUser,
-          enableMessagesPersistence: false
+          enablePersistence: false
       );
 
       //THEN
@@ -199,7 +200,7 @@ void main() {
           baseUrl: testBaseUrl,
           inboxIdentifier: testInboxIdentifier,
           user: testUser,
-          enableMessagesPersistence: true
+          enablePersistence: true
       );
 
       //THEN

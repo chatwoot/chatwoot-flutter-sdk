@@ -2,6 +2,8 @@
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
 import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
@@ -13,10 +15,8 @@ import 'package:riverpod/riverpod.dart';
 import 'data/local/local_storage.dart';
 
 
-/// Represents a chatwoot client instance
-///
-/// Results from repository operations are passed through [callbacks] to be handled
-/// appropriately
+/// Represents a chatwoot client instance. All chatwoot operations (Example: sendMessages) are
+/// passed through chatwoot client
 class ChatwootClient{
 
   late final ChatwootRepository _repository;
@@ -54,11 +54,17 @@ class ChatwootClient{
     }
   }
 
+  ///Retrieves chatwoot client's messages. If persistence is enabled [ChatwootCallbacks.onPersistedMessagesRetrieved]
+  ///will be triggered with persisted messages. On successfully fetch from remote server
+  ///[ChatwootCallbacks.onMessagesRetrieved] will be triggered
   void loadMessages() async{
     _repository.getPersistedMessages();
     await _repository.getMessages();
   }
 
+  /// Sends chatwoot message. The echoId is your temporary message id. When message sends successfully
+  /// [ChatwootMessage] will be returned with the [echoId] on [ChatwootCallbacks.onMessageSent]. If
+  /// message fails to send [ChatwootCallbacks.onError] will be triggered [echoId] as data.
   Future<void> sendMessage({
     required String content,
     required String echoId
@@ -70,11 +76,14 @@ class ChatwootClient{
     await _repository.sendMessage(request);
   }
 
+  ///Send chatwoot action performed by user.
+  ///
+  /// Example: User started typing
   Future<void> sendAction(ChatwootActionType action) async{
     _repository.sendAction(action);
   }
 
-
+  ///Disposes chatwoot client and cancels all stream subscriptions
   dispose(){
     final container = providerContainerMap[_parameters.clientInstanceKey]!;
     _repository.dispose();
@@ -82,6 +91,7 @@ class ChatwootClient{
     providerContainerMap.remove(_parameters.clientInstanceKey);
   }
 
+  /// Clears all chatwoot client data
   clearClientData(){
     final container = providerContainerMap[_parameters.clientInstanceKey]!;
     final localStorage = container.read(localStorageProvider(_parameters));
@@ -91,22 +101,24 @@ class ChatwootClient{
 
 
 
-
+  /// Creates an instance of [ChatwootClient] with the [baseUrl] of your chatwoot installation,
+  /// [inboxIdentifier] for the targeted inbox. Specify custom user details using [user] and [callbacks] for
+  /// handling chatwoot events. By default persistence is enabled, to disable persistence use [enablePersistence]
   static Future<ChatwootClient> create({
     required String baseUrl,
     required String inboxIdentifier,
     ChatwootUser? user,
-    bool enableMessagesPersistence = false,
+    bool enablePersistence = true,
     ChatwootCallbacks? callbacks
   }) async {
 
-    if(enableMessagesPersistence){
+    if(enablePersistence){
       await LocalStorage.openDB();
     }
 
     final chatwootParams = ChatwootParameters(
         clientInstanceKey: getClientInstanceKey(baseUrl: baseUrl, inboxIdentifier: inboxIdentifier, userIdentifier: user?.identifier),
-        isPersistenceEnabled: enableMessagesPersistence,
+        isPersistenceEnabled: enablePersistence,
         baseUrl: baseUrl,
         inboxIdentifier: inboxIdentifier,
         userIdentifier: user?.identifier
@@ -123,17 +135,26 @@ class ChatwootClient{
     return client;
   }
 
-  static final keySeparator= "|||";
+  static final _keySeparator= "|||";
+
+  ///Create a chatwoot client instance key using the chatwoot client instance baseurl, inboxIdentifier
+  ///and userIdentifier. Client instance keys are used to differentiate between client instances and their data
+  ///(contact ([ChatwootContact]),conversation ([ChatwootConversation]) and messages ([ChatwootMessage]))
+  ///
+  /// Create separate [ChatwootClient] instances with same baseUrl, inboxIdentifier, userIdentifier and persistence
+  /// enabled will be regarded as same therefore use same contact and conversation.
   static String getClientInstanceKey({
     required String baseUrl,
     required String inboxIdentifier,
     String? userIdentifier
   }){
-    return "$baseUrl$keySeparator$userIdentifier$keySeparator$inboxIdentifier";
+    return "$baseUrl$_keySeparator$userIdentifier$_keySeparator$inboxIdentifier";
   }
 
   static Map<String, ProviderContainer> providerContainerMap = Map();
 
+  ///Clears all persisted chatwoot data on device for a particular chatwoot client instance.
+  ///See [getClientInstanceKey] on how chatwoot client instance are differentiated
   static Future<void> clearData({
     required String baseUrl,
     required String inboxIdentifier,
@@ -162,6 +183,7 @@ class ChatwootClient{
     providerContainerMap.remove(clientInstanceKey);
   }
 
+  /// Clears all persisted chatwoot data on device.
   static Future<void> clearAllData() async{
     providerContainerMap.putIfAbsent("all", () => ProviderContainer());
     final container = providerContainerMap["all"]!;

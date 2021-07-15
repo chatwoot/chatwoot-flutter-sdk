@@ -40,6 +40,20 @@ class _MyHomePageState extends State<MyHomePage> {
         name: "Tester test",
         email: "test@test.com",
       ),
+      appBar: AppBar(
+        title: Text(
+          "Chatwoot",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset("assets/chatwoot_logo.png"),
+        ),
+        backgroundColor: Colors.white,
+      ),
       onWelcome: (){
         print("Welcome event received");
       },

@@ -7,12 +7,11 @@ const CHATWOOT_COLOR_PRIMARY = Color(0xff1f93ff);
 const CHATWOOT_BG_COLOR = Color(0xfff7f0fc);
 const CHATWOOT_AVATAR_COLORS = [CHATWOOT_COLOR_PRIMARY];
 
-/// Default chat theme which extends [ChatTheme]
+/// Default chatwoot chat theme which extends [ChatTheme]
 @immutable
 class ChatwootChatTheme extends ChatTheme {
   /// Creates a chatwoot chat theme. Use this constructor if you want to
-  /// override only a couple of variables, otherwise create a new class
-  /// which extends [ChatTheme]
+  /// override only a couple of variables.
   const ChatwootChatTheme({
     Widget? attachmentButtonIcon,
     Color backgroundColor = CHATWOOT_BG_COLOR,
