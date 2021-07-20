@@ -15,3 +15,8 @@
 ## [0.0.4] - Jul 15,2021
 
 * Updated build_runner dependency to null safety version
+
+## [0.0.5] - Jul 20,2021
+
+* Added ChatwootChatModal 
+* Updated README.md
