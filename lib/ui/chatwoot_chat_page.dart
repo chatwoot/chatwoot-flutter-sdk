@@ -156,7 +156,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
 
   final idGen = Uuid();
   late final _user;
-  late final ChatwootClient chatwootClient;
+  ChatwootClient? chatwootClient;
 
   late final chatwootCallbacks;
 
@@ -254,7 +254,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
         .then((client) {
       setState(() {
         chatwootClient = client;
-        chatwootClient.loadMessages();
+        chatwootClient!.loadMessages();
       });
     }).onError((error, stackTrace) {
       widget.onError?.call(ChatwootClientException(
@@ -300,7 +300,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
   }
 
   void _handleResendMessage(types.TextMessage message) async {
-    chatwootClient.sendMessage(content: message.text, echoId: message.id);
+    chatwootClient!.sendMessage(content: message.text, echoId: message.id);
     final index = _messages.indexWhere((element) => element.id == message.id);
     setState(() {
       _messages[index] = message.copyWith(status: types.Status.sending);
@@ -354,8 +354,8 @@ class _ChatwootChatState extends State<ChatwootChat> {
 
     _addMessage(textMessage);
 
-    chatwootClient.sendMessage(
-        content: textMessage.text, echoId: textMessage.id);
+    chatwootClient!
+        .sendMessage(content: textMessage.text, echoId: textMessage.id);
     widget.onSendPressed?.call(message);
   }
 
@@ -364,28 +364,55 @@ class _ChatwootChatState extends State<ChatwootChat> {
     return Scaffold(
       appBar: widget.appBar,
       backgroundColor: widget.theme?.backgroundColor ?? CHATWOOT_BG_COLOR,
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
-        child: Chat(
-          messages: _messages,
-          onMessageTap: _handleMessageTap,
-          onPreviewDataFetched: _handlePreviewDataFetched,
-          onSendPressed: _handleSendPressed,
-          user: _user,
-          onEndReached: widget.onEndReached,
-          onEndReachedThreshold: widget.onEndReachedThreshold,
-          onMessageLongPress: widget.onMessageLongPress,
-          onTextChanged: widget.onTextChanged,
-          showUserAvatars: widget.showUserAvatars,
-          showUserNames: widget.showUserNames,
-          timeFormat: widget.timeFormat ?? DateFormat.Hm(),
-          dateFormat: widget.timeFormat ?? DateFormat("EEEE MMMM d"),
-          theme: widget.theme ?? ChatwootChatTheme(),
-          l10n: widget.l10n ??
-              ChatL10nEn(
-                  emptyChatPlaceholder: "",
-                  inputPlaceholder: "Type your message"),
-        ),
+      body: Column(
+        children: [
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+              child: Chat(
+                messages: _messages,
+                onMessageTap: _handleMessageTap,
+                onPreviewDataFetched: _handlePreviewDataFetched,
+                onSendPressed: _handleSendPressed,
+                user: _user,
+                onEndReached: widget.onEndReached,
+                onEndReachedThreshold: widget.onEndReachedThreshold,
+                onMessageLongPress: widget.onMessageLongPress,
+                onTextChanged: widget.onTextChanged,
+                showUserAvatars: widget.showUserAvatars,
+                showUserNames: widget.showUserNames,
+                timeFormat: widget.timeFormat ?? DateFormat.Hm(),
+                dateFormat: widget.timeFormat ?? DateFormat("EEEE MMMM d"),
+                theme: widget.theme ?? ChatwootChatTheme(),
+                l10n: widget.l10n ??
+                    ChatL10nEn(
+                        emptyChatPlaceholder: "",
+                        inputPlaceholder: "Type your message"),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "assets/logo_grey.png",
+                  package: 'chatwoot_client_sdk',
+                  width: 20,
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    "Powered by Chatwoot",
+                    style: TextStyle(color: Colors.black45, fontSize: 14),
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -393,6 +420,6 @@ class _ChatwootChatState extends State<ChatwootChat> {
   @override
   void dispose() {
     super.dispose();
-    chatwootClient.dispose();
+    chatwootClient?.dispose();
   }
 }
