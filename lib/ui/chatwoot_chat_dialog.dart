@@ -117,104 +117,108 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.title,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Visibility(
-                          visible: status != localizedStrings.offlineText,
-                          child: Container(
-                            width: 10,
-                            height: 10,
-                            margin: EdgeInsets.only(left: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(40),
-                            ),
+      insetPadding: EdgeInsets.all(8.0),
+      child: Container(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            widget.title,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2.0),
-                      child: Text(
-                        status,
-                        style: TextStyle(fontSize: 14),
+                          Visibility(
+                            visible: status != localizedStrings.offlineText,
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              margin: EdgeInsets.only(left: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: InkWell(
-                  onTap: () => Navigator.pop(context),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.grey,
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2.0),
+                        child: Text(
+                          status,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              )
-            ],
-          ),
-          Flexible(
-            child: ChatwootChat(
-              baseUrl: widget.baseUrl,
-              inboxIdentifier: widget.inboxIdentifier,
-              user: widget.user,
-              enablePersistence: widget.enablePersistence,
-              timeFormat: widget.timeFormat,
-              dateFormat: widget.dateFormat,
-              theme: ChatwootChatTheme(
-                primaryColor: widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY,
-                secondaryColor: widget.secondaryColor ?? Colors.white,
-                backgroundColor: widget.backgroundColor ?? CHATWOOT_BG_COLOR,
-              ),
-              onConversationIsOffline: () {
-                setState(() {
-                  status = localizedStrings.offlineText;
-                });
-              },
-              onConversationIsOnline: () {
-                setState(() {
-                  status = localizedStrings.onlineText;
-                });
-              },
-              onConversationStoppedTyping: () {
-                setState(() {
-                  if (status == localizedStrings.typingText) {
-                    status = localizedStrings.onlineText;
-                  }
-                });
-              },
-              onConversationStartedTyping: () {
-                setState(() {
-                  status = localizedStrings.typingText;
-                });
-              },
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
-          ),
-        ],
+            Flexible(
+              child: ChatwootChat(
+                baseUrl: widget.baseUrl,
+                inboxIdentifier: widget.inboxIdentifier,
+                user: widget.user,
+                enablePersistence: widget.enablePersistence,
+                timeFormat: widget.timeFormat,
+                dateFormat: widget.dateFormat,
+                theme: ChatwootChatTheme(
+                  primaryColor: widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY,
+                  secondaryColor: widget.secondaryColor ?? Colors.white,
+                  backgroundColor: widget.backgroundColor ?? CHATWOOT_BG_COLOR,
+                ),
+                onConversationIsOffline: () {
+                  setState(() {
+                    status = localizedStrings.offlineText;
+                  });
+                },
+                onConversationIsOnline: () {
+                  setState(() {
+                    status = localizedStrings.onlineText;
+                  });
+                },
+                onConversationStoppedTyping: () {
+                  setState(() {
+                    if (status == localizedStrings.typingText) {
+                      status = localizedStrings.onlineText;
+                    }
+                  });
+                },
+                onConversationStartedTyping: () {
+                  setState(() {
+                    status = localizedStrings.typingText;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
