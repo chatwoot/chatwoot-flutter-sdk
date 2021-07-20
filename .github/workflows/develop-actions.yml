@@ -25,5 +25,5 @@ jobs:
           channel: 'stable' # or: 'beta', 'dev' or 'master'
       - run: flutter pub get
       - run: flutter pub run build_runner clean
-      - run: flutter pub run build_runner build
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter test
