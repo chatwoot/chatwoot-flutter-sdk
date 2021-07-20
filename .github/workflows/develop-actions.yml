@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Flutter
+name: build
 
 on:
   push:
@@ -27,3 +27,4 @@ jobs:
       - run: flutter pub run build_runner clean
       - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter test
+      - run: flutter analyze
