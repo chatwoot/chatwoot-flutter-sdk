@@ -1,3 +1,5 @@
+![build](https://github.com/EphraimNetWorks/test_cw_flutter_client/actions/workflows/develop-actions.yml/badge.svg) [![likes](https://badges.bar/chatwoot_client_sdk/likes)](https://pub.dev/packages/chatwoot_client_sdk/score) [![popularity](https://badges.bar/chatwoot_client_sdk/popularity)](https://pub.dev/packages/chatwoot_client_sdk/score) [![pub points](https://badges.bar/chatwoot_client_sdk/pub%20points)](https://pub.dev/packages/chatwoot_client_sdk/score)
+
 # Integrate Chatwoot with Flutter app
 
 Integrate Chatwoot flutter client into your flutter app and talk to your visitors in real time. [Chatwoot](https://github.com/chatwoot/chatwoot) helps you to chat with your visitors and provide exceptional support in real time. To use Chatwoot in your flutter app, follow the steps described below.
