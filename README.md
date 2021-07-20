@@ -166,7 +166,7 @@ You also find a sample implementation [here](https://github.com/EphraimNetWorks/
 | showUserNames     | true                      | bool                | Show user names for received messages. 
 
 
-### b. Using Chatwoot Client
+### c. Using Chatwoot Client
 You can also create a customized chat ui and use `ChatwootClient` to load and sendMessages. Messaging events like `onMessageSent` and `onMessageReceived` will be triggered on `ChatwootCallback` passed when creating the client instance.
 
 ```
