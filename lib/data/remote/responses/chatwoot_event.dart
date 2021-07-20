@@ -1,6 +1,5 @@
-
-
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
+import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -8,71 +7,54 @@ import 'package:json_annotation/json_annotation.dart';
 part 'chatwoot_event.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class ChatwootEvent{
-
-  @JsonKey(
-    toJson: eventTypeToJson,
-    fromJson: eventTypeFromJson
-  )
+class ChatwootEvent {
+  @JsonKey(toJson: eventTypeToJson, fromJson: eventTypeFromJson)
   final ChatwootEventType? type;
 
   @JsonKey()
   final String? identifier;
 
-  @JsonKey(
-    fromJson: eventMessageFromJson
-  )
+  @JsonKey(fromJson: eventMessageFromJson)
   final ChatwootEventMessage? message;
 
-  ChatwootEvent({
-    this.type,
-    this.message,
-    this.identifier
-  });
+  ChatwootEvent({this.type, this.message, this.identifier});
 
-  factory ChatwootEvent.fromJson(Map<String, dynamic> json) => _$ChatwootEventFromJson(json);
+  factory ChatwootEvent.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootEventFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootEventToJson(this);
-
 }
 
-ChatwootEventMessage? eventMessageFromJson(value){
-  if(value == null){
+ChatwootEventMessage? eventMessageFromJson(value) {
+  if (value == null) {
     return null;
-  }else if(value is num){
+  } else if (value is num) {
     return ChatwootEventMessage();
-  }else if(value is String){
+  } else if (value is String) {
     return ChatwootEventMessage();
-  }else{
-    return ChatwootEventMessage.fromJson(value as Map<String,dynamic>);
+  } else {
+    return ChatwootEventMessage.fromJson(value as Map<String, dynamic>);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
-class ChatwootEventMessage{
-
+class ChatwootEventMessage {
   @JsonKey()
   final ChatwootEventMessageData? data;
 
-  @JsonKey(
-    toJson: eventMessageTypeToJson,
-    fromJson: eventMessageTypeFromJson
-  )
+  @JsonKey(toJson: eventMessageTypeToJson, fromJson: eventMessageTypeFromJson)
   final ChatwootEventMessageType? event;
 
-  ChatwootEventMessage({
-    this.data,
-    this.event
-  });
+  ChatwootEventMessage({this.data, this.event});
 
-  factory ChatwootEventMessage.fromJson(Map<String, dynamic> json) => _$ChatwootEventMessageFromJson(json);
+  factory ChatwootEventMessage.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootEventMessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootEventMessageToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
-class ChatwootEventMessageData{
-
+class ChatwootEventMessageData {
   @JsonKey(name: "account_id")
   final int? accountId;
 
@@ -133,47 +115,43 @@ class ChatwootEventMessageData{
   @JsonKey()
   final dynamic users;
 
-  ChatwootEventMessageData({
-    this.id,
-    this.user,
-    this.conversation,
-    this.echoId,
-    this.sender,
-    this.conversationId,
-    this.createdAt,
-    this.contentAttributes,
-    this.contentType,
-    this.messageType,
-    this.content,
-    this.inboxId,
-    this.sourceId,
-    this.updatedAt,
-    this.status,
-    this.accountId,
-    this.externalSourceIds,
-    this.private,
-    this.senderId,
-    this.users
-  });
+  ChatwootEventMessageData(
+      {this.id,
+      this.user,
+      this.conversation,
+      this.echoId,
+      this.sender,
+      this.conversationId,
+      this.createdAt,
+      this.contentAttributes,
+      this.contentType,
+      this.messageType,
+      this.content,
+      this.inboxId,
+      this.sourceId,
+      this.updatedAt,
+      this.status,
+      this.accountId,
+      this.externalSourceIds,
+      this.private,
+      this.senderId,
+      this.users});
 
-
-  factory ChatwootEventMessageData.fromJson(Map<String, dynamic> json) => _$ChatwootEventMessageDataFromJson(json);
+  factory ChatwootEventMessageData.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootEventMessageDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootEventMessageDataToJson(this);
 
-  getMessage(){
+  getMessage() {
     return ChatwootMessage.fromJson(toJson());
   }
 }
 
 /// {@category FlutterClientSdk}
-@HiveType(typeId: 4)
+@HiveType(typeId: CHATWOOT_EVENT_USER_HIVE_TYPE_ID)
 @JsonSerializable(explicitToJson: true)
-class ChatwootEventMessageUser extends Equatable{
-
-  @JsonKey(
-    name: "avatar_url"
-  )
+class ChatwootEventMessageUser extends Equatable {
+  @JsonKey(name: "avatar_url")
   @HiveField(0)
   final String? avatarUrl;
 
@@ -189,41 +167,26 @@ class ChatwootEventMessageUser extends Equatable{
   @HiveField(3)
   final String? thumbnail;
 
+  ChatwootEventMessageUser(
+      {this.id, this.avatarUrl, this.name, this.thumbnail});
 
-  ChatwootEventMessageUser({
-    this.id,
-    this.avatarUrl,
-    this.name,
-    this.thumbnail
-  });
-
-
-  factory ChatwootEventMessageUser.fromJson(Map<String, dynamic> json) => _$ChatwootEventMessageUserFromJson(json);
+  factory ChatwootEventMessageUser.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootEventMessageUserFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatwootEventMessageUserToJson(this);
 
   @override
-  List<Object?> get props => [
-    id,
-    avatarUrl,
-    name,
-    thumbnail
-  ];
-
+  List<Object?> get props => [id, avatarUrl, name, thumbnail];
 }
 
-enum ChatwootEventType{
-  welcome,
-  ping,
-  confirm_subscription
-}
+enum ChatwootEventType { welcome, ping, confirm_subscription }
 
-String? eventTypeToJson(ChatwootEventType? actionType){
+String? eventTypeToJson(ChatwootEventType? actionType) {
   return actionType.toString();
 }
 
-ChatwootEventType? eventTypeFromJson(String? value){
-  switch(value){
+ChatwootEventType? eventTypeFromJson(String? value) {
+  switch (value) {
     case "welcome":
       return ChatwootEventType.welcome;
     case "ping":
@@ -235,15 +198,15 @@ ChatwootEventType? eventTypeFromJson(String? value){
   }
 }
 
-enum ChatwootEventMessageType{
+enum ChatwootEventMessageType {
   presence_update,
   message_created,
   conversation_typing_off,
   conversation_typing_on
 }
 
-String? eventMessageTypeToJson(ChatwootEventMessageType? actionType){
-  switch(actionType){
+String? eventMessageTypeToJson(ChatwootEventMessageType? actionType) {
+  switch (actionType) {
     case null:
       return null;
     case ChatwootEventMessageType.conversation_typing_on:
@@ -259,8 +222,8 @@ String? eventMessageTypeToJson(ChatwootEventMessageType? actionType){
   }
 }
 
-ChatwootEventMessageType? eventMessageTypeFromJson(String? value){
-  switch(value){
+ChatwootEventMessageType? eventMessageTypeFromJson(String? value) {
+  switch (value) {
     case "presence.update":
       return ChatwootEventMessageType.presence_update;
     case "message.created":

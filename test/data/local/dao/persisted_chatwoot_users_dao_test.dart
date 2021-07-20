@@ -6,11 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() {
-
-  group("Persisted Chatwoot User Dao Tests", (){
-
-    late PersistedChatwootUserDao dao ;
-    late Box<String> mockClientInstanceKeyToUserBox ;
+  group("Persisted Chatwoot User Dao Tests", () {
+    late PersistedChatwootUserDao dao;
+    late Box<String> mockClientInstanceKeyToUserBox;
     late Box<ChatwootUser> mockUserBox;
     final testClientInstanceKey = "testKey";
 
@@ -20,35 +18,31 @@ void main() {
         name: "name",
         email: "email",
         avatarUrl: "avatarUrl",
-        customAttributes: {}
-    );
+        customAttributes: {});
 
-    setUpAll((){
-      return Future(()async{
-
+    setUpAll(() {
+      return Future(() async {
         final hiveTestPath = Directory.current.path + '/test/hive_testing_path';
         Hive
           ..init(hiveTestPath)
           ..registerAdapter(ChatwootUserAdapter());
-
       });
     });
 
-    setUp((){
-      return Future(()async{
-
+    setUp(() {
+      return Future(() async {
         mockUserBox = await Hive.openBox(ChatwootUserBoxNames.USERS.toString());
-        mockClientInstanceKeyToUserBox = await Hive.openBox(ChatwootUserBoxNames.CLIENT_INSTANCE_TO_USER.toString());
+        mockClientInstanceKeyToUserBox = await Hive.openBox(
+            ChatwootUserBoxNames.CLIENT_INSTANCE_TO_USER.toString());
 
         dao = PersistedChatwootUserDao(
-            mockUserBox,
-            mockClientInstanceKeyToUserBox,
-            testClientInstanceKey
-        );
+            mockUserBox, mockClientInstanceKeyToUserBox, testClientInstanceKey);
       });
     });
 
-    test('Given user is successfully deleted when deleteUser is called, then getUser should return null', () async{
+    test(
+        'Given user is successfully deleted when deleteUser is called, then getUser should return null',
+        () async {
       //GIVEN
       await dao.saveUser(testUser);
 
@@ -59,8 +53,9 @@ void main() {
       expect(dao.getUser(), null);
     });
 
-    test('Given user is successfully save when saveUser is called, then getUser should return saved user', () async{
-
+    test(
+        'Given user is successfully save when saveUser is called, then getUser should return saved user',
+        () async {
       //WHEN
       await dao.saveUser(testUser);
 
@@ -68,7 +63,9 @@ void main() {
       expect(dao.getUser(), testUser);
     });
 
-    test('Given user is successfully retrieved when getUser is called, then retrieved user should not be null', () async{
+    test(
+        'Given user is successfully retrieved when getUser is called, then retrieved user should not be null',
+        () async {
       //GIVEN
       await dao.saveUser(testUser);
 
@@ -79,24 +76,9 @@ void main() {
       expect(retrievedUser, testUser);
     });
 
-    test('Given dao is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
-
-      //WHEN
-      await dao.onDispose();
-
-      HiveError? hiveError;
-      try{
-        mockUserBox.get(testUser.identifier);
-        mockClientInstanceKeyToUserBox.get(testClientInstanceKey);
-      }on HiveError catch(e){
-        //THEN
-        hiveError = e;
-      }
-      expect(hiveError != null, true);
-    });
-
-
-    test('Given users are successfully cleared when clearAll is called, then retrieving a user should be null', () async{
+    test(
+        'Given users are successfully cleared when clearAll is called, then retrieving a user should be null',
+        () async {
       //GIVEN
       await dao.saveUser(testUser);
 
@@ -107,24 +89,22 @@ void main() {
       expect(dao.getUser(), null);
     });
 
-    tearDown((){
-      return Future(()async{
-        try{
+    tearDown(() {
+      return Future(() async {
+        try {
           await mockUserBox.clear();
           await mockClientInstanceKeyToUserBox.clear();
-        }on HiveError catch(e){
+        } on HiveError catch (e) {
           print(e);
         }
       });
     });
 
-    tearDownAll((){
-      return Future(()async{
+    tearDownAll(() {
+      return Future(() async {
         await mockUserBox.close();
         await mockClientInstanceKeyToUserBox.close();
       });
     });
-
   });
-  
 }

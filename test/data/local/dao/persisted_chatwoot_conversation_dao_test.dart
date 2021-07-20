@@ -10,20 +10,18 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../utils/test_resources_util.dart';
 
 void main() {
-
-  group("Persisted Chatwoot Conversation Dao Tests", (){
-
-    late PersistedChatwootConversationDao dao ;
-    late Box<String> mockClientInstanceKeyToConversationBox ;
+  group("Persisted Chatwoot Conversation Dao Tests", () {
+    late PersistedChatwootConversationDao dao;
+    late Box<String> mockClientInstanceKeyToConversationBox;
     late Box<ChatwootConversation> mockConversationBox;
     final testClientInstanceKey = "testKey";
 
     late final ChatwootConversation testConversation;
 
-    setUpAll((){
-      return Future(()async{
-
-        testConversation = ChatwootConversation.fromJson(await TestResourceUtil.readJsonResource(fileName: "conversation"));
+    setUpAll(() {
+      return Future(() async {
+        testConversation = ChatwootConversation.fromJson(
+            await TestResourceUtil.readJsonResource(fileName: "conversation"));
 
         final hiveTestPath = Directory.current.path + '/test/hive_testing_path';
         Hive
@@ -31,25 +29,25 @@ void main() {
           ..registerAdapter(ChatwootConversationAdapter())
           ..registerAdapter(ChatwootContactAdapter())
           ..registerAdapter(ChatwootMessageAdapter());
-
       });
     });
 
-    setUp((){
-      return Future(()async{
+    setUp(() {
+      return Future(() async {
+        mockConversationBox = await Hive.openBox(
+            ChatwootConversationBoxNames.CONVERSATIONS.toString());
+        mockClientInstanceKeyToConversationBox = await Hive.openBox(
+            ChatwootConversationBoxNames.CLIENT_INSTANCE_TO_CONVERSATIONS
+                .toString());
 
-        mockConversationBox = await Hive.openBox(ChatwootConversationBoxNames.CONVERSATIONS.toString());
-        mockClientInstanceKeyToConversationBox = await Hive.openBox(ChatwootConversationBoxNames.CLIENT_INSTANCE_TO_CONVERSATIONS.toString());
-
-        dao = PersistedChatwootConversationDao(
-            mockConversationBox,
-            mockClientInstanceKeyToConversationBox,
-            testClientInstanceKey
-        );
+        dao = PersistedChatwootConversationDao(mockConversationBox,
+            mockClientInstanceKeyToConversationBox, testClientInstanceKey);
       });
     });
 
-    test('Given conversation is successfully deleted when deleteConversation is called, then getConversation should return null', () async{
+    test(
+        'Given conversation is successfully deleted when deleteConversation is called, then getConversation should return null',
+        () async {
       //GIVEN
       await dao.saveConversation(testConversation);
 
@@ -60,8 +58,9 @@ void main() {
       expect(dao.getConversation(), null);
     });
 
-    test('Given conversation is successfully save when saveConversation is called, then getConversation should return saved conversation', () async{
-
+    test(
+        'Given conversation is successfully save when saveConversation is called, then getConversation should return saved conversation',
+        () async {
       //WHEN
       await dao.saveConversation(testConversation);
 
@@ -69,7 +68,9 @@ void main() {
       expect(dao.getConversation(), testConversation);
     });
 
-    test('Given conversation is successfully retrieved when getConversation is called, then retrieved conversation should not be null', () async{
+    test(
+        'Given conversation is successfully retrieved when getConversation is called, then retrieved conversation should not be null',
+        () async {
       //GIVEN
       await dao.saveConversation(testConversation);
 
@@ -80,8 +81,9 @@ void main() {
       expect(retrievedConversation, testConversation);
     });
 
-
-    test('Given conversations are successfully cleared when clearAll is called, then retrieving a conversation should be null', () async{
+    test(
+        'Given conversations are successfully cleared when clearAll is called, then retrieving a conversation should be null',
+        () async {
       //GIVEN
       await dao.saveConversation(testConversation);
 
@@ -92,39 +94,22 @@ void main() {
       expect(dao.getConversation(), null);
     });
 
-    test('Given dao is successfully disposed when onDispose is called, then hive boxes should be closed', () async{
-
-      //WHEN
-      await dao.onDispose();
-
-      HiveError? hiveError;
-      try{
-        mockConversationBox.get(testConversation.id);
-        mockClientInstanceKeyToConversationBox.get(testClientInstanceKey);
-      }on HiveError catch(e){
-        //THEN
-        hiveError = e;
-      }
-      expect(hiveError != null, true);
-    });
-
-    tearDown((){
-      return Future(()async{
-        try{
+    tearDown(() {
+      return Future(() async {
+        try {
           await mockConversationBox.clear();
           await mockClientInstanceKeyToConversationBox.clear();
-        }on HiveError catch(e){
+        } on HiveError catch (e) {
           print(e);
         }
       });
     });
 
-    tearDownAll((){
-      return Future(()async{
+    tearDownAll(() {
+      return Future(() async {
         await mockConversationBox.close();
         await mockClientInstanceKeyToConversationBox.close();
       });
     });
-
   });
 }

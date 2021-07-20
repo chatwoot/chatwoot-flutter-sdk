@@ -1,8 +1,9 @@
 # Integrate Chatwoot with Flutter app
 
+Integrate Chatwoot flutter client into your flutter app and talk to your visitors in real time. [Chatwoot](https://github.com/chatwoot/chatwoot) helps you to chat with your visitors and provide exceptional support in real time. To use Chatwoot in your flutter app, follow the steps described below.
+
 ![Screenshot_chatwoot](https://user-images.githubusercontent.com/22669874/125801289-14631c60-9788-4ff6-af2b-1c27dcc030af.png)
 
-Integrate Chatwoot flutter client into your flutter app and talk to your visitors in real time. [Chatwoot](https://github.com/chatwoot/chatwoot) helps you to chat with your visitors and provide exceptional support in real time. To use Chatwoot in your flutter app, follow the steps described below.
 
 ## 1. Create an Api inbox in Chatwoot
 
@@ -23,8 +24,8 @@ NB: This library uses [Hive](https://pub.dev/packages/hive) for local storage an
 ## 3. How to use
 Replace `baseUrl` and `inboxIdentifier` with appropriate values. See [](https://www.chatwoot.com/docs/product/channels/api/client-apis) for more information on how to obtain your `baseUrl` and `inboxIdentifier`
 
-### a. Using ChatwootChatPage Widget
-Use ChatwootChatPage widget, for faster simpler integration with out of the box chat ui. Customize chat UI theme by passing a `ChatwootChatTheme` with your custom theme colors and more.
+### a. Using ChatwootChat Widget
+Use ChatwootChat widget, for faster simpler integration with out of the box chat ui. Customize chat UI theme by passing a `ChatwootChatTheme` with your custom theme colors and more.
 
 ```
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
@@ -61,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChatwootChatPage(
+    return ChatwootChat(
       baseUrl: "<<<your-chatwoot-base-url-here>>>",
       inboxIdentifier: "<<<your-inbox-identifier-here>>>",
       user: ChatwootUser(

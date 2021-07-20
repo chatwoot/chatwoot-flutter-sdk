@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-
 
 const CHATWOOT_COLOR_PRIMARY = Color(0xff1f93ff);
 const CHATWOOT_BG_COLOR = Color(0xfff7f0fc);
@@ -110,37 +108,37 @@ class ChatwootChatTheme extends ChatTheme {
       height: 1.333,
     ),
   }) : super(
-    attachmentButtonIcon: attachmentButtonIcon,
-    backgroundColor: backgroundColor,
-    dateDividerTextStyle: dateDividerTextStyle,
-    deliveredIcon: deliveredIcon,
-    documentIcon: documentIcon,
-    emptyChatPlaceholderTextStyle: emptyChatPlaceholderTextStyle,
-    errorColor: errorColor,
-    errorIcon: errorIcon,
-    inputBackgroundColor: inputBackgroundColor,
-    inputBorderRadius: inputBorderRadius,
-    inputTextColor: inputTextColor,
-    inputTextStyle: inputTextStyle,
-    messageBorderRadius: messageBorderRadius,
-    primaryColor: primaryColor,
-    receivedMessageBodyTextStyle: receivedMessageBodyTextStyle,
-    receivedMessageCaptionTextStyle: receivedMessageCaptionTextStyle,
-    receivedMessageDocumentIconColor: receivedMessageDocumentIconColor,
-    receivedMessageLinkDescriptionTextStyle:
-    receivedMessageLinkDescriptionTextStyle,
-    receivedMessageLinkTitleTextStyle: receivedMessageLinkTitleTextStyle,
-    secondaryColor: secondaryColor,
-    seenIcon: seenIcon,
-    sendButtonIcon: sendButtonIcon,
-    sentMessageBodyTextStyle: sentMessageBodyTextStyle,
-    sentMessageCaptionTextStyle: sentMessageCaptionTextStyle,
-    sentMessageDocumentIconColor: sentMessageDocumentIconColor,
-    sentMessageLinkDescriptionTextStyle:
-    sentMessageLinkDescriptionTextStyle,
-    sentMessageLinkTitleTextStyle: sentMessageLinkTitleTextStyle,
-    userAvatarNameColors: userAvatarNameColors,
-    userAvatarTextStyle: userAvatarTextStyle,
-    userNameTextStyle: userNameTextStyle,
-  );
+          attachmentButtonIcon: attachmentButtonIcon,
+          backgroundColor: backgroundColor,
+          dateDividerTextStyle: dateDividerTextStyle,
+          deliveredIcon: deliveredIcon,
+          documentIcon: documentIcon,
+          emptyChatPlaceholderTextStyle: emptyChatPlaceholderTextStyle,
+          errorColor: errorColor,
+          errorIcon: errorIcon,
+          inputBackgroundColor: inputBackgroundColor,
+          inputBorderRadius: inputBorderRadius,
+          inputTextColor: inputTextColor,
+          inputTextStyle: inputTextStyle,
+          messageBorderRadius: messageBorderRadius,
+          primaryColor: primaryColor,
+          receivedMessageBodyTextStyle: receivedMessageBodyTextStyle,
+          receivedMessageCaptionTextStyle: receivedMessageCaptionTextStyle,
+          receivedMessageDocumentIconColor: receivedMessageDocumentIconColor,
+          receivedMessageLinkDescriptionTextStyle:
+              receivedMessageLinkDescriptionTextStyle,
+          receivedMessageLinkTitleTextStyle: receivedMessageLinkTitleTextStyle,
+          secondaryColor: secondaryColor,
+          seenIcon: seenIcon,
+          sendButtonIcon: sendButtonIcon,
+          sentMessageBodyTextStyle: sentMessageBodyTextStyle,
+          sentMessageCaptionTextStyle: sentMessageCaptionTextStyle,
+          sentMessageDocumentIconColor: sentMessageDocumentIconColor,
+          sentMessageLinkDescriptionTextStyle:
+              sentMessageLinkDescriptionTextStyle,
+          sentMessageLinkTitleTextStyle: sentMessageLinkTitleTextStyle,
+          userAvatarNameColors: userAvatarNameColors,
+          userAvatarTextStyle: userAvatarTextStyle,
+          userNameTextStyle: userNameTextStyle,
+        );
 }
