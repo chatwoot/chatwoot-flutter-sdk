@@ -20,6 +20,7 @@ class ChatwootChatDialog extends StatefulWidget {
     ChatwootUser? user,
     Color? primaryColor,
     Color? secondaryColor,
+    Color? backgroundColor,
     ChatwootL10n? l10n,
     DateFormat? timeFormat,
     DateFormat? dateFormat,
@@ -35,6 +36,7 @@ class ChatwootChatDialog extends StatefulWidget {
             enablePersistence: enablePersistence,
             primaryColor: primaryColor,
             secondaryColor: secondaryColor,
+            backgroundColor: backgroundColor,
             l10n: l10n,
             timeFormat: timeFormat,
             dateFormat: dateFormat,
@@ -66,6 +68,9 @@ class ChatwootChatDialog extends StatefulWidget {
   /// Secondary color for [ChatwootChatTheme]
   final Color? secondaryColor;
 
+  /// Secondary color for [ChatwootChatTheme]
+  final Color? backgroundColor;
+
   /// See [ChatwootL10n]
   final String title;
 
@@ -87,6 +92,7 @@ class ChatwootChatDialog extends StatefulWidget {
     this.user,
     this.primaryColor,
     this.secondaryColor,
+    this.backgroundColor,
     this.l10n,
     this.timeFormat,
     this.dateFormat,
@@ -176,6 +182,14 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
               baseUrl: widget.baseUrl,
               inboxIdentifier: widget.inboxIdentifier,
               user: widget.user,
+              enablePersistence: widget.enablePersistence,
+              timeFormat: widget.timeFormat,
+              dateFormat: widget.dateFormat,
+              theme: ChatwootChatTheme(
+                primaryColor: widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY,
+                secondaryColor: widget.secondaryColor ?? Colors.white,
+                backgroundColor: widget.backgroundColor ?? CHATWOOT_BG_COLOR,
+              ),
               onConversationIsOffline: () {
                 setState(() {
                   status = localizedStrings.offlineText;

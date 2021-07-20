@@ -4,6 +4,7 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_client_sdk/ui/chatwoot_chat_theme.dart';
+import 'package:chatwoot_client_sdk/ui/chatwoot_l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -53,17 +54,16 @@ class ChatwootChat extends StatefulWidget {
   /// See [Input.onTextChanged]
   final void Function(String)? onTextChanged;
 
-  /// See [Message.showUserAvatars]
+  /// Show avatars for received messages.
   final bool showUserAvatars;
 
-  /// Show user names for received messages. Useful for a group chat. Will be
-  /// shown only on text messages.
+  /// Show user names for received messages.
   final bool showUserNames;
 
   final ChatwootChatTheme? theme;
 
-  /// See [ChatL10n]
-  final ChatL10n? l10n;
+  /// See [ChatwootL10n]
+  final ChatwootL10n? l10n;
 
   /// See [Chat.timeFormat]
   final DateFormat? timeFormat;
