@@ -86,7 +86,7 @@ class ChatwootClient {
 
   /// Creates an instance of [ChatwootClient] with the [baseUrl] of your chatwoot installation,
   /// [inboxIdentifier] for the targeted inbox. Specify custom user details using [user] and [callbacks] for
-  /// handling chatwoot events. By default persistence is enabled, to disable persistence use [enablePersistence]
+  /// handling chatwoot events. By default persistence is enabled, to disable persistence set [enablePersistence] as false
   static Future<ChatwootClient> create(
       {required String baseUrl,
       required String inboxIdentifier,

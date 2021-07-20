@@ -29,6 +29,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  _showChatwootDialog() {
+    ChatwootChatDialog.show(
+      context,
+      baseUrl: "<<<your-chatwoot-base-url-here>>>",
+      inboxIdentifier: "<<<your-inbox-identifier-here>>>",
+      title: "Chatwoot Support",
+      user: ChatwootUser(
+        identifier: "test@test.com",
+        name: "Tester test",
+        email: "test@test.com",
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,42 +62,42 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(
           "Chatwoot",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset("assets/chatwoot_logo.png"),
+        leading: InkWell(
+          onTap: () => _showChatwootDialog(),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset("assets/chatwoot_logo.png"),
+          ),
         ),
         backgroundColor: Colors.white,
       ),
-      onWelcome: (){
+      onWelcome: () {
         print("Welcome event received");
       },
-      onPing: (){
+      onPing: () {
         print("Ping event received");
       },
-      onConfirmedSubscription: (){
+      onConfirmedSubscription: () {
         print("Confirmation event received");
       },
-      onMessageDelivered: (_){
+      onMessageDelivered: (_) {
         print("Message delivered event received");
       },
-      onMessageSent: (_){
+      onMessageSent: (_) {
         print("Message sent event received");
       },
-      onConversationIsOffline: (){
+      onConversationIsOffline: () {
         print("Conversation is offline event received");
       },
-      onConversationIsOnline: (){
+      onConversationIsOnline: () {
         print("Conversation is online event received");
       },
-      onConversationStoppedTyping: (){
+      onConversationStoppedTyping: () {
         print("Conversation stopped typing event received");
       },
-      onConversationStartedTyping: (){
+      onConversationStartedTyping: () {
         print("Conversation started typing event received");
       },
     );

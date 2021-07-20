@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 const CHATWOOT_COLOR_PRIMARY = Color(0xff1f93ff);
-const CHATWOOT_BG_COLOR = Color(0xfff7f0fc);
+const CHATWOOT_BG_COLOR = Color(0xfff4f6fb);
 const CHATWOOT_AVATAR_COLORS = [CHATWOOT_COLOR_PRIMARY];
 
 /// Default chatwoot chat theme which extends [ChatTheme]
