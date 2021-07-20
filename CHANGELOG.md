@@ -20,3 +20,7 @@
 
 * Added ChatwootChatModal 
 * Updated README.md
+
+## [0.0.6] - Jul 20,2021
+
+* Fixed received message widget overflow on mobile screens
