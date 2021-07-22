@@ -13,6 +13,8 @@ Refer to [Website Channel](https://www.chatwoot.com/docs/product/channels/api/cr
 
 ## 2. Add the package to your project
 
+Run the command below in your terminal
+
 `flutter pub add chatwoot_client_sdk`
 
 or
@@ -24,7 +26,7 @@ to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubsp
 NB: This library uses [Hive](https://pub.dev/packages/hive) for local storage and [Flutter Chat UI](https://pub.dev/packages/flutter_chat_ui) for its user interface.
 
 ## 3. How to use
-Replace `baseUrl` and `inboxIdentifier` with appropriate values. See [](https://www.chatwoot.com/docs/product/channels/api/client-apis) for more information on how to obtain your `baseUrl` and `inboxIdentifier`
+Replace `baseUrl` and `inboxIdentifier` with appropriate values. See [here](https://www.chatwoot.com/docs/product/channels/api/client-apis) for more information on how to obtain your `baseUrl` and `inboxIdentifier`
 
 ### a. Using ChatwootChatDialog
 Simply call `ChatwootChatDialog.show` with your parameters to show chat dialog. To close dialog use `Navigator.pop(context)`.
