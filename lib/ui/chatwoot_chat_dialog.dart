@@ -189,10 +189,13 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
                 timeFormat: widget.timeFormat,
                 dateFormat: widget.dateFormat,
                 theme: ChatwootChatTheme(
-                  primaryColor: widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY,
-                  secondaryColor: widget.secondaryColor ?? Colors.white,
-                  backgroundColor: widget.backgroundColor ?? CHATWOOT_BG_COLOR,
-                ),
+                    primaryColor: widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY,
+                    secondaryColor: widget.secondaryColor ?? Colors.white,
+                    backgroundColor:
+                        widget.backgroundColor ?? CHATWOOT_BG_COLOR,
+                    userAvatarNameColors: [
+                      widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY
+                    ]),
                 isPresentedInDialog: true,
                 onConversationIsOffline: () {
                   setState(() {
