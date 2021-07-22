@@ -196,6 +196,7 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
                     userAvatarNameColors: [
                       widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY
                     ]),
+                isPresentedInDialog: true,
                 onConversationIsOffline: () {
                   setState(() {
                     status = localizedStrings.offlineText;

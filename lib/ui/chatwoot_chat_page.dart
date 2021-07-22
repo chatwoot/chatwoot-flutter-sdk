@@ -110,6 +110,9 @@ class ChatwootChat extends StatefulWidget {
   ///See [ChatwootCallbacks.onError]
   final void Function(ChatwootClientException)? onError;
 
+  ///Horizontal padding is reduced if set to true
+  final bool isPresentedInDialog;
+
   const ChatwootChat({
     Key? key,
     required this.baseUrl,
@@ -142,6 +145,7 @@ class ChatwootChat extends StatefulWidget {
     this.onConversationIsOnline,
     this.onConversationIsOffline,
     this.onError,
+    this.isPresentedInDialog = false
   }) : super(key: key);
 
   @override
@@ -361,6 +365,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = widget.isPresentedInDialog ? 8.0 : 16.0;
     return Scaffold(
       appBar: widget.appBar,
       backgroundColor: widget.theme?.backgroundColor ?? CHATWOOT_BG_COLOR,
@@ -368,7 +373,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
         children: [
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+              padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding),
               child: Chat(
                 messages: _messages,
                 onMessageTap: _handleMessageTap,
