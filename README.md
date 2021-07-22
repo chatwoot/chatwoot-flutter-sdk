@@ -9,7 +9,7 @@ Integrate Chatwoot flutter client into your flutter app and talk to your visitor
 
 ## 1. Create an Api inbox in Chatwoot
 
-Refer to [Website Channel](https://www.chatwoot.com/docs/product/channels/live-chat/create-website-channel) document.
+Refer to [Website Channel](https://www.chatwoot.com/docs/product/channels/api/create-channel) document.
 
 ## 2. Add the package to your project
 
