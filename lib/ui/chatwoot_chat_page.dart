@@ -113,40 +113,40 @@ class ChatwootChat extends StatefulWidget {
   ///Horizontal padding is reduced if set to true
   final bool isPresentedInDialog;
 
-  const ChatwootChat({
-    Key? key,
-    required this.baseUrl,
-    required this.inboxIdentifier,
-    this.enablePersistence = true,
-    this.user,
-    this.appBar,
-    this.onEndReached,
-    this.onEndReachedThreshold,
-    this.onMessageLongPress,
-    this.onMessageTap,
-    this.onSendPressed,
-    this.onTextChanged,
-    this.showUserAvatars = true,
-    this.showUserNames = true,
-    this.theme,
-    this.l10n,
-    this.timeFormat,
-    this.dateFormat,
-    this.onWelcome,
-    this.onPing,
-    this.onConfirmedSubscription,
-    this.onMessageReceived,
-    this.onMessageSent,
-    this.onMessageDelivered,
-    this.onPersistedMessagesRetrieved,
-    this.onMessagesRetrieved,
-    this.onConversationStartedTyping,
-    this.onConversationStoppedTyping,
-    this.onConversationIsOnline,
-    this.onConversationIsOffline,
-    this.onError,
-    this.isPresentedInDialog = false
-  }) : super(key: key);
+  const ChatwootChat(
+      {Key? key,
+      required this.baseUrl,
+      required this.inboxIdentifier,
+      this.enablePersistence = true,
+      this.user,
+      this.appBar,
+      this.onEndReached,
+      this.onEndReachedThreshold,
+      this.onMessageLongPress,
+      this.onMessageTap,
+      this.onSendPressed,
+      this.onTextChanged,
+      this.showUserAvatars = true,
+      this.showUserNames = true,
+      this.theme,
+      this.l10n,
+      this.timeFormat,
+      this.dateFormat,
+      this.onWelcome,
+      this.onPing,
+      this.onConfirmedSubscription,
+      this.onMessageReceived,
+      this.onMessageSent,
+      this.onMessageDelivered,
+      this.onPersistedMessagesRetrieved,
+      this.onMessagesRetrieved,
+      this.onConversationStartedTyping,
+      this.onConversationStoppedTyping,
+      this.onConversationIsOnline,
+      this.onConversationIsOffline,
+      this.onError,
+      this.isPresentedInDialog = false})
+      : super(key: key);
 
   @override
   _ChatwootChatState createState() => _ChatwootChatState();
@@ -373,7 +373,8 @@ class _ChatwootChatState extends State<ChatwootChat> {
         children: [
           Flexible(
             child: Padding(
-              padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding),
+              padding: EdgeInsets.only(
+                  left: horizontalPadding, right: horizontalPadding),
               child: Chat(
                 messages: _messages,
                 onMessageTap: _handleMessageTap,
