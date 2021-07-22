@@ -69,6 +69,7 @@ class ChatwootChatTheme extends ChatTheme {
     Color secondaryColor = Colors.white,
     Widget? seenIcon,
     Widget? sendButtonIcon,
+    Widget? sendingIcon,
     TextStyle sentMessageBodyTextStyle = const TextStyle(
       color: Colors.white,
       fontSize: 16,
@@ -131,6 +132,7 @@ class ChatwootChatTheme extends ChatTheme {
           secondaryColor: secondaryColor,
           seenIcon: seenIcon,
           sendButtonIcon: sendButtonIcon,
+          sendingIcon: sendingIcon,
           sentMessageBodyTextStyle: sentMessageBodyTextStyle,
           sentMessageCaptionTextStyle: sentMessageCaptionTextStyle,
           sentMessageDocumentIconColor: sentMessageDocumentIconColor,
