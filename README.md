@@ -4,7 +4,7 @@
 
 Integrate Chatwoot flutter client into your flutter app and talk to your visitors in real time. [Chatwoot](https://github.com/chatwoot/chatwoot) helps you to chat with your visitors and provide exceptional support in real time. To use Chatwoot in your flutter app, follow the steps described below.
 
-![final chatwoot screenshot](https://user-images.githubusercontent.com/22669874/126673917-f8bdd47a-7a4d-4241-8b46-27ef108a0e23.png)
+<img src="https://user-images.githubusercontent.com/22669874/126673917-f8bdd47a-7a4d-4241-8b46-27ef108a0e23.png" alt="chatwoot screenshot" height="560"/>
 
 
 ## 1. Create an Api inbox in Chatwoot
