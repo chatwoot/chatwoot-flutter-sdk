@@ -24,3 +24,12 @@
 ## [0.0.6] - Jul 20,2021
 
 * Fixed received message widget overflow on mobile screens
+
+## [0.0.7] - Jul 22,2021
+
+* Fixed ChatwootChatDialog avatar color
+* Fixed ChatwootChatDialog chat bubble overflow
+
+## [0.0.8] - Jul 22,2021
+
+* Update dependencies
