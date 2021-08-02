@@ -146,6 +146,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
         if (!_isListeningForEvents) {
           _isListeningForEvents = true;
         }
+        _publishPresenceUpdates();
         callbacks.onConfirmedSubscription?.call();
       } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.message_created) {
@@ -158,6 +159,14 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
         } else {
           callbacks.onMessageReceived?.call(message);
         }
+      } else if (chatwootEvent.message?.event ==
+          ChatwootEventMessageType.message_updated) {
+        print("here comes the updated message: $event");
+
+        final message = chatwootEvent.message!.data!.getMessage();
+        localStorage.messagesDao.saveMessage(message);
+
+        callbacks.onMessageUpdated?.call(message);
       } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.conversation_typing_off) {
         callbacks.onConversationStoppedTyping?.call();
@@ -193,6 +202,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   void dispose() {
     localStorage.dispose();
     callbacks = ChatwootCallbacks();
+    _timer?.cancel();
     _subscriptions.forEach((subs) {
       subs.cancel();
     });
@@ -203,5 +213,15 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   void sendAction(ChatwootActionType action) {
     clientService.sendAction(
         localStorage.contactDao.getContact()!.pubsubToken, action);
+  }
+
+  Timer? _timer;
+
+  ///Publishes presence update to websocket channel at a 30 second interval
+  void _publishPresenceUpdates() {
+    sendAction(ChatwootActionType.update_presence);
+    _timer = Timer.periodic(Duration(seconds: 30), (timer) {
+      sendAction(ChatwootActionType.update_presence);
+    });
   }
 }

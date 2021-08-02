@@ -201,8 +201,10 @@ ChatwootEventType? eventTypeFromJson(String? value) {
 enum ChatwootEventMessageType {
   presence_update,
   message_created,
+  message_updated,
   conversation_typing_off,
-  conversation_typing_on
+  conversation_typing_on,
+  conversation_status_changed
 }
 
 String? eventMessageTypeToJson(ChatwootEventMessageType? actionType) {
@@ -217,6 +219,10 @@ String? eventMessageTypeToJson(ChatwootEventMessageType? actionType) {
       return "presence.update";
     case ChatwootEventMessageType.message_created:
       return "message.created";
+    case ChatwootEventMessageType.message_updated:
+      return "message.updated";
+    case ChatwootEventMessageType.conversation_status_changed:
+      return "conversation.status_changed";
     default:
       return actionType.toString();
   }
@@ -228,10 +234,14 @@ ChatwootEventMessageType? eventMessageTypeFromJson(String? value) {
       return ChatwootEventMessageType.presence_update;
     case "message.created":
       return ChatwootEventMessageType.message_created;
+    case "message.updated":
+      return ChatwootEventMessageType.message_updated;
     case "conversation.typing_on":
       return ChatwootEventMessageType.conversation_typing_on;
     case "conversation.typing_off":
       return ChatwootEventMessageType.conversation_typing_off;
+    case "conversation.status_changed":
+      return ChatwootEventMessageType.conversation_status_changed;
     default:
       return null;
   }

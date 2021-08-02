@@ -282,6 +282,8 @@ void main() {
         () async {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
+      when(mockChatwootClientService.sendAction(any, any))
+          .thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConfirmedSubscription)
           .thenAnswer((_) => () {});
       final dynamic confirmSubscriptionEvent = {"type": "confirm_subscription"};
@@ -293,6 +295,8 @@ void main() {
 
       //THEN
       verify(mockChatwootCallbacks.onConfirmedSubscription?.call());
+      verify(mockChatwootClientService.sendAction(
+          testContact.pubsubToken, ChatwootActionType.update_presence));
     });
 
     test(
@@ -388,41 +392,27 @@ void main() {
     });
 
     test(
-        'Given new message event is received when listening for events, then callback onMessageReceived event should be triggered',
+        'Given an updated message event is received when listening for events, then callback onMessageUpdated event should be triggered',
         () async {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockMessagesDao.saveMessage(any))
           .thenAnswer((_) => Future.microtask(() {}));
-      when(mockChatwootCallbacks.onMessageReceived).thenAnswer((_) => (_) {});
-      final dynamic messageReceivedEvent = {
-        "type": "message",
-        "message": {
-          "event": "message.created",
-          "data": {
-            "id": 0,
-            "content": "content",
-            "echo_id": "echo_id",
-            "message_type": 1,
-            "content_type": "contentType",
-            "content_attributes": "contentAttributes",
-            "created_at": DateTime.now().toString(),
-            "conversation_id": 0,
-            "attachments": [],
-          }
-        }
-      };
+      when(mockChatwootCallbacks.onMessageUpdated).thenAnswer((_) => (_) {});
+      final dynamic messageUpdatedEvent =
+          await TestResourceUtil.readJsonResource(
+              fileName: "websocket_message_updated");
 
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(jsonEncode(messageReceivedEvent));
+      mockWebSocketStream.add(jsonEncode(messageUpdatedEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
       final message =
-          ChatwootMessage.fromJson(messageReceivedEvent["message"]["data"]);
-      verify(mockChatwootCallbacks.onMessageReceived?.call(message));
+          ChatwootMessage.fromJson(messageUpdatedEvent["message"]["data"]);
+      verify(mockChatwootCallbacks.onMessageUpdated?.call(message));
     });
 
     test(

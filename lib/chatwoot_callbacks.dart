@@ -43,6 +43,11 @@ class ChatwootCallbacks {
   ///See [ChatwootRepository.listenForEvents]
   void Function(ChatwootMessage)? onMessageReceived;
 
+  ///Triggered when a message created event/message [ChatwootEventMessageType.message_updated]
+  ///is received after connecting to the chatwoot websocket.
+  ///See [ChatwootRepository.listenForEvents]
+  void Function(ChatwootMessage)? onMessageUpdated;
+
   void Function(ChatwootMessage, String)? onMessageSent;
 
   ///Triggered when a message created event/message [ChatwootEventMessageType.message_created]
@@ -68,6 +73,7 @@ class ChatwootCallbacks {
     this.onMessageReceived,
     this.onMessageSent,
     this.onMessageDelivered,
+    this.onMessageUpdated,
     this.onPersistedMessagesRetrieved,
     this.onMessagesRetrieved,
     this.onConversationStartedTyping,

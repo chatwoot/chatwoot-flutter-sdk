@@ -15,19 +15,10 @@ class ChatwootActionData {
   Map<String, dynamic> toJson() => _$ChatwootActionDataToJson(this);
 }
 
-enum ChatwootActionType {
-  subscribe,
-  update_presence,
-  conversation_typing_on,
-  conversation_typing_off
-}
+enum ChatwootActionType { subscribe, update_presence }
 
 String actionTypeToJson(ChatwootActionType actionType) {
   switch (actionType) {
-    case ChatwootActionType.conversation_typing_off:
-      return "conversation.typing_off";
-    case ChatwootActionType.conversation_typing_on:
-      return "conversation.typing_on";
     case ChatwootActionType.update_presence:
       return "update_presence";
     case ChatwootActionType.subscribe:
@@ -37,10 +28,6 @@ String actionTypeToJson(ChatwootActionType actionType) {
 
 ChatwootActionType actionTypeFromJson(String? value) {
   switch (value) {
-    case "conversation.typing_on":
-      return ChatwootActionType.conversation_typing_on;
-    case "conversation.typing_off":
-      return ChatwootActionType.conversation_typing_on;
     case "update_presence":
       return ChatwootActionType.update_presence;
     case "subscribe":

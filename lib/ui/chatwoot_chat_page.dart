@@ -101,6 +101,9 @@ class ChatwootChat extends StatefulWidget {
   ///See [ChatwootCallbacks.onMessageDelivered]
   final void Function(ChatwootMessage)? onMessageDelivered;
 
+  ///See [ChatwootCallbacks.onMessageUpdated]
+  final void Function(ChatwootMessage)? onMessageUpdated;
+
   ///See [ChatwootCallbacks.onPersistedMessagesRetrieved]
   final void Function(List<ChatwootMessage>)? onPersistedMessagesRetrieved;
 
@@ -138,6 +141,7 @@ class ChatwootChat extends StatefulWidget {
       this.onMessageReceived,
       this.onMessageSent,
       this.onMessageDelivered,
+      this.onMessageUpdated,
       this.onPersistedMessagesRetrieved,
       this.onMessagesRetrieved,
       this.onConversationStartedTyping,
@@ -230,6 +234,11 @@ class _ChatwootChatState extends State<ChatwootChat> {
         _handleMessageSent(
             _chatwootMessageToTextMessage(chatwootMessage, echoId: echoId));
         widget.onMessageDelivered?.call(chatwootMessage);
+      },
+      onMessageUpdated: (chatwootMessage) {
+        _handleMessageUpdated(_chatwootMessageToTextMessage(chatwootMessage,
+            echoId: chatwootMessage.id.toString()));
+        widget.onMessageUpdated?.call(chatwootMessage);
       },
       onMessageSent: (chatwootMessage, echoId) {
         final textMessage = types.TextMessage(
@@ -340,6 +349,18 @@ class _ChatwootChatState extends State<ChatwootChat> {
     if (_messages[index].status == types.Status.seen) {
       return;
     }
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      setState(() {
+        _messages[index] = message;
+      });
+    });
+  }
+
+  void _handleMessageUpdated(
+    types.Message message,
+  ) {
+    final index = _messages.indexWhere((element) => element.id == message.id);
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       setState(() {
