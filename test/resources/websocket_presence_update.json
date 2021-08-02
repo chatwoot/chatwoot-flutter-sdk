@@ -1,0 +1,15 @@
+{
+  "identifier": "{\"channel\":\"RoomChannel\",\"pubsub_token\":\"token\",\"account_id\":1,\"user_id\":1}",
+  "message": {
+    "event": "presence.update",
+    "data": {
+      "account_id": 1,
+      "users": {
+        "1": "online"
+      },
+      "contacts": {
+        "1": "online"
+      }
+    }
+  }
+}

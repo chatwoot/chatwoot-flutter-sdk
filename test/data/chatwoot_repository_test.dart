@@ -306,9 +306,8 @@ void main() {
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationStartedTyping)
           .thenAnswer((_) => () {});
-      final dynamic typingOnEvent = {
-        "message": {"event": "conversation.typing_on"}
-      };
+      final dynamic typingOnEvent = await TestResourceUtil.readJsonResource(
+          fileName: "websocket_conversation_typing_on");
       repo.listenForEvents();
 
       //WHEN
@@ -326,15 +325,9 @@ void main() {
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationIsOnline)
           .thenAnswer((_) => () {});
-      final dynamic presenceUpdateOnlineEvent = {
-        "message": {
-          "data": {
-            "account_id": 5,
-            "users": {"5": "online"}
-          },
-          "event": "presence.update"
-        }
-      };
+      final dynamic presenceUpdateOnlineEvent =
+          await TestResourceUtil.readJsonResource(
+              fileName: "websocket_presence_update");
       repo.listenForEvents();
 
       //WHEN
@@ -352,15 +345,9 @@ void main() {
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationIsOffline)
           .thenAnswer((_) => () {});
-      final dynamic presenceUpdateOfflineEvent = {
-        "message": {
-          "data": {
-            "account_id": 5,
-            "users": {"5": "offline"}
-          },
-          "event": "presence.update"
-        }
-      };
+      final dynamic presenceUpdateOfflineEvent =
+          await TestResourceUtil.readJsonResource(
+              fileName: "websocket_presence_update");
       repo.listenForEvents();
 
       //WHEN
@@ -378,9 +365,8 @@ void main() {
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationStoppedTyping)
           .thenAnswer((_) => () {});
-      final dynamic typingOffEvent = {
-        "message": {"event": "conversation.typing_off"}
-      };
+      final dynamic typingOffEvent = await TestResourceUtil.readJsonResource(
+          fileName: "websocket_conversation_typing_off");
       repo.listenForEvents();
 
       //WHEN
