@@ -359,7 +359,7 @@ void main() {
       //THEN
       verify(mockChatwootCallbacks.onConversationIsOnline?.call());
       verify(mockChatwootCallbacks.onConversationIsOffline?.call());
-    });
+    }, timeout: Timeout(Duration(seconds: 45)));
 
     test(
         'Given typing off event is received when listening for events, then callback onConversationStoppedTyping event should be triggered',
