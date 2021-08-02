@@ -48,6 +48,8 @@ abstract class ChatwootRepository {
 
 class ChatwootRepositoryImpl extends ChatwootRepository {
   bool _isListeningForEvents = false;
+  Timer? _publishPresenceTimer;
+  Timer? _presenceResetTimer;
 
   ChatwootRepositoryImpl(
       {required ChatwootClientService clientService,
@@ -181,6 +183,8 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
         final isOnline = presenceStatuses.contains("online");
         if (isOnline) {
           callbacks.onConversationIsOnline?.call();
+          _presenceResetTimer?.cancel();
+          _startPresenceResetTimer();
         } else {
           callbacks.onConversationIsOffline?.call();
         }
@@ -202,7 +206,8 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   void dispose() {
     localStorage.dispose();
     callbacks = ChatwootCallbacks();
-    _timer?.cancel();
+    _presenceResetTimer?.cancel();
+    _publishPresenceTimer?.cancel();
     _subscriptions.forEach((subs) {
       subs.cancel();
     });
@@ -215,13 +220,18 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
         localStorage.contactDao.getContact()!.pubsubToken, action);
   }
 
-  Timer? _timer;
-
   ///Publishes presence update to websocket channel at a 30 second interval
   void _publishPresenceUpdates() {
     sendAction(ChatwootActionType.update_presence);
-    _timer = Timer.periodic(Duration(seconds: 30), (timer) {
+    _publishPresenceTimer = Timer.periodic(Duration(seconds: 30), (timer) {
       sendAction(ChatwootActionType.update_presence);
+    });
+  }
+
+  ///Triggers an offline presence event after 40 seconds without receiving a presence update event
+  void _startPresenceResetTimer() {
+    _presenceResetTimer = Timer.periodic(Duration(seconds: 40), (timer) {
+      callbacks.onConversationIsOffline?.call();
     });
   }
 }

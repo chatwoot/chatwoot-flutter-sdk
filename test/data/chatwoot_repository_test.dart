@@ -339,22 +339,25 @@ void main() {
     });
 
     test(
-        'Given offline presence update event is received when listening for events, then callback onConversationIsOffline event should be triggered',
+        'Given conversation is offline when listening for events, then callback onConversationIsOffline event should be triggered',
         () async {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationIsOffline)
           .thenAnswer((_) => () {});
-      final dynamic presenceUpdateOfflineEvent =
+      when(mockChatwootCallbacks.onConversationIsOnline)
+          .thenAnswer((_) => () {});
+      final dynamic presenceUpdateOnlineEvent =
           await TestResourceUtil.readJsonResource(
               fileName: "websocket_presence_update");
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(jsonEncode(presenceUpdateOfflineEvent));
-      await Future.delayed(Duration(seconds: 1));
+      mockWebSocketStream.add(jsonEncode(presenceUpdateOnlineEvent));
+      await Future.delayed(Duration(seconds: 41));
 
       //THEN
+      verify(mockChatwootCallbacks.onConversationIsOnline?.call());
       verify(mockChatwootCallbacks.onConversationIsOffline?.call());
     });
 
