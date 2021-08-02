@@ -232,6 +232,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   void _startPresenceResetTimer() {
     _presenceResetTimer = Timer.periodic(Duration(seconds: 40), (timer) {
       callbacks.onConversationIsOffline?.call();
+      _presenceResetTimer?.cancel();
     });
   }
 }
