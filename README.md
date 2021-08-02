@@ -1,4 +1,4 @@
-![build](https://github.com/EphraimNetWorks/test_cw_flutter_client/actions/workflows/develop-actions.yml/badge.svg) [![likes](https://badges.bar/chatwoot_client_sdk/likes)](https://pub.dev/packages/chatwoot_client_sdk/score) [![popularity](https://badges.bar/chatwoot_client_sdk/popularity)](https://pub.dev/packages/chatwoot_client_sdk/score) [![pub points](https://badges.bar/chatwoot_client_sdk/pub%20points)](https://pub.dev/packages/chatwoot_client_sdk/score)
+[![Pub Version](https://img.shields.io/pub/v/chatwoot_client_sdk?color=blueviolet)](https://pub.dev/packages/chatwoot_client_sdk) ![build](https://github.com/EphraimNetWorks/test_cw_flutter_client/actions/workflows/develop-actions.yml/badge.svg) [![likes](https://badges.bar/chatwoot_client_sdk/likes)](https://pub.dev/packages/chatwoot_client_sdk/score) [![popularity](https://badges.bar/chatwoot_client_sdk/popularity)](https://pub.dev/packages/chatwoot_client_sdk/score) [![pub points](https://badges.bar/chatwoot_client_sdk/pub%20points)](https://pub.dev/packages/chatwoot_client_sdk/score)
 
 # Integrate Chatwoot with Flutter app
 
