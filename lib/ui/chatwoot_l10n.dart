@@ -26,17 +26,22 @@ class ChatwootL10n extends ChatL10n {
   /// Accessibility label (hint) for the send button
   final String sendButtonAccessibilityLabel;
 
+  /// Message when agent resolves conversation
+  final String conversationResolvedMessage;
+
   /// Creates a new chatwoot l10n
-  const ChatwootL10n({
-    this.attachmentButtonAccessibilityLabel = "",
-    this.emptyChatPlaceholder = "",
-    this.fileButtonAccessibilityLabel = "",
-    this.onlineText = "online",
-    this.offlineText = "Typically replies in a few hours",
-    this.typingText = "typing...",
-    this.inputPlaceholder = "Type your message",
-    this.sendButtonAccessibilityLabel = "Send Message",
-  }) : super(
+  const ChatwootL10n(
+      {this.attachmentButtonAccessibilityLabel = "",
+      this.emptyChatPlaceholder = "",
+      this.fileButtonAccessibilityLabel = "",
+      this.onlineText = "Typically replies in a few hours",
+      this.offlineText = "We're away at the moment",
+      this.typingText = "typing...",
+      this.inputPlaceholder = "Type your message",
+      this.sendButtonAccessibilityLabel = "Send Message",
+      this.conversationResolvedMessage =
+          "Your ticket has been marked as resolved"})
+      : super(
             attachmentButtonAccessibilityLabel:
                 attachmentButtonAccessibilityLabel,
             emptyChatPlaceholder: emptyChatPlaceholder,

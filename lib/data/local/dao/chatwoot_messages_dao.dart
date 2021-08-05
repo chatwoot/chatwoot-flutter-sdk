@@ -38,6 +38,7 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao {
             _messageIdToClientInstanceKeyBox.get(key) == _clientInstanceKey);
 
     await _box.deleteAll(clientMessageIds);
+    await _messageIdToClientInstanceKeyBox.deleteAll(clientMessageIds);
   }
 
   @override
@@ -94,7 +95,7 @@ class PersistedChatwootMessagesDao extends ChatwootMessagesDao {
   @override
   Future<void> clearAll() async {
     await _box.clear();
-    await _box.clear();
+    await _messageIdToClientInstanceKeyBox.clear();
   }
 
   static Future<void> openDB() async {

@@ -177,7 +177,9 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
         callbacks.onConversationStartedTyping?.call();
       } else if (chatwootEvent.message?.event ==
               ChatwootEventMessageType.conversation_status_changed &&
-          chatwootEvent.message?.data?.status == "resolved") {
+          chatwootEvent.message?.data?.status == "resolved" &&
+          chatwootEvent.message?.data?.id ==
+              (localStorage.conversationDao.getConversation()?.id ?? 0)) {
         //delete conversation result
         localStorage.conversationDao.deleteConversation();
         localStorage.messagesDao.clear();
