@@ -58,8 +58,11 @@ class ChatwootCallbacks {
   ///Triggered when a conversation's messages persisted on device are successfully retrieved
   void Function(List<ChatwootMessage>)? onPersistedMessagesRetrieved;
 
-  ///Triggered a conversation's messages is successfully retrieved from remote server
+  ///Triggered when a conversation's messages is successfully retrieved from remote server
   void Function(List<ChatwootMessage>)? onMessagesRetrieved;
+
+  ///Triggered when an agent resolves the current conversation
+  void Function()? onConversationResolved;
 
   /// Triggered when any error occurs in chatwoot client's operations with the error
   ///
@@ -80,6 +83,7 @@ class ChatwootCallbacks {
     this.onConversationStoppedTyping,
     this.onConversationIsOnline,
     this.onConversationIsOffline,
+    this.onConversationResolved,
     this.onError,
   });
 }

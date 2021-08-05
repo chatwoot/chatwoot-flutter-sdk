@@ -381,6 +381,25 @@ void main() {
     });
 
     test(
+        'Given conversation status changed event is received when listening for events, then callback onConversationResolved event should be triggered',
+        () async {
+      //GIVEN
+      when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
+      when(mockChatwootCallbacks.onConversationResolved)
+          .thenAnswer((_) => () {});
+      final dynamic resolvedEvent = await TestResourceUtil.readJsonResource(
+          fileName: "websocket_conversation_status_changed");
+      repo.listenForEvents();
+
+      //WHEN
+      mockWebSocketStream.add(jsonEncode(resolvedEvent));
+      await Future.delayed(Duration(seconds: 1));
+
+      //THEN
+      verify(mockChatwootCallbacks.onConversationResolved?.call());
+    });
+
+    test(
         'Given an updated message event is received when listening for events, then callback onMessageUpdated event should be triggered',
         () async {
       //GIVEN

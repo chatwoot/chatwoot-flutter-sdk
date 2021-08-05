@@ -176,6 +176,13 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
           ChatwootEventMessageType.conversation_typing_on) {
         callbacks.onConversationStartedTyping?.call();
       } else if (chatwootEvent.message?.event ==
+              ChatwootEventMessageType.conversation_status_changed &&
+          chatwootEvent.message?.data?.status == "resolved") {
+        //delete conversation result
+        localStorage.conversationDao.deleteConversation();
+        localStorage.messagesDao.clear();
+        callbacks.onConversationResolved?.call();
+      } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.presence_update) {
         final presenceStatuses =
             (chatwootEvent.message!.data!.users as Map<dynamic, dynamic>)

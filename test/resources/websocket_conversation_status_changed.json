@@ -81,7 +81,7 @@
           "availability_status": "offline"
         }
       },
-      "status": "pending",
+      "status": "resolved",
       "unread_count": 0,
       "agent_last_seen_at": 1627060756,
       "contact_last_seen_at": 0,

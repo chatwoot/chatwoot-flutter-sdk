@@ -60,10 +60,10 @@ class LocalStorage {
 
   Future<void> clear({bool clearChatwootUserStorage = true}) async {
     await conversationDao.deleteConversation();
-    await contactDao.deleteContact();
     await messagesDao.clear();
     if (clearChatwootUserStorage) {
       await userDao.deleteUser();
+      await contactDao.deleteContact();
     }
   }
 
