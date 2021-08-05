@@ -38,8 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
   _showChatwootDialog() {
     ChatwootChatDialog.show(
       context,
-      baseUrl: "https://adiutor-support.herokuapp.com",
-      inboxIdentifier: "aqmRE7yd9zTH8w7m5q55oFH6",
+      baseUrl: "<<<your-chatwoot-base-url-here>>>",
+      inboxIdentifier: "<<<your-inbox-identifier-here>>>",
       title: "Chatwoot Support",
       user: ChatwootUser(
         identifier: "test@test.com",
@@ -52,8 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return ChatwootChat(
-      baseUrl: "https://adiutor-support.herokuapp.com",
-      inboxIdentifier: "aqmRE7yd9zTH8w7m5q55oFH6",
+      baseUrl: "<<<your-chatwoot-base-url-here>>>",
+      inboxIdentifier: "<<<your-inbox-identifier-here>>>",
       user: ChatwootUser(
         identifier: "test@test.com",
         name: "Tester test",

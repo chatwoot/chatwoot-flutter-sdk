@@ -384,6 +384,8 @@ void main() {
         'Given conversation status changed event is received when listening for events, then callback onConversationResolved event should be triggered',
         () async {
       //GIVEN
+      when(mockLocalStorage.conversationDao).thenReturn(mockConversationDao);
+      when(mockConversationDao.getConversation()).thenReturn(testConversation);
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationResolved)
           .thenAnswer((_) => () {});
