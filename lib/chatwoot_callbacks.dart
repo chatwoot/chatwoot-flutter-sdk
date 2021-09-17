@@ -43,6 +43,11 @@ class ChatwootCallbacks {
   ///See [ChatwootRepository.listenForEvents]
   void Function(ChatwootMessage)? onMessageReceived;
 
+  ///Triggered when a message created event/message [ChatwootEventMessageType.message_updated]
+  ///is received after connecting to the chatwoot websocket.
+  ///See [ChatwootRepository.listenForEvents]
+  void Function(ChatwootMessage)? onMessageUpdated;
+
   void Function(ChatwootMessage, String)? onMessageSent;
 
   ///Triggered when a message created event/message [ChatwootEventMessageType.message_created]
@@ -53,8 +58,11 @@ class ChatwootCallbacks {
   ///Triggered when a conversation's messages persisted on device are successfully retrieved
   void Function(List<ChatwootMessage>)? onPersistedMessagesRetrieved;
 
-  ///Triggered a conversation's messages is successfully retrieved from remote server
+  ///Triggered when a conversation's messages is successfully retrieved from remote server
   void Function(List<ChatwootMessage>)? onMessagesRetrieved;
+
+  ///Triggered when an agent resolves the current conversation
+  void Function()? onConversationResolved;
 
   /// Triggered when any error occurs in chatwoot client's operations with the error
   ///
@@ -68,12 +76,14 @@ class ChatwootCallbacks {
     this.onMessageReceived,
     this.onMessageSent,
     this.onMessageDelivered,
+    this.onMessageUpdated,
     this.onPersistedMessagesRetrieved,
     this.onMessagesRetrieved,
     this.onConversationStartedTyping,
     this.onConversationStoppedTyping,
     this.onConversationIsOnline,
     this.onConversationIsOffline,
+    this.onConversationResolved,
     this.onError,
   });
 }

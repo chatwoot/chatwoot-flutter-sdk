@@ -1,0 +1,26 @@
+{
+  "identifier": "{\"channel\":\"RoomChannel\",\"pubsub_token\":\"token\",\"account_id\":1,\"user_id\":1}",
+  "message": {
+    "event": "message.updated",
+    "data": {
+      "id": 111,
+      "content_type": "input_email",
+      "content_attributes": {
+        "submitted_email": "jane@acme.inc"
+      },
+      "account_id": 1,
+      "inbox_id": 1,
+      "conversation_id": 8,
+      "content": "Get notified by email",
+      "message_type": 3,
+      "created_at": 1627060984,
+      "updated_at": "2021-07-23T17:23:14.000Z",
+      "private": false,
+      "status": "sent",
+      "source_id": null,
+      "sender_type": null,
+      "sender_id": null,
+      "external_source_ids": {}
+    }
+  }
+}

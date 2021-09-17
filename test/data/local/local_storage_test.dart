@@ -104,7 +104,7 @@ void main() {
       await localStorage.clear(clearChatwootUserStorage: false);
 
       //THEN
-      verify(mockContactDao.deleteContact());
+      verifyNever(mockContactDao.deleteContact());
       verify(mockConversationDao.deleteConversation());
       verify(mockMessagesDao.clear());
       verifyNever(mockUserDao.deleteUser());

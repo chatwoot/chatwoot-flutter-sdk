@@ -282,6 +282,8 @@ void main() {
         () async {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
+      when(mockChatwootClientService.sendAction(any, any))
+          .thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConfirmedSubscription)
           .thenAnswer((_) => () {});
       final dynamic confirmSubscriptionEvent = {"type": "confirm_subscription"};
@@ -293,6 +295,8 @@ void main() {
 
       //THEN
       verify(mockChatwootCallbacks.onConfirmedSubscription?.call());
+      verify(mockChatwootClientService.sendAction(
+          testContact.pubsubToken, ChatwootActionType.update_presence));
     });
 
     test(
@@ -302,9 +306,8 @@ void main() {
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationStartedTyping)
           .thenAnswer((_) => () {});
-      final dynamic typingOnEvent = {
-        "message": {"event": "conversation.typing_on"}
-      };
+      final dynamic typingOnEvent = await TestResourceUtil.readJsonResource(
+          fileName: "websocket_conversation_typing_on");
       repo.listenForEvents();
 
       //WHEN
@@ -322,15 +325,9 @@ void main() {
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationIsOnline)
           .thenAnswer((_) => () {});
-      final dynamic presenceUpdateOnlineEvent = {
-        "message": {
-          "data": {
-            "account_id": 5,
-            "users": {"5": "online"}
-          },
-          "event": "presence.update"
-        }
-      };
+      final dynamic presenceUpdateOnlineEvent =
+          await TestResourceUtil.readJsonResource(
+              fileName: "websocket_presence_update");
       repo.listenForEvents();
 
       //WHEN
@@ -342,30 +339,27 @@ void main() {
     });
 
     test(
-        'Given offline presence update event is received when listening for events, then callback onConversationIsOffline event should be triggered',
+        'Given conversation is offline when listening for events, then callback onConversationIsOffline event should be triggered',
         () async {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationIsOffline)
           .thenAnswer((_) => () {});
-      final dynamic presenceUpdateOfflineEvent = {
-        "message": {
-          "data": {
-            "account_id": 5,
-            "users": {"5": "offline"}
-          },
-          "event": "presence.update"
-        }
-      };
+      when(mockChatwootCallbacks.onConversationIsOnline)
+          .thenAnswer((_) => () {});
+      final dynamic presenceUpdateOnlineEvent =
+          await TestResourceUtil.readJsonResource(
+              fileName: "websocket_presence_update");
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(jsonEncode(presenceUpdateOfflineEvent));
-      await Future.delayed(Duration(seconds: 1));
+      mockWebSocketStream.add(jsonEncode(presenceUpdateOnlineEvent));
+      await Future.delayed(Duration(seconds: 41));
 
       //THEN
+      verify(mockChatwootCallbacks.onConversationIsOnline?.call());
       verify(mockChatwootCallbacks.onConversationIsOffline?.call());
-    });
+    }, timeout: Timeout(Duration(seconds: 45)));
 
     test(
         'Given typing off event is received when listening for events, then callback onConversationStoppedTyping event should be triggered',
@@ -374,9 +368,8 @@ void main() {
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationStoppedTyping)
           .thenAnswer((_) => () {});
-      final dynamic typingOffEvent = {
-        "message": {"event": "conversation.typing_off"}
-      };
+      final dynamic typingOffEvent = await TestResourceUtil.readJsonResource(
+          fileName: "websocket_conversation_typing_off");
       repo.listenForEvents();
 
       //WHEN
@@ -388,41 +381,48 @@ void main() {
     });
 
     test(
-        'Given new message event is received when listening for events, then callback onMessageReceived event should be triggered',
+        'Given conversation status changed event is received when listening for events, then callback onConversationResolved event should be triggered',
+        () async {
+      //GIVEN
+      when(mockLocalStorage.conversationDao).thenReturn(mockConversationDao);
+      when(mockConversationDao.getConversation()).thenReturn(testConversation);
+      when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
+      when(mockChatwootCallbacks.onConversationResolved)
+          .thenAnswer((_) => () {});
+      final dynamic resolvedEvent = await TestResourceUtil.readJsonResource(
+          fileName: "websocket_conversation_status_changed");
+      repo.listenForEvents();
+
+      //WHEN
+      mockWebSocketStream.add(jsonEncode(resolvedEvent));
+      await Future.delayed(Duration(seconds: 1));
+
+      //THEN
+      verify(mockChatwootCallbacks.onConversationResolved?.call());
+    });
+
+    test(
+        'Given an updated message event is received when listening for events, then callback onMessageUpdated event should be triggered',
         () async {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockMessagesDao.saveMessage(any))
           .thenAnswer((_) => Future.microtask(() {}));
-      when(mockChatwootCallbacks.onMessageReceived).thenAnswer((_) => (_) {});
-      final dynamic messageReceivedEvent = {
-        "type": "message",
-        "message": {
-          "event": "message.created",
-          "data": {
-            "id": 0,
-            "content": "content",
-            "echo_id": "echo_id",
-            "message_type": 1,
-            "content_type": "contentType",
-            "content_attributes": "contentAttributes",
-            "created_at": DateTime.now().toString(),
-            "conversation_id": 0,
-            "attachments": [],
-          }
-        }
-      };
+      when(mockChatwootCallbacks.onMessageUpdated).thenAnswer((_) => (_) {});
+      final dynamic messageUpdatedEvent =
+          await TestResourceUtil.readJsonResource(
+              fileName: "websocket_message_updated");
 
       repo.listenForEvents();
 
       //WHEN
-      mockWebSocketStream.add(jsonEncode(messageReceivedEvent));
+      mockWebSocketStream.add(jsonEncode(messageUpdatedEvent));
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
       final message =
-          ChatwootMessage.fromJson(messageReceivedEvent["message"]["data"]);
-      verify(mockChatwootCallbacks.onMessageReceived?.call(message));
+          ChatwootMessage.fromJson(messageUpdatedEvent["message"]["data"]);
+      verify(mockChatwootCallbacks.onMessageUpdated?.call(message));
     });
 
     test(

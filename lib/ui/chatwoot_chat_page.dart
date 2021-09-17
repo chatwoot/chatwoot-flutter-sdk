@@ -60,10 +60,10 @@ class ChatwootChat extends StatefulWidget {
   /// Show user names for received messages.
   final bool showUserNames;
 
-  final ChatwootChatTheme? theme;
+  final ChatwootChatTheme theme;
 
   /// See [ChatwootL10n]
-  final ChatwootL10n? l10n;
+  final ChatwootL10n l10n;
 
   /// See [Chat.timeFormat]
   final DateFormat? timeFormat;
@@ -101,6 +101,9 @@ class ChatwootChat extends StatefulWidget {
   ///See [ChatwootCallbacks.onMessageDelivered]
   final void Function(ChatwootMessage)? onMessageDelivered;
 
+  ///See [ChatwootCallbacks.onMessageUpdated]
+  final void Function(ChatwootMessage)? onMessageUpdated;
+
   ///See [ChatwootCallbacks.onPersistedMessagesRetrieved]
   final void Function(List<ChatwootMessage>)? onPersistedMessagesRetrieved;
 
@@ -128,8 +131,8 @@ class ChatwootChat extends StatefulWidget {
       this.onTextChanged,
       this.showUserAvatars = true,
       this.showUserNames = true,
-      this.theme,
-      this.l10n,
+      this.theme = const ChatwootChatTheme(),
+      this.l10n = const ChatwootL10n(),
       this.timeFormat,
       this.dateFormat,
       this.onWelcome,
@@ -138,6 +141,7 @@ class ChatwootChat extends StatefulWidget {
       this.onMessageReceived,
       this.onMessageSent,
       this.onMessageDelivered,
+      this.onMessageUpdated,
       this.onPersistedMessagesRetrieved,
       this.onMessagesRetrieved,
       this.onConversationStartedTyping,
@@ -231,6 +235,11 @@ class _ChatwootChatState extends State<ChatwootChat> {
             _chatwootMessageToTextMessage(chatwootMessage, echoId: echoId));
         widget.onMessageDelivered?.call(chatwootMessage);
       },
+      onMessageUpdated: (chatwootMessage) {
+        _handleMessageUpdated(_chatwootMessageToTextMessage(chatwootMessage,
+            echoId: chatwootMessage.id.toString()));
+        widget.onMessageUpdated?.call(chatwootMessage);
+      },
       onMessageSent: (chatwootMessage, echoId) {
         final textMessage = types.TextMessage(
             id: echoId,
@@ -239,6 +248,18 @@ class _ChatwootChatState extends State<ChatwootChat> {
             status: types.Status.delivered);
         _handleMessageSent(textMessage);
         widget.onMessageSent?.call(chatwootMessage);
+      },
+      onConversationResolved: () {
+        final resolvedMessage = types.TextMessage(
+            id: idGen.v4(),
+            text: widget.l10n.conversationResolvedMessage,
+            author: types.User(
+                id: idGen.v4(),
+                firstName: "Bot",
+                imageUrl:
+                    "https://d2cbg94ubxgsnp.cloudfront.net/Pictures/480x270//9/9/3/512993_shutterstock_715962319converted_920340.png"),
+            status: types.Status.delivered);
+        _addMessage(resolvedMessage);
       },
       onError: (error) {
         if (error.type == ChatwootClientExceptionType.SEND_MESSAGE_FAILED) {
@@ -348,6 +369,18 @@ class _ChatwootChatState extends State<ChatwootChat> {
     });
   }
 
+  void _handleMessageUpdated(
+    types.Message message,
+  ) {
+    final index = _messages.indexWhere((element) => element.id == message.id);
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      setState(() {
+        _messages[index] = message;
+      });
+    });
+  }
+
   void _handleSendPressed(types.PartialText message) {
     final textMessage = types.TextMessage(
         author: _user,
@@ -368,7 +401,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
     final horizontalPadding = widget.isPresentedInDialog ? 8.0 : 16.0;
     return Scaffold(
       appBar: widget.appBar,
-      backgroundColor: widget.theme?.backgroundColor ?? CHATWOOT_BG_COLOR,
+      backgroundColor: widget.theme.backgroundColor,
       body: Column(
         children: [
           Flexible(
@@ -389,30 +422,27 @@ class _ChatwootChatState extends State<ChatwootChat> {
                 showUserNames: widget.showUserNames,
                 timeFormat: widget.timeFormat ?? DateFormat.Hm(),
                 dateFormat: widget.timeFormat ?? DateFormat("EEEE MMMM d"),
-                theme: widget.theme ?? ChatwootChatTheme(),
-                l10n: widget.l10n ??
-                    ChatL10nEn(
-                        emptyChatPlaceholder: "",
-                        inputPlaceholder: "Type your message"),
+                theme: widget.theme,
+                l10n: widget.l10n,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   "assets/logo_grey.png",
                   package: 'chatwoot_client_sdk',
-                  width: 20,
-                  height: 20,
+                  width: 15,
+                  height: 15,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(
                     "Powered by Chatwoot",
-                    style: TextStyle(color: Colors.black45, fontSize: 14),
+                    style: TextStyle(color: Colors.black45, fontSize: 12),
                   ),
                 )
               ],

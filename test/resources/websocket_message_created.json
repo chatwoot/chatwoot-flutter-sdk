@@ -1,0 +1,36 @@
+{
+  "identifier": "{\"channel\":\"RoomChannel\",\"pubsub_token\":\"token\",\"account_id\":1,\"user_id\":1}",
+  "message": {
+    "event": "message.created",
+    "data": {
+      "id": 106,
+      "content": "hi",
+      "account_id": 1,
+      "inbox_id": 1,
+      "conversation_id": 7,
+      "message_type": 0,
+      "created_at": 1627060394,
+      "updated_at": "2021-07-23T17:13:14.000Z",
+      "private": false,
+      "status": "sent",
+      "source_id": null,
+      "content_type": "text",
+      "content_attributes": {},
+      "sender_type": "Contact",
+      "sender_id": 10,
+      "external_source_ids": {},
+      "sender": {
+        "additional_attributes": {},
+        "custom_attributes": {},
+        "email": null,
+        "id": 10,
+        "identifier": null,
+        "name": "white-shadow-394",
+        "phone_number": null,
+        "pubsub_token": "token",
+        "thumbnail": "",
+        "type": "contact"
+      }
+    }
+  }
+}

@@ -48,6 +48,8 @@ abstract class ChatwootRepository {
 
 class ChatwootRepositoryImpl extends ChatwootRepository {
   bool _isListeningForEvents = false;
+  Timer? _publishPresenceTimer;
+  Timer? _presenceResetTimer;
 
   ChatwootRepositoryImpl(
       {required ChatwootClientService clientService,
@@ -146,6 +148,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
         if (!_isListeningForEvents) {
           _isListeningForEvents = true;
         }
+        _publishPresenceUpdates();
         callbacks.onConfirmedSubscription?.call();
       } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.message_created) {
@@ -159,11 +162,28 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
           callbacks.onMessageReceived?.call(message);
         }
       } else if (chatwootEvent.message?.event ==
+          ChatwootEventMessageType.message_updated) {
+        print("here comes the updated message: $event");
+
+        final message = chatwootEvent.message!.data!.getMessage();
+        localStorage.messagesDao.saveMessage(message);
+
+        callbacks.onMessageUpdated?.call(message);
+      } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.conversation_typing_off) {
         callbacks.onConversationStoppedTyping?.call();
       } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.conversation_typing_on) {
         callbacks.onConversationStartedTyping?.call();
+      } else if (chatwootEvent.message?.event ==
+              ChatwootEventMessageType.conversation_status_changed &&
+          chatwootEvent.message?.data?.status == "resolved" &&
+          chatwootEvent.message?.data?.id ==
+              (localStorage.conversationDao.getConversation()?.id ?? 0)) {
+        //delete conversation result
+        localStorage.conversationDao.deleteConversation();
+        localStorage.messagesDao.clear();
+        callbacks.onConversationResolved?.call();
       } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.presence_update) {
         final presenceStatuses =
@@ -172,6 +192,8 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
         final isOnline = presenceStatuses.contains("online");
         if (isOnline) {
           callbacks.onConversationIsOnline?.call();
+          _presenceResetTimer?.cancel();
+          _startPresenceResetTimer();
         } else {
           callbacks.onConversationIsOffline?.call();
         }
@@ -193,6 +215,8 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   void dispose() {
     localStorage.dispose();
     callbacks = ChatwootCallbacks();
+    _presenceResetTimer?.cancel();
+    _publishPresenceTimer?.cancel();
     _subscriptions.forEach((subs) {
       subs.cancel();
     });
@@ -203,5 +227,21 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   void sendAction(ChatwootActionType action) {
     clientService.sendAction(
         localStorage.contactDao.getContact()!.pubsubToken, action);
+  }
+
+  ///Publishes presence update to websocket channel at a 30 second interval
+  void _publishPresenceUpdates() {
+    sendAction(ChatwootActionType.update_presence);
+    _publishPresenceTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+      sendAction(ChatwootActionType.update_presence);
+    });
+  }
+
+  ///Triggers an offline presence event after 40 seconds without receiving a presence update event
+  void _startPresenceResetTimer() {
+    _presenceResetTimer = Timer.periodic(Duration(seconds: 40), (timer) {
+      callbacks.onConversationIsOffline?.call();
+      _presenceResetTimer?.cancel();
+    });
   }
 }
