@@ -22,7 +22,7 @@ class ChatwootContact extends Equatable {
   ///Token for subscribing to websocket stream events
   @JsonKey(name: "pubsub_token")
   @HiveField(2)
-  final String pubsubToken;
+  final String? pubsubToken;
 
   ///Full name of contact
   @JsonKey()
