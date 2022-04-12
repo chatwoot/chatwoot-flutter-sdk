@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ChatwootChatDialog.show(
       context,
       baseUrl: "https://app.chatwoot.com",
-      inboxIdentifier: "LrUdvwbmioUbw7CEy9oz19Yk",
+      inboxIdentifier: "xxxxxxxxxxxxxxxxxxx",
       title: "Chatwoot Support",
       user: ChatwootUser(
         identifier: "test@test.com",
@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return ChatwootChat(
       baseUrl: "https://app.chatwoot.com",
-      inboxIdentifier: "LrUdvwbmioUbw7CEy9oz19Yk",
+      inboxIdentifier: "xxxxxxxxxxxxxxxxxxx",
       user: ChatwootUser(
         identifier: "test1@test.com",
         name: "Tester test1",
