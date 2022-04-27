@@ -2,6 +2,8 @@
 // in chatwoot_client_sdk/test/chatwoot_client_test.dart.
 // Do not manually edit this file.
 
+// ignore_for_file: camel_case_types
+
 import 'dart:async' as _i6;
 
 import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart' as _i4;
