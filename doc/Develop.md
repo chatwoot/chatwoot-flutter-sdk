@@ -26,6 +26,10 @@ flutter pub get
 
 This command helps to add all the latest dependencies listed in the pubspec. yaml file.
 
+### Intergration guide
+
+After the above steps, you can follow [how to use steps](https://github.com/chatwoot/chatwoot-flutter-sdk#3-how-to-use).
+
 ### Run the project
 
 Use any of the methods mentioned below for running a sample project.
@@ -53,10 +57,6 @@ And try installing [cocoapods](https://cocoapods.org/) and then try to run build
 **Android**
 
 If you are using Android, Open Android Studio and try build.
-
-### Intergration guide
-
-After the above steps, you can follow [how to use steps](https://github.com/chatwoot/chatwoot-flutter-sdk#3-how-to-use).
 
 ### Help
 
