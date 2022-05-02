@@ -240,7 +240,7 @@ final chatwootCallbacks = ChatwootCallbacks(
 
     NB `<yourapp_name>` uses this format for the file name.
 
-3.  Go to that path
+3.  Go to the created app directory
 
     `cd <chatwootfluttersdk_app>`
 
