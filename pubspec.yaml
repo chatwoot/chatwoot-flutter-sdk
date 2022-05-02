@@ -30,8 +30,9 @@ dev_dependencies:
     sdk: flutter
   mockito: ^5.0.7
   json_serializable: ^4.1.1
-  hive_generator: ^1.1.0
+  hive_generator: ^1.1.2
   build_runner: ^2.0.6
+  flutter_lints: ^1.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

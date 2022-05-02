@@ -136,7 +136,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
       return;
     }
     clientService.startWebSocketConnection(
-        localStorage.contactDao.getContact()!.pubsubToken);
+        localStorage.contactDao.getContact()!.pubsubToken ?? "");
 
     final newSubscription = clientService.connection!.stream.listen((event) {
       ChatwootEvent chatwootEvent = ChatwootEvent.fromJson(jsonDecode(event));
@@ -226,7 +226,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   @override
   void sendAction(ChatwootActionType action) {
     clientService.sendAction(
-        localStorage.contactDao.getContact()!.pubsubToken, action);
+        localStorage.contactDao.getContact()!.pubsubToken ?? "", action);
   }
 
   ///Publishes presence update to websocket channel at a 30 second interval

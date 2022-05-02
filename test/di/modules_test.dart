@@ -8,7 +8,6 @@ import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_messages_dao.dart';
 import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_user_dao.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 import 'package:chatwoot_client_sdk/di/modules.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -1,9 +1,7 @@
-import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
 import 'package:chatwoot_client_sdk/data/chatwoot_repository.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_client_sdk/di/modules.dart';
