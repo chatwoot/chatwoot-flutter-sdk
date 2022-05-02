@@ -2,7 +2,6 @@ import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_client_sdk/ui/chatwoot_chat_theme.dart';
 import 'package:chatwoot_client_sdk/ui/chatwoot_l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:intl/intl.dart';
 
