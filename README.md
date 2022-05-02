@@ -228,8 +228,59 @@ final chatwootCallbacks = ChatwootCallbacks(
 | enablePersistance | true    | bool              | Enables persistence of chatwoot client instance's contact, conversation and messages to disk <br>for convenience.<br>true - persists chatwoot client instance's data(contact, conversation and messages) to disk. To clear persisted <br>data call ChatwootClient.clearData or ChatwootClient.clearAllData<br>false - holds chatwoot client instance's data in memory and is cleared as<br>soon as chatwoot client instance is disposed<br>Setting  |
 | user              | null    | ChatwootUser      | Custom user details to be attached to chatwoot contact                                                                                                                                                                                                                                                                                                                                                                                              |
 | callbacks         | null    | ChatwootCallbacks | Callbacks for handling chatwoot events                                                                                                                                                                                                                                                                                                                                                                                                              |
+                                                           |
 
+# Chatwoot Flutter SDK Development Guides
 
+1.  Set up your local environment for developing a Flutter app by using their [guide.](https://docs.flutter.dev/get-started/install)
 
+2.  Create a flutter app using this command line. You should be in that directory where you want to build.
 
+    `flutter create <chatwootfluttersdk_app>`
 
+    NB `<yourapp_name>` uses this format for the file name.
+
+3.  Go to that path
+
+    `cd <chatwootfluttersdk_app>`
+
+4.  Add the package to your project by using this [guide.](https://github.com/chatwoot/chatwoot-flutter-sdk#2-add-the-package-to-your-project)
+
+5.  And then run
+
+    `flutter pub get`
+
+6.  If you want to see connected devices
+
+    `flutter devices`
+
+    eg: 2 connected devices:
+
+    iPhone 13 Pro (mobile),
+    Chrome (web)
+
+7.  Then try running `flutter run` using the terminal.
+
+    or
+
+    Open Xcode app in macOS and go to the ios directory in the app that we created `<chatwootfluttersdk_app>` and install [cocoapods](https://cocoapods.org/) and then try run build.
+
+    or
+
+    By Android studio.
+
+    NB: Tested with macOS only.
+
+8.  After that you can use the above [intergration guide](https://github.com/chatwoot/chatwoot-flutter-sdk/edit/develop/README.md#integrate-chatwoot-with-flutter-app) to edit the files.
+
+    NB: If you are facing any issues try running `flutter clean` and follow the above methods from step 4.
+
+9.  Check the build for your flutter code by trying
+
+    `flutter pub run build_runner clean`
+
+    `flutter pub run build_runner--delete-conflicting-outputs`
+
+    `flutter test`
+
+    `flutter analyze`
