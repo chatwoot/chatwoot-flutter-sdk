@@ -6,14 +6,18 @@ Set up your local environment for developing a Flutter app by using their [guide
 
 ## Clone the repository
 
-Git clone the [chatwoot-flutter-sdk](https://github.com/chatwoot/chatwoot-flutter-sdk) repository.
+Clone the [chatwoot-flutter-sdk](https://github.com/chatwoot/chatwoot-flutter-sdk) repository.
+
+```bash
+git clone git@github.com:chatwoot/chatwoot-flutter-sdk.git
+```
 
 ## Run the example project for developing
 
-Go to the example directory in the repository
+Go to the example directory in the repository.
 
 ```
-cd user/chatwoot-flutter-sdk/example
+cd <path-to>/chatwoot-flutter-sdk/example
 ```
 
 After the above step try adding the package to your project by using this [guide](https://github.com/chatwoot/chatwoot-flutter-sdk#2-add-the-package-to-your-project).
