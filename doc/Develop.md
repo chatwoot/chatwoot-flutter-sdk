@@ -28,7 +28,7 @@ flutter pub get
 
 This command helps to add all the latest dependencies listed in the pubspec. yaml file.
 
-### Intergration guide
+### Integration guide
 
 After the above steps, you can follow [how to use steps](https://github.com/chatwoot/chatwoot-flutter-sdk#3-how-to-use).
 
