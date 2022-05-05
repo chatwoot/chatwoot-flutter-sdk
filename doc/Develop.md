@@ -64,6 +64,12 @@ If you are using Android, Open Android Studio and try build.
 If you are facing ` Error: Member not found: 'packageRoot'.` while running flutter then try running the commands mentioned below.
 
 ```
+flutter pub upgrade
+```
+
+or
+
+```
 flutter channel stable
 flutter upgrade
 flutter pub upgrade
