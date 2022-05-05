@@ -20,8 +20,6 @@ Go to the example directory in the repository.
 cd <path-to>/chatwoot-flutter-sdk/example
 ```
 
-After the above step try adding the package to your project by using this [guide](https://github.com/chatwoot/chatwoot-flutter-sdk#2-add-the-package-to-your-project).
-
 ### Add the latest dependencies
 
 ```
