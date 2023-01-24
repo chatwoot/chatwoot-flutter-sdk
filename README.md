@@ -1,4 +1,4 @@
-[![Pub Version](https://img.shields.io/pub/v/chatwoot_client_sdk?color=blueviolet)](https://pub.dev/packages/chatwoot_client_sdk) ![build](https://github.com/EphraimNetWorks/test_cw_flutter_client/actions/workflows/develop-actions.yml/badge.svg) [![likes](https://badges.bar/chatwoot_client_sdk/likes)](https://pub.dev/packages/chatwoot_client_sdk/score) [![popularity](https://badges.bar/chatwoot_client_sdk/popularity)](https://pub.dev/packages/chatwoot_client_sdk/score) [![pub points](https://badges.bar/chatwoot_client_sdk/pub%20points)](https://pub.dev/packages/chatwoot_client_sdk/score)
+[![Pub Version](https://img.shields.io/pub/v/chatwoot_client_sdk?color=blueviolet)](https://pub.dev/packages/chatwoot_sdk) ![build](https://github.com/EphraimNetWorks/test_cw_flutter_client/actions/workflows/develop-actions.yml/badge.svg) [![likes]
 
 # Integrate Chatwoot with Flutter app
 
@@ -15,13 +15,13 @@ Refer to [Create API Channel](https://www.chatwoot.com/docs/product/channels/api
 
 Run the command below in your terminal
 
-`flutter pub add chatwoot_client_sdk`
+`flutter pub add chatwoot_sdk`
 
 or
 
 Add 
-`chatwoot_client_sdk:<<version>>` 
-to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/chatwoot_client_sdk) for the latest version.
+`chatwoot_sdk:<<version>>` 
+to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/chatwoot_sdk) for the latest version.
 
 NB: This library uses [Hive](https://pub.dev/packages/hive) for local storage and [Flutter Chat UI](https://pub.dev/packages/flutter_chat_ui) for its user interface.
 
@@ -65,7 +65,7 @@ ChatwootChatDialog.show(
 To embed ChatwootChat widget inside a part of your app, use the `ChatwootChat` widget. Customize chat UI theme by passing a `ChatwootChatTheme` with your custom theme colors and more.
 
 ```
-import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
+import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -151,7 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
 Horray! You're done.
 
-You also find a sample implementation [here](https://github.com/EphraimNetWorks/chatwoot_flutter_client/blob/main/example/lib/main.dart)
 
 #### Available Parameters
 | Name              | Default                   | Type                | Description                                                                                                                                                                                                                                                                                                                                                                                                                                         |
