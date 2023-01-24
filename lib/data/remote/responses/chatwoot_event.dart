@@ -1,5 +1,5 @@
-import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
-import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
+import 'package:chatwoot_sdk/chatwoot_sdk.dart';
+import 'package:chatwoot_sdk/data/local/local_storage.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
