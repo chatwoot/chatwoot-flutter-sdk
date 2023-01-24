@@ -7,7 +7,6 @@ import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'entity/chatwoot_contact.dart';
-import 'entity/chatwoot_conversation.dart';
 import 'entity/chatwoot_message.dart';
 import 'entity/chatwoot_user.dart';
 
