@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class ChatwootMessagesDao {

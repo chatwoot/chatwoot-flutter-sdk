@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
-import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
-import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
-import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
-import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
+import 'package:chatwoot_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
+import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
+import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';

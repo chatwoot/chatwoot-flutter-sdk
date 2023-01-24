@@ -1,7 +1,7 @@
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
-import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_auth_service.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_sdk/data/local/local_storage.dart';
+import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_auth_service.dart';
 import 'package:dio/dio.dart';
 import 'package:synchronized/synchronized.dart' as synchronized;
 

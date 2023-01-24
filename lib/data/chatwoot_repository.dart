@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 
-import 'package:chatwoot_client_sdk/chatwoot_callbacks.dart';
-import 'package:chatwoot_client_sdk/chatwoot_client.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
-import 'package:chatwoot_client_sdk/data/local/local_storage.dart';
-import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
-import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_action_data.dart';
-import 'package:chatwoot_client_sdk/data/remote/requests/chatwoot_new_message_request.dart';
-import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
-import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_service.dart';
+import 'package:chatwoot_sdk/chatwoot_callbacks.dart';
+import 'package:chatwoot_sdk/chatwoot_client.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_sdk/data/local/local_storage.dart';
+import 'package:chatwoot_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
+import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
+import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
+import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:flutter/material.dart';
 
 /// Handles interactions between chatwoot client api service[clientService] and

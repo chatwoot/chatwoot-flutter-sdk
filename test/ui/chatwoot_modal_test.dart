@@ -1,13 +1,13 @@
 //import 'dart:async';
 
-import 'package:chatwoot_client_sdk/chatwoot_client.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
-import 'package:chatwoot_client_sdk/di/modules.dart';
-import 'package:chatwoot_client_sdk/ui/chatwoot_chat_dialog.dart';
-import 'package:chatwoot_client_sdk/ui/chatwoot_l10n.dart';
+import 'package:chatwoot_sdk/chatwoot_client.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_sdk/di/modules.dart';
+import 'package:chatwoot_sdk/ui/chatwoot_chat_dialog.dart';
+import 'package:chatwoot_sdk/ui/chatwoot_l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';

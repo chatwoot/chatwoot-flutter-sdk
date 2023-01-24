@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
-import 'package:chatwoot_client_sdk/data/remote/chatwoot_client_exception.dart';
-import 'package:chatwoot_client_sdk/data/remote/service/chatwoot_client_api_interceptor.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_sdk/data/remote/chatwoot_client_exception.dart';
+import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_api_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
