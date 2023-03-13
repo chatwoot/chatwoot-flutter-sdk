@@ -18,7 +18,7 @@ class ChatwootUserAdapter extends TypeAdapter<ChatwootUser> {
     };
     return ChatwootUser(
       identifier: fields[0] as String?,
-      identifierHash: fields[1] as String?,
+      identifier_hash: fields[1] as String?,
       name: fields[2] as String?,
       email: fields[3] as String?,
       avatarUrl: fields[4] as String?,
@@ -33,7 +33,7 @@ class ChatwootUserAdapter extends TypeAdapter<ChatwootUser> {
       ..writeByte(0)
       ..write(obj.identifier)
       ..writeByte(1)
-      ..write(obj.identifierHash)
+      ..write(obj.identifier_hash)
       ..writeByte(2)
       ..write(obj.name)
       ..writeByte(3)
@@ -62,7 +62,7 @@ class ChatwootUserAdapter extends TypeAdapter<ChatwootUser> {
 ChatwootUser _$ChatwootUserFromJson(Map<String, dynamic> json) {
   return ChatwootUser(
     identifier: json['identifier'] as String?,
-    identifierHash: json['identifierHash'] as String?,
+    identifier_hash: json['identifier_hash'] as String?,
     name: json['name'] as String?,
     email: json['email'] as String?,
     avatarUrl: json['avatar_url'] as String?,
@@ -73,7 +73,7 @@ ChatwootUser _$ChatwootUserFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$ChatwootUserToJson(ChatwootUser instance) =>
     <String, dynamic>{
       'identifier': instance.identifier,
-      'identifierHash': instance.identifierHash,
+      'identifier_hash': instance.identifier_hash,
       'name': instance.name,
       'email': instance.email,
       'avatar_url': instance.avatarUrl,

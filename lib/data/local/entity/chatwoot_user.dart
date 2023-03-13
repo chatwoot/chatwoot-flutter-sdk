@@ -18,7 +18,7 @@ class ChatwootUser extends Equatable {
   ///custom user identifier hash
   @JsonKey()
   @HiveField(1)
-  final String? identifierHash;
+  final String? identifier_hash;
 
   ///name of chatwoot user
   @JsonKey()
@@ -42,7 +42,7 @@ class ChatwootUser extends Equatable {
 
   ChatwootUser(
       {this.identifier,
-      this.identifierHash,
+      this.identifier_hash,
       this.name,
       this.email,
       this.avatarUrl,
@@ -50,7 +50,7 @@ class ChatwootUser extends Equatable {
 
   @override
   List<Object?> get props =>
-      [identifier, identifierHash, name, email, avatarUrl, customAttributes];
+      [identifier, identifier_hash, name, email, avatarUrl, customAttributes];
 
   factory ChatwootUser.fromJson(Map<String, dynamic> json) =>
       _$ChatwootUserFromJson(json);
