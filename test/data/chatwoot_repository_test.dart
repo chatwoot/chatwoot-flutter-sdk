@@ -30,7 +30,7 @@ void main() {
     late final ChatwootConversation testConversation;
     final testUser = ChatwootUser(
         identifier: "identifier",
-        identifier_hash: "identifier_hash",
+        identifierHash: "identifierHash",
         name: "name",
         email: "email",
         avatarUrl: "avatarUrl",

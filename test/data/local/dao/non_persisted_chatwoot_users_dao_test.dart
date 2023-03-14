@@ -7,7 +7,7 @@ void main() {
     late NonPersistedChatwootUserDao dao;
     final testUser = ChatwootUser(
         identifier: "identifier",
-        identifier_hash: "identifier_hash",
+        identifierHash: "identifierHash",
         name: "name",
         email: "email",
         avatarUrl: "avatarUrl",
