@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_sdk/ui/webview_widget/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart'
+    as webview_flutter_android;
 
 ///Chatwoot webview widget
 /// {@category FlutterClientSdk}
@@ -12,6 +15,11 @@ class Webview extends StatefulWidget {
   late final String widgetUrl;
   late final String injectedJavaScript;
   final void Function()? closeWidget;
+  final Future<List<String>> Function()? onAttachFile;
+
+  final void Function()? onLoadStarted;
+  final void Function(int)? onLoadProgress;
+  final void Function()? onLoadCompleted;
 
   Webview(
       {Key? key,
@@ -20,7 +28,11 @@ class Webview extends StatefulWidget {
       ChatwootUser? user,
       String locale = "en",
       customAttributes,
-      this.closeWidget})
+      this.closeWidget,
+      this.onAttachFile,
+      this.onLoadStarted,
+      this.onLoadProgress,
+      this.onLoadCompleted})
       : super(key: key) {
     widgetUrl =
         "${baseUrl}/widget?website_token=${websiteToken}&locale=${locale}";
@@ -52,9 +64,14 @@ class _WebviewState extends State<Webview> {
             NavigationDelegate(
               onProgress: (int progress) {
                 // Update loading bar.
+                widget.onLoadProgress?.call(progress);
               },
-              onPageStarted: (String url) {},
-              onPageFinished: (String url) async {},
+              onPageStarted: (String url) {
+                widget.onLoadStarted?.call();
+              },
+              onPageFinished: (String url) async {
+                widget.onLoadCompleted?.call();
+              },
               onWebResourceError: (WebResourceError error) {},
               onNavigationRequest: (NavigationRequest request) {
                 _goToUrl(request.url);
@@ -81,6 +98,13 @@ class _WebviewState extends State<Webview> {
             }
           })
           ..loadRequest(Uri.parse(webviewUrl));
+
+        if (Platform.isAndroid && widget.onAttachFile != null) {
+          final androidController = _controller!.platform
+              as webview_flutter_android.AndroidWebViewController;
+          androidController
+              .setOnShowFileSelector((_) => widget.onAttachFile!.call());
+        }
       });
     });
   }
