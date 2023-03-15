@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:chatwoot_sdk/ui/webview_widget/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,13 +12,25 @@ import 'package:webview_flutter_android/webview_flutter_android.dart'
 ///Chatwoot webview widget
 /// {@category FlutterClientSdk}
 class Webview extends StatefulWidget {
+  /// Url for Chatwoot widget in webview
   late final String widgetUrl;
+
+  /// Chatwoot user & locale initialisation script
   late final String injectedJavaScript;
+
+  /// See [ChatwootWidget.closeWidget]
   final void Function()? closeWidget;
+
+  /// See [ChatwootWidget.onAttachFile]
   final Future<List<String>> Function()? onAttachFile;
 
+  /// See [ChatwootWidget.onLoadStarted]
   final void Function()? onLoadStarted;
+
+  /// See [ChatwootWidget.onLoadProgress]
   final void Function(int)? onLoadProgress;
+
+  /// See [ChatwootWidget.onLoadCompleted]
   final void Function()? onLoadCompleted;
 
   Webview(
