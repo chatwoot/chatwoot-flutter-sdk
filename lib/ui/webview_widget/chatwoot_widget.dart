@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 class ChatwootWidget extends StatefulWidget {
   final String websiteToken;
   final String baseUrl;
-  final String cwCookie;
   final ChatwootUser? user;
   final String locale;
   final void Function()? closeWidget;
@@ -16,7 +15,6 @@ class ChatwootWidget extends StatefulWidget {
       {Key? key,
       required this.websiteToken,
       required this.baseUrl,
-      this.cwCookie = "",
       this.user,
       this.locale = "en",
       this.customAttributes,
@@ -35,16 +33,13 @@ class _ChatwootWidgetState extends State<ChatwootWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-        backgroundColor: Colors.white,
-        insetPadding: EdgeInsets.all(8.0),
-        child: Webview(
-          websiteToken: widget.websiteToken,
-          baseUrl: widget.baseUrl,
-          cwCookie: widget.cwCookie,
-          user: widget.user,
-          locale: widget.locale,
-          customAttributes: widget.customAttributes,
-        ));
+    return Webview(
+      websiteToken: widget.websiteToken,
+      baseUrl: widget.baseUrl,
+      user: widget.user,
+      locale: widget.locale,
+      customAttributes: widget.customAttributes,
+      closeWidget: widget.closeWidget,
+    );
   }
 }

@@ -17,20 +17,14 @@ class Webview extends StatefulWidget {
       {Key? key,
       required String websiteToken,
       required String baseUrl,
-      String cwCookie = "",
       ChatwootUser? user,
       String locale = "en",
       customAttributes,
       this.closeWidget})
       : super(key: key) {
-    String cwWidgetUrl =
+    widgetUrl =
         "${baseUrl}/widget?website_token=${websiteToken}&locale=${locale}";
 
-    if (cwCookie.isNotEmpty) {
-      widgetUrl = "${cwWidgetUrl}&cw_conversation=${cwCookie}";
-    } else {
-      widgetUrl = cwWidgetUrl;
-    }
     injectedJavaScript = generateScripts(
         user: user, locale: locale, customAttributes: customAttributes);
   }
@@ -46,11 +40,9 @@ class _WebviewState extends State<Webview> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       String webviewUrl = widget.widgetUrl;
-      if (!webviewUrl.contains("cw_conversation")) {
-        final cwCookie = await StoreHelper.getCookie();
-        if (cwCookie.isNotEmpty) {
-          webviewUrl = "${webviewUrl}&cw_conversation=${cwCookie}";
-        }
+      final cwCookie = await StoreHelper.getCookie();
+      if (cwCookie.isNotEmpty) {
+        webviewUrl = "${webviewUrl}&cw_conversation=${cwCookie}";
       }
       setState(() {
         _controller = WebViewController()

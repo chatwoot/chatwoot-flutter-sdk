@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,7 +34,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -51,7 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         locale: "fr",
         closeWidget: () {
-          Navigator.pop(context);
+          if (Platform.isAndroid) {
+            SystemNavigator.pop();
+          } else if (Platform.isIOS) {
+            exit(0);
+          }
         },
       ),
     );
