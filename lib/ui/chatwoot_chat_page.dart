@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 
 ///Chatwoot chat widget
 /// {@category FlutterClientSdk}
+@deprecated
 class ChatwootChat extends StatefulWidget {
   /// Specifies a custom app bar for chatwoot page widget
   final PreferredSizeWidget? appBar;
@@ -155,6 +156,7 @@ class ChatwootChat extends StatefulWidget {
   _ChatwootChatState createState() => _ChatwootChatState();
 }
 
+@deprecated
 class _ChatwootChatState extends State<ChatwootChat> {
   ///
   List<types.Message> _messages = [];
