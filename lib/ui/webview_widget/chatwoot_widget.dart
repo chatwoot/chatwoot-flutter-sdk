@@ -11,7 +11,7 @@ class ChatwootWidget extends StatefulWidget {
   ///Installation url for chatwoot
   final String baseUrl;
 
-  ///Installation url for chatwoot
+  ///User information about the user like email, username and avatar_url
   final ChatwootUser? user;
 
   ///User locale
@@ -23,7 +23,7 @@ class ChatwootWidget extends StatefulWidget {
   ///Additional information about the customer
   final customAttributes;
 
-  ///Widget Close event. Currently supported only on Android devices
+  ///Widget Attachment event. Currently supported only on Android devices
   final Future<List<String>> Function()? onAttachFile;
 
   ///Widget Load started event
