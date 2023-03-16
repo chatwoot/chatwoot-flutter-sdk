@@ -4,13 +4,9 @@
 
 Integrate Chatwoot flutter client into your flutter app and talk to your visitors in real time. [Chatwoot](https://github.com/chatwoot/chatwoot) helps you to chat with your visitors and provide exceptional support in real time. To use Chatwoot in your flutter app, follow the steps described below.
 
-<img src="https://user-images.githubusercontent.com/22669874/126673917-f8bdd47a-7a4d-4241-8b46-27ef108a0e23.png" alt="chatwoot screenshot" height="560"/>
+<img src="https://user-images.githubusercontent.com/22669874/225545427-bd3fe38c-d116-4286-b542-67b03a51e2d2.jpg" alt="chatwoot screenshot" height="560"/>
 
-## 1. Create an Api inbox in Chatwoot
-
-Refer to [Create API Channel](https://www.chatwoot.com/docs/product/channels/api/create-channel) document.
-
-## 2. Add the package to your project
+## 1. Add the package to your project
 
 Run the command below in your terminal
 
@@ -22,55 +18,22 @@ Add
 `chatwoot_sdk:<<version>>`
 to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/chatwoot_sdk) for the latest version.
 
-NB: This library uses [Hive](https://pub.dev/packages/hive) for local storage and [Flutter Chat UI](https://pub.dev/packages/flutter_chat_ui) for its user interface.
+## 2. How to use
 
-## 3. How to use
+### a. Using ChatwootWidget
 
-Replace `baseUrl` and `inboxIdentifier` with appropriate values. See [here](https://www.chatwoot.com/docs/product/channels/api/client-apis) for more information on how to obtain your `baseUrl` and `inboxIdentifier`
+* Create a website channel in chatwoot server by following the steps described here https://www.chatwoot.com/docs/channels/website
+* Replace websiteToken prop and baseUrl
 
-### a. Using ChatwootChatDialog
+```dart
+import 'dart:io';
 
-Simply call `ChatwootChatDialog.show` with your parameters to show chat dialog. To close dialog use `Navigator.pop(context)`.
-
-```
-// Example
-ChatwootChatDialog.show(
-  context,
-  baseUrl: "<<<your-chatwoot-base-url-here>>>",
-  inboxIdentifier: "<<<your-inbox-identifier-here>>>",
-  title: "Chatwoot Support",
-  user: ChatwootUser(
-    identifier: "john@gmail.com",
-    name: "John Samuel",
-    email: "john@gmail.com",
-  ),
-);
-```
-
-#### Available Parameters
-
-| Name              | Default                   | Type         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ----------------- | ------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| context           | -                         | BuildContext | Current BuildContext                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| baseUrl           | -                         | String       | Installation url for chatwoot                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| inboxIdentifier   | -                         | String       | Identifier for target chatwoot inbox                                                                                                                                                                                                                                                                                                                                                                                                               |
-| enablePersistance | true                      | bool         | Enables persistence of chatwoot client instance's contact, conversation and messages to disk <br>for convenience.<br>true - persists chatwoot client instance's data(contact, conversation and messages) to disk. To clear persisted <br>data call ChatwootClient.clearData or ChatwootClient.clearAllData<br>false - holds chatwoot client instance's data in memory and is cleared as<br>soon as chatwoot client instance is disposed<br>Setting |
-| title             | -                         | String       | Title for modal                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| user              | null                      | ChatwootUser | Custom user details to be attached to chatwoot contact                                                                                                                                                                                                                                                                                                                                                                                             |
-| primaryColor      | Color(0xff1f93ff)         | Color        | Primary color for ChatwootChatTheme                                                                                                                                                                                                                                                                                                                                                                                                                |
-| secondaryColor    | Colors.white              | Color        | Secondary color for ChatwootChatTheme                                                                                                                                                                                                                                                                                                                                                                                                              |
-| backgroundColor   | Color(0xfff4f6fb)         | Color        | Background color for ChatwootChatTheme                                                                                                                                                                                                                                                                                                                                                                                                             |
-| l10n              | ChatwootL10n()            | ChatwootL10n | Localized strings for ChatwootChat widget.                                                                                                                                                                                                                                                                                                                                                                                                         |
-| timeFormat        | DateFormat.Hm()           | DateFormat   | Date format for chats                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| dateFormat        | DateFormat("EEEE MMMM d") | DateFormat   | Time format for chats                                                                                                                                                                                                                                                                                                                                                                                                                              |
-
-### b. Using ChatwootChat Widget
-
-To embed ChatwootChat widget inside a part of your app, use the `ChatwootChat` widget. Customize chat UI theme by passing a `ChatwootChatTheme` with your custom theme colors and more.
-
-```
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image/image.dart' as image;
+import 'package:image_picker/image_picker.dart' as image_picker;
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -100,55 +63,69 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChatwootChat(
-      baseUrl: "<<<your-chatwoot-base-url-here>>>",
-      inboxIdentifier: "<<<your-inbox-identifier-here>>>",
-      user: ChatwootUser(
-        identifier: "john@gmail.com",
-        name: "John Samuel",
-        email: "john@gmail.com",
-      ),
+    return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Chatwoot",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-        backgroundColor: Colors.white,
+        title: Text("Chatwoot Example"),
       ),
-      onWelcome: (){
-        print("Welcome event received");
-      },
-      onPing: (){
-        print("Ping event received");
-      },
-      onConfirmedSubscription: (){
-        print("Confirmation event received");
-      },
-      onMessageDelivered: (_){
-        print("Message delivered event received");
-      },
-      onMessageSent: (_){
-        print("Message sent event received");
-      },
-      onConversationIsOffline: (){
-        print("Conversation is offline event received");
-      },
-      onConversationIsOnline: (){
-        print("Conversation is online event received");
-      },
-      onConversationStoppedTyping: (){
-        print("Conversation stopped typing event received");
-      },
-      onConversationStartedTyping: (){
-        print("Conversation started typing event received");
-      },
+      body: ChatwootWidget(
+        websiteToken: "websiteToken",
+        baseUrl: "https://app.chatwoot.com",
+        user: ChatwootUser(
+          identifier: "test@test.com",
+          name: "Tester test",
+          email: "test@test.com",
+        ),
+        locale: "fr",
+        closeWidget: () {
+          if (Platform.isAndroid) {
+            SystemNavigator.pop();
+          } else if (Platform.isIOS) {
+            exit(0);
+          }
+        },
+        //attachment only works on android for now
+        onAttachFile: _androidFilePicker,
+        onLoadStarted: () {
+          print("loading widget");
+        },
+        onLoadProgress: (int progress) {
+          print("loading... ${progress}");
+        },
+        onLoadCompleted: () {
+          print("widget loaded");
+        },
+      ),
     );
+  }
+
+  Future<List<String>> _androidFilePicker() async {
+    final picker = image_picker.ImagePicker();
+    final photo =
+        await picker.pickImage(source: image_picker.ImageSource.gallery);
+
+    if (photo == null) {
+      return [];
+    }
+
+    final imageData = await photo.readAsBytes();
+    final decodedImage = image.decodeImage(imageData);
+    final scaledImage = image.copyResize(decodedImage, width: 500);
+    final jpg = image.encodeJpg(scaledImage, quality: 90);
+
+    final filePath = (await getTemporaryDirectory()).uri.resolve(
+          './image_${DateTime.now().microsecondsSinceEpoch}.jpg',
+        );
+    final file = await File.fromUri(filePath).create(recursive: true);
+    await file.writeAsBytes(jpg, flush: true);
+
+    return [file.uri.toString()];
   }
 }
 ```
@@ -160,22 +137,25 @@ Horray! You're done.
 
 | Name              | Default                   | Type                | Description                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ----------------- | ------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| appBar            | null                      | PreferredSizeWidget | Specify appBar if widget is being used as standalone page                                                                                                                                                                                                                                                                                                                                                                                          |
+| websiteToken            | -                      | String | Website inbox channel token                                                                                                                                                                                                                                                                                                                                                                                          |
 | baseUrl           | -                         | String              | Installation url for chatwoot                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| inboxIdentifier   | -                         | String              | Identifier for target chatwoot inbox                                                                                                                                                                                                                                                                                                                                                                                                               |
-| enablePersistance | true                      | bool                | Enables persistence of chatwoot client instance's contact, conversation and messages to disk <br>for convenience.<br>true - persists chatwoot client instance's data(contact, conversation and messages) to disk. To clear persisted <br>data call ChatwootClient.clearData or ChatwootClient.clearAllData<br>false - holds chatwoot client instance's data in memory and is cleared as<br>soon as chatwoot client instance is disposed<br>Setting |
-| user              | null                      | ChatwootUser        | Custom user details to be attached to chatwoot contact                                                                                                                                                                                                                                                                                                                                                                                             |
-| l10n              | ChatwootL10n()            | ChatwootL10n        | Localized strings for ChatwootChat widget.                                                                                                                                                                                                                                                                                                                                                                                                         |
-| timeFormat        | DateFormat.Hm()           | DateFormat          | Date format for chats                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| dateFormat        | DateFormat("EEEE MMMM d") | DateFormat          | Time format for chats                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| showAvatars       | true                      | bool                | Show avatars for received messages                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| showUserNames     | true                      | bool                | Show user names for received messages.                                                                                                                                                                                                                                                                                                                                                                                                             |
+| user   | -                         | ChatwootUser              | User information about the user like email, username and avatar_url                                                                                                                                                                                                                                                                                                                                                                                                               |
+| locale | en                      | String                | User locale |
+| closeWidget              | -                      | void Function()        | widget close event                                                                                                                                                                                                                                                                                                                                                                                             |
+| customAttributes              | -            | dynamic        | Additional information about the customer                                                                                                                                                                                                                                                                                                                                                                                                         |
+| onAttachFile        | -           | Future<List<String>> Function()          | Widget Attachment event. Should return a list of File Uris Currently supported only on Android devices                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| onLoadStarted        | - | void Function()          | Widget load start event                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| onLoadProgress       | -                      | void Function(int)                | Widget Load progress event                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| onLoadCompleted     | -                      | void Function()                | Widget Load completed event                                                                                                                                                                                                                                                                                                                                                                                                             |
 
-### c. Using Chatwoot Client
+### b. Using Chatwoot Client
+* Create an Api inbox in Chatwoot. Refer to [Create API Channel](https://www.chatwoot.com/docs/product/channels/api/create-channel) document.
+* Create your own customized chat ui and use `ChatwootClient` to load and sendMessages. Messaging events like `onMessageSent` and `onMessageReceived` will be triggered on `ChatwootCallback` argument passed when creating the client instance.
 
-You can also create a customized chat ui and use `ChatwootClient` to load and sendMessages. Messaging events like `onMessageSent` and `onMessageReceived` will be triggered on `ChatwootCallback` passed when creating the client instance.
 
-```
+NB: This chatwoot client uses [Hive](https://pub.dev/packages/hive) for local storage.
+
+```dart
 final chatwootCallbacks = ChatwootCallbacks(
       onWelcome: (){
         print("on welcome");
