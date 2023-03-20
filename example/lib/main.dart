@@ -42,23 +42,23 @@ class _MyHomePageState extends State<MyHomePage> {
       inboxIdentifier: "xxxxxxxxxxxxxxxxxxx",
       title: "Chatwoot Support",
       user: ChatwootUser(
-        identifier: "test@test.com",
-        name: "Tester test",
-        email: "test@test.com",
-      ),
+          identifier: "test@test.com",
+          name: "Tester test",
+          email: "test@test.com",
+          identifier_hash: '**************************************'),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return ChatwootChat(
-      baseUrl: "https://app.chatwoot.com",
-      inboxIdentifier: "xxxxxxxxxxxxxxxxxxx",
+      baseUrl: "https://staging.chatwoot.com",
+      inboxIdentifier: "igTjPxxYKAZre8GfzbYcDAZH",
       user: ChatwootUser(
-        identifier: "test1@test.com",
-        name: "Tester test1",
-        email: "test1@test.com",
-      ),
+          identifier: "testere@test.com",
+          name: "Tester test",
+          email: "tester@test.com",
+          identifier_hash: '**************************************'),
       appBar: AppBar(
         title: Text(
           "Chatwoot",

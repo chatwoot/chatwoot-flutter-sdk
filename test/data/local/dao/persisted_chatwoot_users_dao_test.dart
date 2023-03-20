@@ -14,7 +14,7 @@ void main() {
 
     final testUser = ChatwootUser(
         identifier: "identifier",
-        identifierHash: "identifierHash",
+        identifier_hash: "identifierHash",
         name: "name",
         email: "email",
         avatarUrl: "avatarUrl",
