@@ -8,6 +8,10 @@
 .buildlog/
 .history
 .svn/
+*.g.dart
+*.mocks.dart
+applicationDocumentsPath
+hive_testing_path
 
 # IntelliJ related
 *.iml

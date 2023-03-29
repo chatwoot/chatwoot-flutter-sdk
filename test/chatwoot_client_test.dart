@@ -6,10 +6,12 @@ import 'package:chatwoot_sdk/di/modules.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'chatwoot_client_test.mocks.dart';
 import 'data/chatwoot_repository_test.mocks.dart';
+import 'utils/test_resources_util.dart';
 
 @GenerateMocks([ChatwootRepository])
 void main() {
@@ -55,6 +57,8 @@ void main() {
           inboxIdentifier: testInboxIdentifier,
           user: testUser,
           enablePersistence: false);
+
+      PathProviderPlatform.instance = MockPathProviderPlatform();
     });
 
     test(

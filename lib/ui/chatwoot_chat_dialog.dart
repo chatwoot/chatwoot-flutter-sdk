@@ -9,6 +9,7 @@ import 'chatwoot_chat_page.dart';
 
 ///Chatwoot chat modal widget
 /// {@category FlutterClientSdk}
+@deprecated
 class ChatwootChatDialog extends StatefulWidget {
   static show(
     BuildContext context, {
@@ -101,6 +102,7 @@ class ChatwootChatDialog extends StatefulWidget {
   _ChatwootChatDialogState createState() => _ChatwootChatDialogState();
 }
 
+@deprecated
 class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
   late String status;
   late ChatwootL10n localizedStrings;
