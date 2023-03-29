@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
           name: "Tester test",
           email: "test@test.com",
         ),
-        locale: "fr",
+        locale: "en",
         closeWidget: () {
           if (Platform.isAndroid) {
             SystemNavigator.pop();
