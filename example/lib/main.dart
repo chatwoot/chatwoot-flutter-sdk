@@ -35,45 +35,162 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isChatVisible = false;
+
   @override
   void initState() {
     super.initState();
   }
 
+  _showChatwootDialog() {
+    ChatwootChatDialog.show(
+      context,
+      baseUrl: "https://app.chatwoot.com",
+      inboxIdentifier: "*********************",
+      title: "Chatwoot Support",
+      user: ChatwootUser(
+        identifier: "test@test.com",
+        identifierHash:
+            "***************************************************************",
+        name: "test",
+        email: "test@test.com",
+      ),
+    );
+  }
+
+// Webview SDK
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chatwoot Example"),
-      ),
-      body: ChatwootWidget(
-        websiteToken: "websiteToken",
-        baseUrl: "https://app.chatwoot.com",
-        user: ChatwootUser(
-          identifier: "test@test.com",
-          name: "Tester test",
-          email: "test@test.com",
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/chatwoot_logo.png',
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+            Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Chatwoot Example'))
+          ],
         ),
-        locale: "en",
-        closeWidget: () {
-          if (Platform.isAndroid) {
-            SystemNavigator.pop();
-          } else if (Platform.isIOS) {
-            exit(0);
-          }
-        },
-        //attachment only works on android for now
-        onAttachFile: _androidFilePicker,
-        onLoadStarted: () {
-          print("loading widget");
-        },
-        onLoadProgress: (int progress) {
-          print("loading... ${progress}");
-        },
-        onLoadCompleted: () {
-          print("widget loaded");
-        },
       ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _isChatVisible = !_isChatVisible;
+              });
+            },
+            child: Text(
+                _isChatVisible ? "Hide webview widget" : "Show webview widget"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _showChatwootDialog();
+            },
+            child: Text("Show Native widget"),
+          ),
+          Visibility(
+            visible: _isChatVisible,
+            child: Expanded(
+              child: ChatwootWidget(
+                websiteToken: "*********************",
+                baseUrl: "https://app.chatwoot.com",
+                user: ChatwootUser(
+                  identifier: "test@test.com",
+                  identifierHash:
+                      "***************************************************************",
+                  name: "test",
+                  email: "test@test.com",
+                ),
+                locale: "en",
+                closeWidget: () {
+                  if (Platform.isAndroid) {
+                    SystemNavigator.pop();
+                  } else if (Platform.isIOS) {
+                    exit(0);
+                  }
+                },
+                //attachment only works on android for now
+                onAttachFile: _androidFilePicker,
+                onLoadStarted: () {
+                  print("loading widget");
+                },
+                onLoadProgress: (int progress) {
+                  print("loading... ${progress}");
+                },
+                onLoadCompleted: () {
+                  print("widget loaded");
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+// Native SDK
+  @override
+  Widget builds(BuildContext context) {
+    return ChatwootChat(
+      baseUrl: "https://app.chatwoot.com",
+      inboxIdentifier: "*********************",
+      user: ChatwootUser(
+        identifier: "test@test.com",
+        identifierHash:
+            "***************************************************************",
+        name: "test",
+        email: "test@test.com",
+      ),
+      appBar: AppBar(
+        title: Text(
+          "Chatwoot",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        leading: InkWell(
+          onTap: () => _showChatwootDialog(),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset("assets/chatwoot_logo.png"),
+          ),
+        ),
+        backgroundColor: Colors.white,
+      ),
+      onWelcome: () {
+        print("Welcome event received");
+      },
+      onPing: () {
+        print("Ping event received");
+      },
+      onConfirmedSubscription: () {
+        print("Confirmation event received");
+      },
+      onMessageDelivered: (_) {
+        print("Message delivered event received");
+      },
+      onMessageSent: (_) {
+        print("Message sent event received");
+      },
+      onConversationIsOffline: () {
+        print("Conversation is offline event received");
+      },
+      onConversationIsOnline: () {
+        print("Conversation is online event received");
+      },
+      onConversationStoppedTyping: () {
+        print("Conversation stopped typing event received");
+      },
+      onConversationStartedTyping: () {
+        print("Conversation started typing event received");
+      },
     );
   }
 
