@@ -7,8 +7,8 @@ import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
-import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_api_interceptor.dart';
+import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:dio/dio.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -60,7 +60,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
       }
     } on DioError catch (e) {
       throw ChatwootClientException(
-          e.message, ChatwootClientExceptionType.SEND_MESSAGE_FAILED);
+          e.message!, ChatwootClientExceptionType.SEND_MESSAGE_FAILED);
     }
   }
 
@@ -81,7 +81,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
       }
     } on DioError catch (e) {
       throw ChatwootClientException(
-          e.message, ChatwootClientExceptionType.GET_MESSAGES_FAILED);
+          e.message!, ChatwootClientExceptionType.GET_MESSAGES_FAILED);
     }
   }
 
@@ -100,7 +100,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
       }
     } on DioError catch (e) {
       throw ChatwootClientException(
-          e.message, ChatwootClientExceptionType.GET_CONTACT_FAILED);
+          e.message!, ChatwootClientExceptionType.GET_CONTACT_FAILED);
     }
   }
 
@@ -121,7 +121,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
       }
     } on DioError catch (e) {
       throw ChatwootClientException(
-          e.message, ChatwootClientExceptionType.GET_CONVERSATION_FAILED);
+          e.message!, ChatwootClientExceptionType.GET_CONVERSATION_FAILED);
     }
   }
 
@@ -141,7 +141,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
       }
     } on DioError catch (e) {
       throw ChatwootClientException(
-          e.message, ChatwootClientExceptionType.UPDATE_CONTACT_FAILED);
+          e.message!, ChatwootClientExceptionType.UPDATE_CONTACT_FAILED);
     }
   }
 
@@ -162,7 +162,7 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
       }
     } on DioError catch (e) {
       throw ChatwootClientException(
-          e.message, ChatwootClientExceptionType.UPDATE_MESSAGE_FAILED);
+          e.message!, ChatwootClientExceptionType.UPDATE_MESSAGE_FAILED);
     }
   }
 

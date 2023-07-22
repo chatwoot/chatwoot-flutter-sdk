@@ -13,7 +13,6 @@ import 'package:uuid/uuid.dart';
 
 ///Chatwoot chat widget
 /// {@category FlutterClientSdk}
-@deprecated
 class ChatwootChat extends StatefulWidget {
   /// Specifies a custom app bar for chatwoot page widget
   final PreferredSizeWidget? appBar;
@@ -156,7 +155,6 @@ class ChatwootChat extends StatefulWidget {
   _ChatwootChatState createState() => _ChatwootChatState();
 }
 
-@deprecated
 class _ChatwootChatState extends State<ChatwootChat> {
   ///
   List<types.Message> _messages = [];
@@ -185,19 +183,22 @@ class _ChatwootChatState extends State<ChatwootChat> {
 
     chatwootCallbacks = ChatwootCallbacks(
       onWelcome: () {
-        widget.onWelcome?.call();
+        if (widget.onWelcome != null) widget.onWelcome?.call();
       },
       onPing: () {
-        widget.onPing?.call();
+        if (widget.onPing != null) widget.onPing?.call();
       },
       onConfirmedSubscription: () {
-        widget.onConfirmedSubscription?.call();
+        if (widget.onConfirmedSubscription != null)
+          widget.onConfirmedSubscription?.call();
       },
       onConversationStartedTyping: () {
-        widget.onConversationStoppedTyping?.call();
+        if (widget.onConversationStoppedTyping != null)
+          widget.onConversationStoppedTyping?.call();
       },
       onConversationStoppedTyping: () {
-        widget.onConversationStartedTyping?.call();
+        if (widget.onConversationStartedTyping != null)
+          widget.onConversationStartedTyping?.call();
       },
       onPersistedMessagesRetrieved: (persistedMessages) {
         if (widget.enablePersistence) {
@@ -347,7 +348,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
     final index = _messages.indexWhere((element) => element.id == message.id);
     final updatedMessage = _messages[index].copyWith(previewData: previewData);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       setState(() {
         _messages[index] = updatedMessage;
       });
@@ -363,7 +364,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
       return;
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       setState(() {
         _messages[index] = message;
       });
@@ -375,7 +376,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
   ) {
     final index = _messages.indexWhere((element) => element.id == message.id);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       setState(() {
         _messages[index] = message;
       });
@@ -428,27 +429,27 @@ class _ChatwootChatState extends State<ChatwootChat> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/logo_grey.png",
-                  package: 'chatwoot_sdk',
-                  width: 15,
-                  height: 15,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "Powered by Chatwoot",
-                    style: TextStyle(color: Colors.black45, fontSize: 12),
-                  ),
-                )
-              ],
-            ),
-          )
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Image.asset(
+          //         "assets/logo_grey.png",
+          //         package: 'chatwoot_sdk',
+          //         width: 15,
+          //         height: 15,
+          //       ),
+          //       Padding(
+          //         padding: const EdgeInsets.only(left: 8.0),
+          //         child: Text(
+          //           "Powered by Chatwoot",
+          //           style: TextStyle(color: Colors.black45, fontSize: 12),
+          //         ),
+          //       )
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );

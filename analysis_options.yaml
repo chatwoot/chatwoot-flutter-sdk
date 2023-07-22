@@ -1,4 +1,4 @@
-analyzer:
-  exclude:
-    - "**.g.dart"
-    - "**.mocks.dart"
+# analyzer:
+#   exclude:
+#     - "**.g.dart"
+#     - "**.mocks.dart"

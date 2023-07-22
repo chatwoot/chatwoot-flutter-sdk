@@ -16,7 +16,7 @@ class ChatwootUser extends Equatable {
   final String? identifier;
 
   ///custom user identifier hash
-  @JsonKey(name: "identifier_hash")
+  @JsonKey()
   @HiveField(1)
   final String? identifierHash;
 
