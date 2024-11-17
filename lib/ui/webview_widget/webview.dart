@@ -18,8 +18,6 @@ class Webview extends StatefulWidget {
   /// See [ChatwootWidget.closeWidget]
   final void Function()? closeWidget;
 
-  /// See [ChatwootWidget.onAttachFile]
-  final Future<List<String>> Function()? onAttachFile;
 
   /// See [ChatwootWidget.onLoadStarted]
   final void Function()? onLoadStarted;
@@ -38,7 +36,6 @@ class Webview extends StatefulWidget {
     String locale = "en",
     customAttributes,
     this.closeWidget,
-    this.onAttachFile,
     this.onLoadStarted,
     this.onLoadProgress,
     this.onLoadCompleted,

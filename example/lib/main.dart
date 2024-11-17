@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -60,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
             exit(0);
           }
         },
-        onAttachFile: _pickFiles,
         onLoadStarted: () {
           print("loading widget");
         },
@@ -74,14 +72,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<List<String>> _pickFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
-    if (result != null) {
-      File file = File(result.files.single.path ?? '');
-      return [file.uri.toString()];
-    } else {
-      return [];
-    }
-  }
 }
