@@ -28,5 +28,18 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to upload images.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>We need access to your documents for uploading files.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+   		<key>NSAllowsArbitraryLoads</key>
+   		<true/>
+	</dict>
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
 </dict>
 </plist>
