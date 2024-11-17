@@ -1,11 +1,9 @@
 import 'dart:io';
 
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image/image.dart' as image;
-import 'package:image_picker/image_picker.dart' as image_picker;
-import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -47,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("Chatwoot Example"),
       ),
       body: ChatwootWidget(
-        websiteToken: "Your Token", //ADD YOUR TOKEN
+        websiteToken: "YOUR_TOKEN",
         baseUrl: "https://app.chatwoot.com",
         user: ChatwootUser(
           identifier: "test@test.com",
@@ -58,12 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
         closeWidget: () {
           if (Platform.isAndroid) {
             SystemNavigator.pop();
-          } else if (Platform.isIOS) {
+          } else {
             exit(0);
           }
         },
-        //attachment only works on android for now
-        onAttachFile: _androidFilePicker,
+        onAttachFile: _pickFiles,
         onLoadStarted: () {
           print("loading widget");
         },
@@ -77,26 +74,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<List<String>> _androidFilePicker() async {
-    final picker = image_picker.ImagePicker();
-    final photo =
-        await picker.pickImage(source: image_picker.ImageSource.gallery);
+  Future<List<String>> _pickFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
-    if (photo == null) {
+    if (result != null) {
+      File file = File(result.files.single.path ?? '');
+      return [file.uri.toString()];
+    } else {
       return [];
     }
-
-    final imageData = await photo.readAsBytes();
-    final decodedImage = image.decodeImage(imageData);
-    final scaledImage = image.copyResize(decodedImage!, width: 500);
-    final jpg = image.encodeJpg(scaledImage, quality: 90);
-
-    final filePath = (await getTemporaryDirectory()).uri.resolve(
-          './image_${DateTime.now().microsecondsSinceEpoch}.jpg',
-        );
-    final file = await File.fromUri(filePath).create(recursive: true);
-    await file.writeAsBytes(jpg, flush: true);
-
-    return [file.uri.toString()];
   }
 }
