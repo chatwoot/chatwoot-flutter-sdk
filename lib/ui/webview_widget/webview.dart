@@ -1,19 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:chatwoot_sdk/ui/webview_widget/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
 ///Chatwoot webview widget
 /// {@category FlutterClientSdk}
-import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'dart:convert';
-import 'dart:io';
 
 class Webview extends StatefulWidget {
   /// URL for Chatwoot widget in webview
