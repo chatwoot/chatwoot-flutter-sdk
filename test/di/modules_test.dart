@@ -50,7 +50,8 @@ void main() {
 
       //THEN
       expect(result.options.baseUrl, equals(testChatwootParameters.baseUrl));
-      expect(result.interceptors.isEmpty, equals(true));
+     
+      expect(result.interceptors.isEmpty, equals(false)); //[ImplyContentInterceptor] is always present]
     });
 
     test(
@@ -61,7 +62,7 @@ void main() {
           .read(chatwootClientAuthServiceProvider(testChatwootParameters));
 
       //THEN
-      expect(result.dio.interceptors.length, equals(0));
+      expect(result.dio.interceptors.length, equals(1));//[ImplyContentInterceptor] is always present]
     });
 
     test(
@@ -73,7 +74,8 @@ void main() {
 
       //THEN
       expect(result.options.baseUrl, equals(testChatwootParameters.baseUrl));
-      expect(result.interceptors.length, equals(1));
+       print(result.interceptors.toString());
+      expect(result.interceptors.length, equals(2));//[ImplyContentInterceptor] is always present]
     });
 
     test(

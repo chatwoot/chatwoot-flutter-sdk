@@ -29,6 +29,7 @@ void main() {
         name: "name",
         email: "email",
         avatarUrl: "avatarUrl",
+        phoneNumber: "phoneNumber",
         customAttributes: {});
     final testClientInstanceKey = ChatwootClient.getClientInstanceKey(
         baseUrl: testBaseUrl,
@@ -38,13 +39,15 @@ void main() {
     setUp(() async {
       when(mockRepository.initialize(testUser))
           .thenAnswer((realInvocation) => Future.microtask(() {}));
-      mockProviderContainer = ProviderContainer();
-      mockProviderContainer.updateOverrides([
-        localStorageProvider
+      mockProviderContainer = ProviderContainer(
+        overrides: [
+            localStorageProvider
             .overrideWithProvider(( param) => Provider<MockLocalStorage>((ref) => mockLocalStorage,)),
         chatwootRepositoryProvider
             .overrideWithProvider(( param) => Provider<MockChatwootRepository>((ref) => mockRepository,))
-      ]);
+        ]
+      );
+     
       ChatwootClient.providerContainerMap.update(
           testClientInstanceKey, (_) => mockProviderContainer,
           ifAbsent: () => mockProviderContainer);
