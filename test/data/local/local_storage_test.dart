@@ -43,7 +43,8 @@ void main() {
         ..registerAdapter(ChatwootContactAdapter())
         ..registerAdapter(ChatwootConversationAdapter())
         ..registerAdapter(ChatwootMessageAdapter())
-        ..registerAdapter(ChatwootUserAdapter());
+        ..registerAdapter(ChatwootUserAdapter())
+        ..registerAdapter(ChatwootMessageAttachmentAdapter());
 
       localStorage = LocalStorage(
           userDao: mockUserDao,

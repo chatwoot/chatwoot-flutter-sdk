@@ -10,11 +10,12 @@ import 'entity/chatwoot_contact.dart';
 import 'entity/chatwoot_message.dart';
 import 'entity/chatwoot_user.dart';
 
-const CHATWOOT_CONTACT_HIVE_TYPE_ID = 0;
-const CHATWOOT_CONVERSATION_HIVE_TYPE_ID = 1;
-const CHATWOOT_MESSAGE_HIVE_TYPE_ID = 2;
-const CHATWOOT_USER_HIVE_TYPE_ID = 3;
-const CHATWOOT_EVENT_USER_HIVE_TYPE_ID = 4;
+const CHATWOOT_CONTACT_HIVE_TYPE_ID = 110;
+const CHATWOOT_CONVERSATION_HIVE_TYPE_ID = 111;
+const CHATWOOT_MESSAGE_HIVE_TYPE_ID = 112;
+const CHATWOOT_USER_HIVE_TYPE_ID = 113;
+const CHATWOOT_EVENT_USER_HIVE_TYPE_ID = 114;
+const CHATWOOT_MESSAGE_ATTACHMENT_HIVE_TYPE_ID = 115;
 
 class LocalStorage {
   ChatwootUserDao userDao;
@@ -31,12 +32,12 @@ class LocalStorage {
 
   static Future<void> openDB({void Function()? onInitializeHive}) async {
     if (onInitializeHive == null) {
-      await Hive.initFlutter();
+      await Hive.initFlutter("chatwoot");
       if (!Hive.isAdapterRegistered(CHATWOOT_CONTACT_HIVE_TYPE_ID)) {
-        Hive..registerAdapter(ChatwootContactAdapter());
+        await Hive..registerAdapter(ChatwootContactAdapter());
       }
       if (!Hive.isAdapterRegistered(CHATWOOT_CONVERSATION_HIVE_TYPE_ID)) {
-        Hive..registerAdapter(ChatwootConversationAdapter());
+        await Hive..registerAdapter(ChatwootConversationAdapter());
       }
       if (!Hive.isAdapterRegistered(CHATWOOT_MESSAGE_HIVE_TYPE_ID)) {
         Hive..registerAdapter(ChatwootMessageAdapter());
@@ -46,6 +47,9 @@ class LocalStorage {
       }
       if (!Hive.isAdapterRegistered(CHATWOOT_USER_HIVE_TYPE_ID)) {
         Hive..registerAdapter(ChatwootUserAdapter());
+      }
+      if (!Hive.isAdapterRegistered(CHATWOOT_MESSAGE_ATTACHMENT_HIVE_TYPE_ID)) {
+        Hive..registerAdapter(ChatwootMessageAttachmentAdapter());
       }
     } else {
       onInitializeHive();

@@ -50,7 +50,7 @@ class ChatwootMessage extends Equatable {
   ///list of media/doc/file attachment for message
   @JsonKey()
   @HiveField(7)
-  final List<dynamic>? attachments;
+  final List<ChatwootMessageAttachment>? attachments;
 
   ///The user this message belongs to
   @JsonKey(name: "sender")
@@ -58,7 +58,7 @@ class ChatwootMessage extends Equatable {
   final ChatwootEventMessageUser? sender;
 
   ///checks if message belongs to contact making the request
-  bool get isMine => messageType != 1;
+  bool get isMine => messageType != 1 && messageType !=3;
 
   ChatwootMessage(
       {required this.id,
@@ -89,6 +89,50 @@ class ChatwootMessage extends Equatable {
         sender
       ];
 }
+
+@JsonSerializable(explicitToJson: true)
+@HiveType(typeId: CHATWOOT_MESSAGE_ATTACHMENT_HIVE_TYPE_ID)
+class ChatwootMessageAttachment {
+  @JsonKey(name: "id")
+  @HiveField(1)
+  int? id;
+  @JsonKey(name: "message_id")
+  @HiveField(2)
+  int? messageId;
+  @JsonKey(name: "file_type")
+  @HiveField(3)
+  String? fileType;
+  @JsonKey(name: "account_id")
+  @HiveField(4)
+  int? accountId;
+  @JsonKey(name: "data_url")
+  @HiveField(5)
+  String? dataUrl;
+
+  @JsonKey(name: "thumb_url")
+  @HiveField(6)
+  String? thumbUrl;
+  @JsonKey(name: "file_size")
+  @HiveField(7)
+  int? fileSize;
+
+  ChatwootMessageAttachment(
+      {this.id,
+        this.messageId,
+        this.fileType,
+        this.accountId,
+        this.dataUrl,
+        this.thumbUrl,
+        this.fileSize});
+
+
+
+  factory ChatwootMessageAttachment.fromJson(Map<String, dynamic> json) =>
+      _$ChatwootMessageAttachmentFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ChatwootMessageAttachmentToJson(this);
+}
+
 
 int idFromJson(value) {
   if (value is String) {

@@ -53,8 +53,9 @@ final chatwootClientAuthServiceProvider =
 ///Provides instance of chatwoot client api service [ChatwootClientService].
 final chatwootClientServiceProvider =
     Provider.family<ChatwootClientService, ChatwootParameters>((ref, params) {
-  final authenticatedDio = ref.read(authenticatedDioProvider(params));
-  return ChatwootClientServiceImpl(params.baseUrl, dio: authenticatedDio);
+      final authenticatedDio = ref.read(authenticatedDioProvider(params));
+      final unauthenticatedDio = ref.read(unauthenticatedDioProvider(params));
+  return ChatwootClientServiceImpl(params.baseUrl, dio: authenticatedDio, uDio: unauthenticatedDio);
 });
 
 ///Provides hive box to store relations between chatwoot client instance and contact object,

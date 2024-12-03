@@ -11,6 +11,8 @@ import 'package:chatwoot_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
+import 'package:chatwoot_sdk/data/remote/requests/send_csat_survey_request.dart';
+import 'package:chatwoot_sdk/data/remote/responses/csat_survey_response.dart';
 import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -36,6 +38,7 @@ void main() {
         avatarUrl: "avatarUrl",
         customAttributes: {});
     late final ChatwootMessage testMessage;
+    late final CsatSurveyFeedbackResponse testCsatFeedback;
 
     final mockLocalStorage = MockLocalStorage();
     final mockChatwootClientService = MockChatwootClientService();
@@ -56,6 +59,8 @@ void main() {
           await TestResourceUtil.readJsonResource(fileName: "conversation"));
       testMessage = ChatwootMessage.fromJson(
           await TestResourceUtil.readJsonResource(fileName: "message"));
+      testCsatFeedback = CsatSurveyFeedbackResponse.fromJson(
+          await TestResourceUtil.readJsonResource(fileName: "csat_feedback"));
 
       when(mockLocalStorage.messagesDao).thenReturn(mockMessagesDao);
       when(mockLocalStorage.contactDao).thenReturn(mockContactDao);
@@ -146,45 +151,81 @@ void main() {
 
     test(
         'Given message is successfully sent when sendMessage is called, then callback should be called with sent message',
-        () async {
-      //GIVEN
-      final messageRequest =
+            () async {
+          //GIVEN
+          final messageRequest =
           ChatwootNewMessageRequest(content: "new message", echoId: "echoId");
-      when(mockChatwootClientService.createMessage(any))
-          .thenAnswer((_) => Future.value(testMessage));
-      when(mockChatwootCallbacks.onMessageSent).thenAnswer((_) => (_, __) {});
-      when(mockMessagesDao.saveMessage(any))
-          .thenAnswer((_) => Future.microtask(() {}));
+          when(mockChatwootClientService.createMessage(any))
+              .thenAnswer((_) => Future.value(testMessage));
+          when(mockChatwootCallbacks.onMessageSent).thenAnswer((_) => (_, __) {});
+          when(mockMessagesDao.saveMessage(any))
+              .thenAnswer((_) => Future.microtask(() {}));
 
-      //WHEN
-      await repo.sendMessage(messageRequest);
+          //WHEN
+          await repo.sendMessage(messageRequest);
 
-      //THEN
-      verify(mockChatwootClientService.createMessage(messageRequest));
-      verify(mockChatwootCallbacks.onMessageSent
-          ?.call(testMessage, messageRequest.echoId));
-      verify(mockMessagesDao.saveMessage(testMessage));
-    });
+          //THEN
+          verify(mockChatwootClientService.createMessage(messageRequest));
+          verify(mockChatwootCallbacks.onMessageSent
+              ?.call(testMessage, messageRequest.echoId));
+          verify(mockMessagesDao.saveMessage(testMessage));
+        });
 
     test(
         'Given message fails to send when sendMessage is called, then callback should be called with an error',
-        () async {
-      //GIVEN
-      final testError = ChatwootClientException(
-          "error", ChatwootClientExceptionType.SEND_MESSAGE_FAILED);
-      final messageRequest =
+            () async {
+          //GIVEN
+          final testError = ChatwootClientException(
+              "error", ChatwootClientExceptionType.SEND_MESSAGE_FAILED);
+          final messageRequest =
           ChatwootNewMessageRequest(content: "new message", echoId: "echoId");
-      when(mockChatwootClientService.createMessage(any)).thenThrow(testError);
-      when(mockChatwootCallbacks.onError).thenAnswer((_) => (_) {});
+          when(mockChatwootClientService.createMessage(any)).thenThrow(testError);
+          when(mockChatwootCallbacks.onError).thenAnswer((_) => (_) {});
 
-      //WHEN
-      await repo.sendMessage(messageRequest);
+          //WHEN
+          await repo.sendMessage(messageRequest);
 
-      //THEN
-      verify(mockChatwootClientService.createMessage(messageRequest));
-      verify(mockChatwootCallbacks.onError?.call(testError));
-      verifyNever(mockMessagesDao.saveMessage(any));
-    });
+          //THEN
+          verify(mockChatwootClientService.createMessage(messageRequest));
+          verify(mockChatwootCallbacks.onError?.call(testError));
+          verifyNever(mockMessagesDao.saveMessage(any));
+        });
+
+    test(
+        'Given csat survey is successfully recorded when sendCsatFeedBack is called, then callback should be called with feedback response',
+            () async {
+          //GIVEN
+          final csatRequest = SendCsatSurveyRequest(rating: 5, feedbackMessage: "My issue was resolved promptly");
+          when(mockChatwootClientService.sendCsatFeedBack(testConversation.uuid, csatRequest))
+              .thenAnswer((_) => Future.value(testCsatFeedback));
+          when(mockChatwootCallbacks.onCsatSurveyResponseRecorded).thenAnswer((_) => (_) {});
+
+          //WHEN
+          await repo.sendCsatFeedBack(testConversation.uuid!, csatRequest);
+
+          //THEN
+          verify(mockChatwootClientService.sendCsatFeedBack(testConversation.uuid, csatRequest));
+          verify(mockChatwootCallbacks.onCsatSurveyResponseRecorded
+              ?.call(testCsatFeedback));
+        });
+
+    test(
+        'Given send csat survey fails to send when sendCsatFeedBack is called, then callback should be called with an error',
+            () async {
+          //GIVEN
+          final testError = ChatwootClientException(
+              "error", ChatwootClientExceptionType.SEND_CSAT_FEEDBACK);
+          final csatRequest = SendCsatSurveyRequest(rating: 5, feedbackMessage: "My issue was resolved promptly");
+          when(mockChatwootClientService.sendCsatFeedBack(testConversation.uuid, csatRequest)).thenThrow(testError);
+          when(mockChatwootCallbacks.onError).thenAnswer((_) => (_) {});
+
+          //WHEN
+          await repo.sendCsatFeedBack(testConversation.uuid!, csatRequest);
+
+          //THEN
+          verify(mockChatwootClientService.sendCsatFeedBack(testConversation.uuid, csatRequest));
+          verify(mockChatwootCallbacks.onError?.call(testError));
+        });
 
     test(
         'Given repo is initialized with user successfully when initialize is called, then client should be properly initialized',
@@ -343,6 +384,7 @@ void main() {
         () async {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
+      when(mockChatwootCallbacks.onError).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationIsOffline)
           .thenAnswer((_) => () {});
       when(mockChatwootCallbacks.onConversationIsOnline)
@@ -388,7 +430,7 @@ void main() {
       when(mockConversationDao.getConversation()).thenReturn(testConversation);
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationResolved)
-          .thenAnswer((_) => () {});
+          .thenAnswer((_) => (_) {});
       final dynamic resolvedEvent = await TestResourceUtil.readJsonResource(
           fileName: "websocket_conversation_status_changed");
       repo.listenForEvents();
@@ -398,7 +440,7 @@ void main() {
       await Future.delayed(Duration(seconds: 1));
 
       //THEN
-      verify(mockChatwootCallbacks.onConversationResolved?.call());
+      verify(mockChatwootCallbacks.onConversationResolved?.call(testConversation.uuid!));
     });
 
     test(

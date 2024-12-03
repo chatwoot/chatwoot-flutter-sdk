@@ -29,6 +29,39 @@ class ChatwootL10n extends ChatL10n {
   /// Message when agent resolves conversation
   final String conversationResolvedMessage;
 
+  final String and;
+
+  final String isTyping;
+
+  final String others;
+
+  /// Unread messages
+  final String unreadMessagesLabel;
+
+  /// Action text for csat form
+  final String csatInquiryQuestion;
+
+  /// CSAT option rating: 1
+  final String csatVeryUnsatisfied;
+
+  ///  CSAT option rating: 2
+  final String csatUnsatisfied;
+
+  ///  CSAT option rating: 3
+  final String csatOK;
+
+  ///  CSAT option rating: 4
+  final String csatSatisfied;
+
+  ///  CSAT option rating: 5
+  final String csatVerySatisfied;
+
+  /// CSAT form feed back text placholder
+  final String csatFeedbackPlaceholder;
+
+  /// Message displayed to user after completing csat survey
+  final String csatThankYouMessage;
+
   /// Creates a new chatwoot l10n
   const ChatwootL10n(
       {this.attachmentButtonAccessibilityLabel = "",
@@ -39,13 +72,30 @@ class ChatwootL10n extends ChatL10n {
       this.typingText = "typing...",
       this.inputPlaceholder = "Type your message",
       this.sendButtonAccessibilityLabel = "Send Message",
-      this.conversationResolvedMessage =
-          "Your ticket has been marked as resolved"})
+      this.conversationResolvedMessage = "Your ticket has been marked as resolved",
+      this.and = "and",
+      this.isTyping = "is typing...",
+      this.others = "others",
+      this.unreadMessagesLabel = "Your ticket has been marked as resolved",
+        this.csatInquiryQuestion = "Rate your experience",
+        this.csatVeryUnsatisfied = "Very poor",
+        this.csatUnsatisfied = "Poor",
+        this.csatOK = "Okay",
+        this.csatSatisfied = "Good",
+        this.csatVerySatisfied = "Excellent",
+        this.csatFeedbackPlaceholder = "Leave your feedback (optional)...",
+        this.csatThankYouMessage = "Thank you for your feedback"
+    })
       : super(
             attachmentButtonAccessibilityLabel:
                 attachmentButtonAccessibilityLabel,
             emptyChatPlaceholder: emptyChatPlaceholder,
             fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
             inputPlaceholder: inputPlaceholder,
-            sendButtonAccessibilityLabel: sendButtonAccessibilityLabel);
+            sendButtonAccessibilityLabel: sendButtonAccessibilityLabel,
+            and: and,
+            isTyping: isTyping,
+            others: others,
+            unreadMessagesLabel: unreadMessagesLabel
+      );
 }

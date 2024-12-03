@@ -6,6 +6,8 @@ import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
+import 'package:chatwoot_sdk/data/remote/requests/send_csat_survey_request.dart';
+import 'package:chatwoot_sdk/data/remote/responses/csat_survey_response.dart';
 import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,9 +24,11 @@ void main() {
     late final ChatwootClientService clientService;
     final testBaseUrl = "https://test.com";
     final mockDio = MockDio();
+    final unauthenticatedmockDio = MockDio();
 
     setUpAll(() {
-      clientService = ChatwootClientServiceImpl(testBaseUrl, dio: mockDio);
+      clientService = ChatwootClientServiceImpl(testBaseUrl,
+          dio: mockDio, uDio: unauthenticatedmockDio);
     });
 
     _createSuccessResponse(body) {
@@ -49,8 +53,16 @@ void main() {
           await TestResourceUtil.readJsonResource(fileName: "message");
       final request =
           ChatwootNewMessageRequest(content: "test message", echoId: "id");
-      when(mockDio.post(any, data: request.toJson())).thenAnswer(
-          (_) => Future.value(_createSuccessResponse(responseBody)));
+      when(mockDio.post(any, data: anyNamed("data"))).thenAnswer((invocation) {
+        assert(invocation.namedArguments[Symbol("data")] is FormData);
+        final form = invocation.namedArguments[Symbol("data")] as FormData;
+        final messageContent =
+            form.fields.firstWhere((f) => f.key == "content").value;
+        final echoId = form.fields.firstWhere((f) => f.key == "echo_id").value;
+        expect(messageContent, request.content);
+        expect(echoId, request.echoId);
+        return Future.value(_createSuccessResponse(responseBody));
+      });
 
       //WHEN
       final result = await clientService.createMessage(request);
@@ -65,7 +77,7 @@ void main() {
       //GIVEN
       final request =
           ChatwootNewMessageRequest(content: "test message", echoId: "id");
-      when(mockDio.post(any, data: request.toJson())).thenAnswer(
+      when(mockDio.post(any, data: anyNamed("data"))).thenAnswer(
           (_) => Future.value(_createErrorResponse(statusCode: 401, body: {})));
 
       //WHEN
@@ -89,7 +101,7 @@ void main() {
       final testError = DioError(requestOptions: RequestOptions(path: ""));
       final request =
           ChatwootNewMessageRequest(content: "test message", echoId: "id");
-      when(mockDio.post(any, data: request.toJson())).thenThrow(testError);
+      when(mockDio.post(any, data: anyNamed("data"))).thenThrow(testError);
 
       //WHEN
       ChatwootClientException? chatwootClientException;
@@ -408,6 +420,96 @@ void main() {
       expect(chatwootClientException, isNotNull);
       expect(chatwootClientException!.type,
           equals(ChatwootClientExceptionType.UPDATE_MESSAGE_FAILED));
+    });
+
+    test(
+        'Given csat survey is successfully sent when sendCsatFeedBack is called, then return feedback response',
+        () async {
+      //GIVEN
+      final responseBody =
+          await TestResourceUtil.readJsonResource(fileName: "csat_feedback");
+      final testConversationUuid = "conversation-uuid";
+      final feedbackRequest =
+          SendCsatSurveyRequest(rating: 1, feedbackMessage: "test message");
+      final requestBody = {
+        "message": {
+          "submitted_values": {"csat_survey_response": feedbackRequest.toJson()}
+        }
+      };
+      when(unauthenticatedmockDio.put(any, data: requestBody)).thenAnswer(
+          (_) => Future.value(_createSuccessResponse(responseBody)));
+
+      //WHEN
+      final result = await clientService.sendCsatFeedBack(
+          testConversationUuid, feedbackRequest);
+
+      //THEN
+      expect(result, CsatSurveyFeedbackResponse.fromJson(responseBody));
+    });
+
+    test(
+        'Given send csat survey returns with error response when sendCsatFeedBack is called, then throw error',
+        () async {
+      //GIVEN
+      final testConversationUuid = "conversation-uuid";
+      final feedbackRequest =
+          SendCsatSurveyRequest(rating: 1, feedbackMessage: "test message");
+      final requestBody = {
+        "message": {
+          "submitted_values": {"csat_survey_response": feedbackRequest.toJson()}
+        }
+      };
+      when(unauthenticatedmockDio.put(any, data: requestBody)).thenAnswer(
+          (_) => Future.value(_createErrorResponse(statusCode: 500, body: {})));
+
+      //WHEN
+      ChatwootClientException? chatwootClientException;
+      try {
+        await clientService.sendCsatFeedBack(
+            testConversationUuid, feedbackRequest);
+      } on ChatwootClientException catch (e) {
+        chatwootClientException = e;
+      }
+
+      //THEN
+      verify(unauthenticatedmockDio.put(argThat(contains(testConversationUuid)),
+          data: requestBody));
+      expect(chatwootClientException, isNotNull);
+      expect(chatwootClientException!.type,
+          equals(ChatwootClientExceptionType.SEND_CSAT_FEEDBACK));
+    });
+
+    test(
+        'Given send csat feedback fails when sendCsatFeedBack is called, then throw error',
+        () async {
+      //GIVEN
+      final testConversationUuid = "conversation-uuid";
+      final feedbackRequest =
+          SendCsatSurveyRequest(rating: 1, feedbackMessage: "test message");
+      final testError = DioError(requestOptions: RequestOptions(path: ""));
+      final requestBody = {
+        "message": {
+          "submitted_values": {"csat_survey_response": feedbackRequest.toJson()}
+        }
+      };
+      when(unauthenticatedmockDio.put(any, data: requestBody))
+          .thenThrow(testError);
+
+      //WHEN
+      ChatwootClientException? chatwootClientException;
+      try {
+        await clientService.sendCsatFeedBack(
+            testConversationUuid, feedbackRequest);
+      } on ChatwootClientException catch (e) {
+        chatwootClientException = e;
+      }
+
+      //THEN
+      verify(unauthenticatedmockDio.put(argThat(contains(testConversationUuid)),
+          data: requestBody));
+      expect(chatwootClientException, isNotNull);
+      expect(chatwootClientException!.type,
+          equals(ChatwootClientExceptionType.SEND_CSAT_FEEDBACK));
     });
 
     test(

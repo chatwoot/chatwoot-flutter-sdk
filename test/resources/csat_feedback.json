@@ -1,0 +1,20 @@
+{
+  "id": 48,
+  "csat_survey_response": {
+    "id": 1,
+    "account_id": 2,
+    "conversation_id": 9,
+    "message_id": 48,
+    "rating": 5,
+    "feedback_message": "Great Support",
+    "contact_id": 8,
+    "assigned_agent_id": 2,
+    "created_at": "2024-11-25T11:45:23.473Z",
+    "updated_at": "2024-11-25T11:45:41.807Z"
+  },
+  "inbox_avatar_url": "",
+  "inbox_name": "Mobile",
+  "locale": "en",
+  "conversation_id": 9,
+  "created_at": "2024-11-25T11:44:41.937Z"
+}

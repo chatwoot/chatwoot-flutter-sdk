@@ -2,6 +2,7 @@ import 'package:chatwoot_sdk/chatwoot_client.dart';
 import 'package:chatwoot_sdk/data/chatwoot_repository.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
+import 'package:chatwoot_sdk/data/remote/requests/send_csat_survey_request.dart';
 import 'package:chatwoot_sdk/di/modules.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -21,7 +22,9 @@ void main() {
     final testBaseUrl = "https://testbaseurl.com";
     late ProviderContainer mockProviderContainer;
     final mockLocalStorage = MockLocalStorage();
+    final mockLocalStorageProvider = Provider.family((ref,params)=>mockLocalStorage);
     final mockRepository = MockChatwootRepository();
+    final mockRepositoryProvider = Provider.family((ref,params)=>mockRepository);
 
     final testUser = ChatwootUser(
         identifier: "identifier",
@@ -38,13 +41,14 @@ void main() {
     setUp(() async {
       when(mockRepository.initialize(testUser))
           .thenAnswer((realInvocation) => Future.microtask(() {}));
-      mockProviderContainer = ProviderContainer();
-      mockProviderContainer.updateOverrides([
-        localStorageProvider
-            .overrideWithProvider((ref, param) => mockLocalStorage),
-        chatwootRepositoryProvider
-            .overrideWithProvider((ref, param) => mockRepository)
-      ]);
+      mockProviderContainer = ProviderContainer(
+          overrides:[
+            localStorageProvider
+                .overrideWithProvider(mockLocalStorageProvider),
+            chatwootRepositoryProvider
+                .overrideWithProvider(mockRepositoryProvider)
+          ]
+      );
       ChatwootClient.providerContainerMap.update(
           testClientInstanceKey, (_) => mockProviderContainer,
           ifAbsent: () => mockProviderContainer);
@@ -175,18 +179,35 @@ void main() {
     });
 
     test(
+        'Given csat feedback is sent successfully when a sendCsatSurveyResults is called, then repository should be called',
+            () async {
+          //GIVEN
+          final testConversationUuid = "conversation-uuid";
+          final rating = 5;
+          final feedback = "Excellent service";
+          when(mockRepository.sendCsatFeedBack(any, any))
+              .thenAnswer((_) => Future.microtask(() {}));
+
+          //WHEN
+          client.sendCsatSurveyResults(testConversationUuid, rating, feedback);
+
+          //THEN
+          verify(mockRepository.sendCsatFeedBack(testConversationUuid, SendCsatSurveyRequest(rating: rating, feedbackMessage: feedback)));
+        });
+
+    test(
         'Given action is sent successfully when a sendAction is called, then repository should be called',
-        () async {
-      //GIVEN
-      when(mockRepository.sendAction(any))
-          .thenAnswer((_) => Future.microtask(() {}));
+            () async {
+          //GIVEN
+          when(mockRepository.sendAction(any))
+              .thenAnswer((_) => Future.microtask(() {}));
 
-      //WHEN
-      client.sendAction(ChatwootActionType.update_presence);
+          //WHEN
+          client.sendAction(ChatwootActionType.update_presence);
 
-      //THEN
-      verify(mockRepository.sendAction(ChatwootActionType.update_presence));
-    });
+          //THEN
+          verify(mockRepository.sendAction(ChatwootActionType.update_presence));
+        });
 
     test(
         'Given client is successfully initialized when a create is called without persistence enabled, then repository should be initialized',

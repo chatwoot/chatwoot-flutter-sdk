@@ -2,6 +2,7 @@ import 'package:chatwoot_sdk/data/chatwoot_repository.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
+import 'package:chatwoot_sdk/data/remote/responses/csat_survey_response.dart';
 
 ///Chatwoot callback are specified for each created client instance. Methods are triggered
 ///when a method satisfying their respective conditions occur.
@@ -62,7 +63,10 @@ class ChatwootCallbacks {
   void Function(List<ChatwootMessage>)? onMessagesRetrieved;
 
   ///Triggered when an agent resolves the current conversation
-  void Function()? onConversationResolved;
+  void Function(String)? onConversationResolved;
+
+  ///Triggered when csat feedbaack is sent
+  void Function(CsatSurveyFeedbackResponse)? onCsatSurveyResponseRecorded;
 
   /// Triggered when any error occurs in chatwoot client's operations with the error
   ///
@@ -84,6 +88,7 @@ class ChatwootCallbacks {
     this.onConversationIsOnline,
     this.onConversationIsOffline,
     this.onConversationResolved,
+    this.onCsatSurveyResponseRecorded,
     this.onError,
   });
 }

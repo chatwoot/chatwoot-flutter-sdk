@@ -29,8 +29,14 @@ class ChatwootConversation extends Equatable {
   @HiveField(3)
   final ChatwootContact contact;
 
+  ///The uuid ID of the conversation
+  @JsonKey(name: "uuid")
+  @HiveField(4)
+  final String? uuid;
+
   ChatwootConversation(
       {required this.id,
+        this.uuid,
       required this.inboxId,
       required this.messages,
       required this.contact});

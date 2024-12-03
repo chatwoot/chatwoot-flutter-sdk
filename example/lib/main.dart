@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image/image.dart' as image;
 import 'package:image_picker/image_picker.dart' as image_picker;
 import 'package:path_provider/path_provider.dart';
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -46,33 +45,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text("Chatwoot Example"),
       ),
-      body: ChatwootWidget(
-        websiteToken: "websiteToken",
-        baseUrl: "https://app.chatwoot.com",
+      body: ChatwootChat(
+        baseUrl: "https://chat.goldenprizma.com",
         user: ChatwootUser(
           identifier: "test@test.com",
           name: "Tester test",
           email: "test@test.com",
         ),
-        locale: "en",
-        closeWidget: () {
-          if (Platform.isAndroid) {
-            SystemNavigator.pop();
-          } else if (Platform.isIOS) {
-            exit(0);
-          }
-        },
-        //attachment only works on android for now
-        onAttachFile: _androidFilePicker,
-        onLoadStarted: () {
-          print("loading widget");
-        },
-        onLoadProgress: (int progress) {
-          print("loading... ${progress}");
-        },
-        onLoadCompleted: () {
-          print("widget loaded");
-        },
+        //attachment only works on android for now,
+        inboxIdentifier: 'gHgywYWNz6nbrNp2GzWBvaYo',
       ),
     );
   }
@@ -88,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final imageData = await photo.readAsBytes();
     final decodedImage = image.decodeImage(imageData);
-    final scaledImage = image.copyResize(decodedImage, width: 500);
+    final scaledImage = image.copyResize(decodedImage!, width: 500);
     final jpg = image.encodeJpg(scaledImage, quality: 90);
 
     final filePath = (await getTemporaryDirectory()).uri.resolve(

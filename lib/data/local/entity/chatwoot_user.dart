@@ -35,6 +35,11 @@ class ChatwootUser extends Equatable {
   @HiveField(4)
   final String? avatarUrl;
 
+  ///phone number of user
+  @JsonKey(name: "phone_number")
+  @HiveField(6)
+  final String? phoneNumber;
+
   ///any other custom attributes to be linked to the user
   @JsonKey(name: "custom_attributes")
   @HiveField(5)
@@ -45,6 +50,7 @@ class ChatwootUser extends Equatable {
       this.identifierHash,
       this.name,
       this.email,
+      this.phoneNumber,
       this.avatarUrl,
       this.customAttributes});
 

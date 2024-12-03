@@ -46,7 +46,7 @@ class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService {
       }
     } on DioError catch (e) {
       throw ChatwootClientException(
-          e.message, ChatwootClientExceptionType.CREATE_CONTACT_FAILED);
+          e.message ?? "", ChatwootClientExceptionType.CREATE_CONTACT_FAILED);
     }
   }
 
@@ -68,8 +68,8 @@ class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService {
             ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
       }
     } on DioError catch (e) {
-      throw ChatwootClientException(
-          e.message, ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
+      throw ChatwootClientException(e.message ?? "",
+          ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
     }
   }
 }

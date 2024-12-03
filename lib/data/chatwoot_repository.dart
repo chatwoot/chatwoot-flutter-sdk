@@ -4,12 +4,15 @@ import 'dart:core';
 
 import 'package:chatwoot_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_sdk/chatwoot_client.dart';
+import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_sdk/data/local/local_storage.dart';
 import 'package:chatwoot_sdk/data/remote/chatwoot_client_exception.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
+import 'package:chatwoot_sdk/data/remote/requests/send_csat_survey_request.dart';
 import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
+import 'package:chatwoot_sdk/data/remote/responses/csat_survey_response.dart';
 import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +44,8 @@ abstract class ChatwootRepository {
 
   void sendAction(ChatwootActionType action);
 
+  Future<void> sendCsatFeedBack(String conversationUuid, SendCsatSurveyRequest request);
+
   Future<void> clear();
 
   void dispose();
@@ -50,6 +55,8 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   bool _isListeningForEvents = false;
   Timer? _publishPresenceTimer;
   Timer? _presenceResetTimer;
+  Timer? _checkPingTimer;
+  DateTime? _lastPingTime;
 
   ChatwootRepositoryImpl(
       {required ChatwootClientService clientService,
@@ -126,11 +133,37 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
     }
   }
 
+  @override
+  Future<void> sendCsatFeedBack(String conversationUuid, SendCsatSurveyRequest request) async{
+    try {
+      CsatSurveyFeedbackResponse feedback = await clientService.sendCsatFeedBack(conversationUuid, request);
+      if(feedback.csatSurveyResponse == null){
+        feedback = CsatSurveyFeedbackResponse(
+            id: feedback.id,
+            csatSurveyResponse: CsatResponse(
+                id:feedback.id,
+                conversationId: feedback.conversationId,
+                rating: request.rating,
+                feedbackMessage: request.feedbackMessage
+            ),
+            inboxAvatarUrl: feedback.inboxAvatarUrl,
+            inboxName: feedback.inboxName,
+            createdAt: feedback.createdAt,
+            conversationId: feedback.conversationId
+        );
+      }
+      callbacks.onCsatSurveyResponseRecorded?.call(feedback);
+    } on ChatwootClientException catch (e) {
+      callbacks.onError?.call(
+          ChatwootClientException(e.cause, e.type));
+    }
+  }
+
   /// Connects to chatwoot websocket and starts listening for updates
   ///
   /// Received events/messages are pushed through [ChatwootClient.callbacks]
   @override
-  void listenForEvents() {
+  void listenForEvents(){
     final token = localStorage.contactDao.getContact()?.pubsubToken;
     if (token == null) {
       return;
@@ -138,11 +171,16 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
     clientService.startWebSocketConnection(
         localStorage.contactDao.getContact()!.pubsubToken ?? "");
 
-    final newSubscription = clientService.connection!.stream.listen((event) {
+    final newSubscription = clientService.connection!.stream.listen(
+            (event) async{
       ChatwootEvent chatwootEvent = ChatwootEvent.fromJson(jsonDecode(event));
       if (chatwootEvent.type == ChatwootEventType.welcome) {
         callbacks.onWelcome?.call();
       } else if (chatwootEvent.type == ChatwootEventType.ping) {
+        if(_lastPingTime == null){
+          _startPingCheck();
+        }
+        _lastPingTime = DateTime.now();
         callbacks.onPing?.call();
       } else if (chatwootEvent.type == ChatwootEventType.confirm_subscription) {
         if (!_isListeningForEvents) {
@@ -153,7 +191,9 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
       } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.message_created) {
         print("here comes message: $event");
-        final message = chatwootEvent.message!.data!.getMessage();
+
+        final ChatwootMessage message = chatwootEvent.message!.data!.getMessage();
+
         localStorage.messagesDao.saveMessage(message);
         if (message.isMine) {
           callbacks.onMessageDelivered
@@ -165,7 +205,8 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
           ChatwootEventMessageType.message_updated) {
         print("here comes the updated message: $event");
 
-        final message = chatwootEvent.message!.data!.getMessage();
+
+        final ChatwootMessage message = chatwootEvent.message!.data!.getMessage();
         localStorage.messagesDao.saveMessage(message);
 
         callbacks.onMessageUpdated?.call(message);
@@ -181,9 +222,10 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
           chatwootEvent.message?.data?.id ==
               (localStorage.conversationDao.getConversation()?.id ?? 0)) {
         //delete conversation result
+        final conversationUuid = localStorage.conversationDao.getConversation()?.uuid ??'';
         localStorage.conversationDao.deleteConversation();
         localStorage.messagesDao.clear();
-        callbacks.onConversationResolved?.call();
+        callbacks.onConversationResolved?.call(conversationUuid);
       } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.presence_update) {
         final presenceStatuses =
@@ -200,6 +242,11 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
       } else {
         print("chatwoot unknown event: $event");
       }
+    },
+    onError: (e){
+      //auto reconnect on error
+      print("chatwoot websocket: $e");
+      listenForEvents();
     });
     _subscriptions.add(newSubscription);
   }
@@ -217,6 +264,7 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
     callbacks = ChatwootCallbacks();
     _presenceResetTimer?.cancel();
     _publishPresenceTimer?.cancel();
+    _checkPingTimer?.cancel();
     _subscriptions.forEach((subs) {
       subs.cancel();
     });
@@ -227,6 +275,23 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   void sendAction(ChatwootActionType action) {
     clientService.sendAction(
         localStorage.contactDao.getContact()!.pubsubToken ?? "", action);
+  }
+
+  /// Start a timer to check for missed pings
+  void _startPingCheck() {
+    _checkPingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final now = DateTime.now();
+      if (_lastPingTime != null &&
+          now.difference(_lastPingTime!).inSeconds > 30) {
+        print("No ping received in 30 seconds. Reconnecting...");
+        _lastPingTime = null;
+        _checkPingTimer?.cancel();
+        _checkPingTimer = null;
+        listenForEvents();
+        //get any lost messages
+        getMessages();
+      }
+    });
   }
 
   ///Publishes presence update to websocket channel at a 30 second interval

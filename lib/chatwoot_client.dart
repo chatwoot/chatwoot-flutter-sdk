@@ -4,10 +4,12 @@ import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
+import 'package:chatwoot_sdk/data/remote/requests/send_csat_survey_request.dart';
 import 'package:chatwoot_sdk/di/modules.dart';
 import 'package:chatwoot_sdk/chatwoot_parameters.dart';
 import 'package:chatwoot_sdk/repository_parameters.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import 'data/local/local_storage.dart';
 
@@ -55,8 +57,8 @@ class ChatwootClient {
   /// [ChatwootMessage] will be returned with the [echoId] on [ChatwootCallbacks.onMessageSent]. If
   /// message fails to send [ChatwootCallbacks.onError] will be triggered [echoId] as data.
   Future<void> sendMessage(
-      {required String content, required String echoId}) async {
-    final request = ChatwootNewMessageRequest(content: content, echoId: echoId);
+      {required String content, required String echoId, List<FileAttachment>? attachment}) async {
+    final request = ChatwootNewMessageRequest(content: content, echoId: echoId, attachments: attachment ?? []);
     await _repository.sendMessage(request);
   }
 
@@ -65,6 +67,11 @@ class ChatwootClient {
   /// Example: User started typing
   Future<void> sendAction(ChatwootActionType action) async {
     _repository.sendAction(action);
+  }
+
+  ///Send chatwoot csat survey results.
+  Future<void> sendCsatSurveyResults(String conversationUuid, int rating, String feedback) async {
+    _repository.sendCsatFeedBack(conversationUuid, SendCsatSurveyRequest(rating: rating, feedbackMessage: feedback));
   }
 
   ///Disposes chatwoot client and cancels all stream subscriptions
@@ -87,7 +94,8 @@ class ChatwootClient {
   /// handling chatwoot events. By default persistence is enabled, to disable persistence set [enablePersistence] as false
   static Future<ChatwootClient> create(
       {required String baseUrl,
-      required String inboxIdentifier,
+        required String inboxIdentifier,
+        String? userIdentityValidationKey,
       ChatwootUser? user,
       bool enablePersistence = true,
       ChatwootCallbacks? callbacks}) async {
@@ -103,10 +111,28 @@ class ChatwootClient {
         isPersistenceEnabled: enablePersistence,
         baseUrl: baseUrl,
         inboxIdentifier: inboxIdentifier,
-        userIdentifier: user?.identifier);
+        userIdentityValidationKey: userIdentityValidationKey);
+
+    ChatwootUser? chatUser = user;
+    if(userIdentityValidationKey != null && user != null ){
+      final userIdentifier = user.identifier ?? user.email ?? Uuid().v4();
+      final identifierHash = chatwootParams.generateHmacHash(userIdentityValidationKey, userIdentifier);
+      chatUser = ChatwootUser(
+        identifier: userIdentifier,
+        identifierHash: identifierHash,
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
+        customAttributes: user.customAttributes
+      );
+    }
 
     final client =
-        ChatwootClient._(chatwootParams, callbacks: callbacks, user: user);
+        ChatwootClient._(
+            chatwootParams,
+            callbacks: callbacks,
+            user: chatUser
+        );
 
     client._init();
 

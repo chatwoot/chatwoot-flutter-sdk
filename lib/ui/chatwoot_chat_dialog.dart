@@ -2,19 +2,17 @@ import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_sdk/ui/chatwoot_chat_theme.dart';
 import 'package:chatwoot_sdk/ui/chatwoot_l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:intl/intl.dart';
 
 import 'chatwoot_chat_page.dart';
 
 ///Chatwoot chat modal widget
 /// {@category FlutterClientSdk}
-@deprecated
 class ChatwootChatDialog extends StatefulWidget {
   static show(
     BuildContext context, {
     required String baseUrl,
     required String inboxIdentifier,
+    String? userIdentityValidationKey,
     bool enablePersistence = true,
     required String title,
     ChatwootUser? user,
@@ -22,8 +20,8 @@ class ChatwootChatDialog extends StatefulWidget {
     Color? secondaryColor,
     Color? backgroundColor,
     ChatwootL10n? l10n,
-    DateFormat? timeFormat,
-    DateFormat? dateFormat,
+    Future<FileAttachment?> Function()? onAttachmentPressed,
+    Future<void> Function(String)? openFile
   }) {
     showDialog(
         context: context,
@@ -31,6 +29,7 @@ class ChatwootChatDialog extends StatefulWidget {
           return ChatwootChatDialog(
             baseUrl: baseUrl,
             inboxIdentifier: inboxIdentifier,
+            userIdentityValidationKey: userIdentityValidationKey,
             title: title,
             user: user,
             enablePersistence: enablePersistence,
@@ -38,8 +37,8 @@ class ChatwootChatDialog extends StatefulWidget {
             secondaryColor: secondaryColor,
             backgroundColor: backgroundColor,
             l10n: l10n,
-            timeFormat: timeFormat,
-            dateFormat: dateFormat,
+            onAttachmentPressed: onAttachmentPressed,
+            openFile: openFile,
           );
         });
   }
@@ -51,6 +50,12 @@ class ChatwootChatDialog extends StatefulWidget {
   ///
   /// For more details see https://www.chatwoot.com/docs/product/channels/api/client-apis
   final String inboxIdentifier;
+
+
+  ///Key used to generate user identifier hash
+  ///
+  /// For more details see https://www.chatwoot.com/docs/product/channels/api/client-apis
+  final String? userIdentityValidationKey;
 
   /// Enables persistence of chatwoot client instance's contact, conversation and messages to disk
   /// for convenience.
@@ -77,16 +82,15 @@ class ChatwootChatDialog extends StatefulWidget {
   /// See [ChatwootL10n]
   final ChatwootL10n? l10n;
 
-  /// See [Chat.timeFormat]
-  final DateFormat? timeFormat;
+  final Future<FileAttachment?> Function()? onAttachmentPressed;
 
-  /// See [Chat.dateFormat]
-  final DateFormat? dateFormat;
+  final Future<void> Function(String)? openFile;
 
   const ChatwootChatDialog({
     Key? key,
     required this.baseUrl,
     required this.inboxIdentifier,
+    this.userIdentityValidationKey,
     this.enablePersistence = true,
     required this.title,
     this.user,
@@ -94,15 +98,14 @@ class ChatwootChatDialog extends StatefulWidget {
     this.secondaryColor,
     this.backgroundColor,
     this.l10n,
-    this.timeFormat,
-    this.dateFormat,
+    this.onAttachmentPressed,
+    this.openFile
   }) : super(key: key);
 
   @override
   _ChatwootChatDialogState createState() => _ChatwootChatDialogState();
 }
 
-@deprecated
 class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
   late String status;
   late ChatwootL10n localizedStrings;
@@ -185,10 +188,9 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
               child: ChatwootChat(
                 baseUrl: widget.baseUrl,
                 inboxIdentifier: widget.inboxIdentifier,
+                userIdentityValidationKey: widget.userIdentityValidationKey,
                 user: widget.user,
                 enablePersistence: widget.enablePersistence,
-                timeFormat: widget.timeFormat,
-                dateFormat: widget.dateFormat,
                 theme: ChatwootChatTheme(
                     primaryColor: widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY,
                     secondaryColor: widget.secondaryColor ?? Colors.white,
@@ -220,6 +222,8 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
                     status = localizedStrings.typingText;
                   });
                 },
+                onAttachmentPressed: widget.onAttachmentPressed,
+                openFile: widget.openFile,
               ),
             ),
           ],

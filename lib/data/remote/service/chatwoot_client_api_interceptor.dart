@@ -1,3 +1,4 @@
+import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_sdk/data/local/local_storage.dart';
@@ -28,6 +29,7 @@ class ChatwootClientApiInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     await requestLock.synchronized(() async {
       RequestOptions newOptions = options;
+      ChatwootUser? user = _localStorage.userDao.getUser();
       ChatwootContact? contact = _localStorage.contactDao.getContact();
       ChatwootConversation? conversation =
           _localStorage.conversationDao.getConversation();
@@ -35,7 +37,7 @@ class ChatwootClientApiInterceptor extends Interceptor {
       if (contact == null) {
         // create new contact from user if no token found
         contact = await _authService.createNewContact(
-            _inboxIdentifier, _localStorage.userDao.getUser());
+            _inboxIdentifier, user);
         conversation = await _authService.createNewConversation(
             _inboxIdentifier, contact.contactIdentifier!);
         await _localStorage.conversationDao.saveConversation(conversation);
@@ -56,6 +58,12 @@ class ChatwootClientApiInterceptor extends Interceptor {
       newOptions.path = newOptions.path.replaceAll(
           INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER,
           "${conversation.id}");
+
+      if(user?.identifierHash != null){
+        //if user identifier hash has been set attach it requests
+        newOptions.queryParameters["identifier_hash"] = user!.identifierHash;
+        newOptions.queryParameters["identifier"] = user.identifier;
+      }
 
       handler.next(newOptions);
     });
