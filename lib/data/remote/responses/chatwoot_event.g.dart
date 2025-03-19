@@ -114,6 +114,7 @@ ChatwootEventMessageData _$ChatwootEventMessageDataFromJson(
       private: json['private'] as bool?,
       senderId: (json['sender_id'] as num?)?.toInt(),
       users: json['users'],
+      attachments: json['attachments'],
     );
 
 Map<String, dynamic> _$ChatwootEventMessageDataToJson(
@@ -139,6 +140,7 @@ Map<String, dynamic> _$ChatwootEventMessageDataToJson(
       'conversation': instance.conversation,
       'user': instance.user?.toJson(),
       'users': instance.users,
+      'attachments': instance.attachments,
     };
 
 ChatwootEventMessageUser _$ChatwootEventMessageUserFromJson(
