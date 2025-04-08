@@ -29,7 +29,7 @@ dependencies:
   mime: ^2.0.0
   media_kit: ^1.1.11
   media_kit_video: ^1.2.5
-  media_kit_libs_video: ^1.0.5
+  #media_kit_libs_video: ^1.0.5
   easy_image_viewer: ^1.5.1
   cached_network_image: ^3.4.0
   flutter_markdown: ^0.7.4+2
