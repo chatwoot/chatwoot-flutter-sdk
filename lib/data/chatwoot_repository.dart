@@ -95,6 +95,12 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
     try {
       if (user != null) {
         await localStorage.userDao.saveUser(user);
+
+        try {
+          await clientService.updateContact(user.toJson());
+        } catch (e) {
+          print('>>>> 更新联系人信息错误:$e');
+        }
       }
 
       //refresh contact
