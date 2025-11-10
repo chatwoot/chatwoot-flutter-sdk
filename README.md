@@ -18,6 +18,14 @@ Add
 `chatwoot_sdk:<<version>>`
 to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/chatwoot_sdk) for the latest version.
 
+### Requirements
+
+- Flutter SDK: ^3.5.3
+- Dart SDK: Compatible with Flutter SDK version
+- riverpod: ^3.0.0 (for state management)
+
+This package uses [Hive](https://pub.dev/packages/hive) for local storage and [riverpod](https://pub.dev/packages/riverpod) for dependency injection.
+
 ## 2. How to use
 
 ### a. Using ChatwootWidget
