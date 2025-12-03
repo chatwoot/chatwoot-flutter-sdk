@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 
 import 'package:chatwoot_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_sdk/chatwoot_client.dart';
@@ -38,6 +39,8 @@ abstract class ChatwootRepository {
   void listenForEvents();
 
   Future<void> sendMessage(ChatwootNewMessageRequest request);
+
+  Future<void> sendAttachment(ChatwootNewMessageRequest request, File file);
 
   void sendAction(ChatwootActionType action);
 
@@ -115,6 +118,24 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   Future<void> sendMessage(ChatwootNewMessageRequest request) async {
     try {
       final createdMessage = await clientService.createMessage(request);
+      await localStorage.messagesDao.saveMessage(createdMessage);
+      callbacks.onMessageSent?.call(createdMessage, request.echoId);
+      if (clientService.connection != null && !_isListeningForEvents) {
+        listenForEvents();
+      }
+    } on ChatwootClientException catch (e) {
+      callbacks.onError?.call(
+          ChatwootClientException(e.cause, e.type, data: request.echoId));
+    }
+  }
+
+  ///Sends message with attachment to chatwoot inbox
+  @override
+  Future<void> sendAttachment(
+      ChatwootNewMessageRequest request, File file) async {
+    try {
+      final createdMessage =
+          await clientService.createMessageWithAttachment(request, file);
       await localStorage.messagesDao.saveMessage(createdMessage);
       callbacks.onMessageSent?.call(createdMessage, request.echoId);
       if (clientService.connection != null && !_isListeningForEvents) {

@@ -2,6 +2,9 @@
 
 # Integrate Chatwoot with Flutter app
 
+> **⚠️ IMPORTANT:** This package has been upgraded to flutter_chat_ui v2.x. Some widgets are no longer functional.  
+> See [FLUTTER_CHAT_UI_V2_UPGRADE.md](FLUTTER_CHAT_UI_V2_UPGRADE.md) for migration details.
+
 Integrate Chatwoot flutter client into your flutter app and talk to your visitors in real time. [Chatwoot](https://github.com/chatwoot/chatwoot) helps you to chat with your visitors and provide exceptional support in real time. To use Chatwoot in your flutter app, follow the steps described below.
 
 <img src="https://user-images.githubusercontent.com/22669874/225545427-bd3fe38c-d116-4286-b542-67b03a51e2d2.jpg" alt="chatwoot screenshot" height="560"/>
