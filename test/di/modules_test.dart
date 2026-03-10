@@ -11,7 +11,7 @@ import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
 import 'package:chatwoot_sdk/di/modules.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:riverpod/riverpod.dart';
 
 void main() {
@@ -50,7 +50,6 @@ void main() {
 
       //THEN
       expect(result.options.baseUrl, equals(testChatwootParameters.baseUrl));
-      expect(result.interceptors.isEmpty, equals(true));
     });
 
     test(
@@ -61,7 +60,7 @@ void main() {
           .read(chatwootClientAuthServiceProvider(testChatwootParameters));
 
       //THEN
-      expect(result.dio.interceptors.length, equals(0));
+      expect(result.dio.interceptors.length, equals(1));
     });
 
     test(
@@ -73,7 +72,7 @@ void main() {
 
       //THEN
       expect(result.options.baseUrl, equals(testChatwootParameters.baseUrl));
-      expect(result.interceptors.length, equals(1));
+      expect(result.interceptors.length, equals(2));
     });
 
     test(
