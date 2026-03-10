@@ -90,6 +90,7 @@ class _WebviewState extends State<Webview> {
         transparentBackground: false,
         allowFileAccess: true,
         allowContentAccess: true,
+        useShouldOverrideUrlLoading:true,
         mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
       ),
       initialUserScripts: UnmodifiableListView([
