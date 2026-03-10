@@ -90,8 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
             exit(0);
           }
         },
-        //attachment only works on android for now
-        onAttachFile: _androidFilePicker,
         onLoadStarted: () {
           print("loading widget");
         },
@@ -103,29 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
     );
-  }
-
-  Future<List<String>> _androidFilePicker() async {
-    final picker = image_picker.ImagePicker();
-    final photo =
-        await picker.pickImage(source: image_picker.ImageSource.gallery);
-
-    if (photo == null) {
-      return [];
-    }
-
-    final imageData = await photo.readAsBytes();
-    final decodedImage = image.decodeImage(imageData);
-    final scaledImage = image.copyResize(decodedImage, width: 500);
-    final jpg = image.encodeJpg(scaledImage, quality: 90);
-
-    final filePath = (await getTemporaryDirectory()).uri.resolve(
-          './image_${DateTime.now().microsecondsSinceEpoch}.jpg',
-        );
-    final file = await File.fromUri(filePath).create(recursive: true);
-    await file.writeAsBytes(jpg, flush: true);
-
-    return [file.uri.toString()];
   }
 }
 ```
