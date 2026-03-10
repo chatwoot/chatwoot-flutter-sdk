@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
-* In order to support file attachments, for android define a FileProvider in AndroidManifest.xml under the `<application>` tag. Replace ${applicationId} with your application id
+* To support file attachments, **for android** define a FileProvider in AndroidManifest.xml under the `<application>` tag. Replace ${applicationId} with your application id
 ```xml
 <provider
    android:name="androidx.core.content.FileProvider"
@@ -117,6 +117,12 @@ class _MyHomePageState extends State<MyHomePage> {
        android:resource="@xml/file_paths" />
 </provider>
 ```
+* Under `<manifest>` tag in AndroidManifest.xml. Add files access permissions:
+```xml
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+<uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+```
 * Then in res/xml/file_paths.xml
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -125,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
     <external-path name="external_files" path="." />
 </paths>
 ```
-* For iOS declare Usage Description Keys in Info.plist. Add:
+* **For iOS** declare Usage Description Keys in Info.plist. Add:
 ```xml
 <key>NSCameraUsageDescription</key>
 <string>This app requires camera access to upload photos.</string>
