@@ -130,6 +130,36 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
+* In order to support file attachments, for android define a FileProvider in AndroidManifest.xml under the `<application>` tag. Replace ${applicationId} with your application id
+```xml
+<provider
+   android:name="androidx.core.content.FileProvider"
+   android:authorities="${applicationId}.flutter_inappwebview_android.fileprovider"
+   android:exported="false"
+   android:grantUriPermissions="true">
+   <meta-data
+       android:name="android.support.FILE_PROVIDER_PATHS"
+       android:resource="@xml/file_paths" />
+</provider>
+```
+* Then in res/xml/file_paths.xml
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="cache" path="." />
+    <external-path name="external_files" path="." />
+</paths>
+```
+* For iOS declare Usage Description Keys in Info.plist. Add:
+```xml
+<key>NSCameraUsageDescription</key>
+<string>This app requires camera access to upload photos.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>This app requires access to your photo library to upload files.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>This app requires microphone access for recording audio.</string>
+```
+
 Horray! You're done.
 
 
