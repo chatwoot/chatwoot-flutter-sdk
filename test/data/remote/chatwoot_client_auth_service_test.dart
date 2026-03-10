@@ -86,7 +86,7 @@ void main() {
         'Given contact creation fails when createNewContact is called, then throw error',
         () async {
       //GIVEN
-      final testError = DioError(requestOptions: RequestOptions(path: ""));
+      final testError = DioException(requestOptions: RequestOptions(path: ""));
       when(mockDio.post(any, data: testUser.toJson())).thenThrow(testError);
 
       //WHEN
@@ -146,7 +146,7 @@ void main() {
         'Given conversation creation fails when createNewConversation is called, then throw error',
         () async {
       //GIVEN
-      final testError = DioError(requestOptions: RequestOptions(path: ""));
+      final testError = DioException(requestOptions: RequestOptions(path: ""));
       when(mockDio.post(any)).thenThrow(testError);
 
       //WHEN

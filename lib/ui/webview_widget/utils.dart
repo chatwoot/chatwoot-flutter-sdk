@@ -52,9 +52,7 @@ String generateScripts(
   return script;
 }
 
-const _androidOptions = AndroidOptions(
-  encryptedSharedPreferences: true,
-);
+const _androidOptions = AndroidOptions();
 final secureStorage = new FlutterSecureStorage(aOptions: _androidOptions);
 const cookieKey = 'cwCookie';
 

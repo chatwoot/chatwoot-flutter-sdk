@@ -53,7 +53,6 @@ class Webview extends StatefulWidget {
 }
 
 class _WebviewState extends State<Webview> {
-  InAppWebViewController? _controller;
   String? _webviewUrl;
 
   @override
@@ -107,7 +106,6 @@ window.postMessage = window.ReactNativeWebView.postMessage
         )
       ]),
       onWebViewCreated: (controller) async {
-        _controller = controller;
         controller.addJavaScriptHandler(
           handlerName: "ReactNativeWebView",
           callback: (args) async {
