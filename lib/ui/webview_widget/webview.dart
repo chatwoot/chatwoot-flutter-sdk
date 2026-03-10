@@ -101,7 +101,6 @@ window.ReactNativeWebView = {
     window.flutter_inappwebview.callHandler('ReactNativeWebView', message);
   }
 };
-window.postMessage = window.ReactNativeWebView.postMessage
       """,
           injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
         )
