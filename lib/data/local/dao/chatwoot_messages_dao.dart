@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 abstract class ChatwootMessagesDao {
   Future<void> saveMessage(ChatwootMessage message);

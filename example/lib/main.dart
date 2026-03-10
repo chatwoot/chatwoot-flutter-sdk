@@ -26,9 +26,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final imageData = await photo.readAsBytes();
     final decodedImage = image.decodeImage(imageData);
-    final scaledImage = image.copyResize(decodedImage, width: 500);
+    final scaledImage = image.copyResize(decodedImage!, width: 500);
     final jpg = image.encodeJpg(scaledImage, quality: 90);
 
     final filePath = (await getTemporaryDirectory()).uri.resolve(

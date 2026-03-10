@@ -1,6 +1,6 @@
 import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../local_storage.dart';
