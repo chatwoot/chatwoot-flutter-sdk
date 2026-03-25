@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
-* To support file attachments, **for android** define a FileProvider in AndroidManifest.xml under the `<application>` tag. Replace ${applicationId} with your application id
+* To better support file attachments, **for android** define a FileProvider in AndroidManifest.xml under the `<application>` tag. Replace ${applicationId} with your application id
 ```xml
 <provider
    android:name="androidx.core.content.FileProvider"
@@ -120,8 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
 * Under `<manifest>` tag in AndroidManifest.xml. Add files access permissions:
 ```xml
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-<uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
 ```
 * Then in res/xml/file_paths.xml
 ```xml
