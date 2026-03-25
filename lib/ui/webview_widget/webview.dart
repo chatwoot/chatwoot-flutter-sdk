@@ -87,7 +87,7 @@ class _WebviewState extends State<Webview> {
         javaScriptEnabled: true,
         allowFileAccessFromFileURLs: true,
         allowUniversalAccessFromFileURLs: true,
-        transparentBackground: false,
+        transparentBackground: true,
         allowFileAccess: true,
         allowContentAccess: true,
         useShouldOverrideUrlLoading:true,
