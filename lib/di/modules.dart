@@ -14,7 +14,7 @@ import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_service.dart';
 import 'package:chatwoot_sdk/chatwoot_parameters.dart';
 import 'package:chatwoot_sdk/repository_parameters.dart';
 import 'package:dio/dio.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:riverpod/riverpod.dart';
 
 ///Provides an instance of [Dio]

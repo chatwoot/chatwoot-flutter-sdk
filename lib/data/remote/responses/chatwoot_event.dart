@@ -1,7 +1,7 @@
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:chatwoot_sdk/data/local/local_storage.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'chatwoot_event.g.dart';
@@ -223,8 +223,6 @@ String? eventMessageTypeToJson(ChatwootEventMessageType? actionType) {
       return "message.updated";
     case ChatwootEventMessageType.conversation_status_changed:
       return "conversation.status_changed";
-    default:
-      return actionType.toString();
   }
 }
 

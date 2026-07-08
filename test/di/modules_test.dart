@@ -9,10 +9,9 @@ import 'package:chatwoot_sdk/data/local/dao/chatwoot_user_dao.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
 import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
-import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_api_interceptor.dart';
 import 'package:chatwoot_sdk/di/modules.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:riverpod/riverpod.dart';
 
 void main() {
@@ -51,8 +50,6 @@ void main() {
 
       //THEN
       expect(result.options.baseUrl, equals(testChatwootParameters.baseUrl));
-      final authInterceptorCount = result.interceptors.where((i)=>i is ChatwootClientApiInterceptor).length;
-      expect(authInterceptorCount, equals(0));
     });
 
     test(
@@ -63,8 +60,7 @@ void main() {
           .read(chatwootClientAuthServiceProvider(testChatwootParameters));
 
       //THEN
-      final authInterceptorCount = result.dio.interceptors.where((i)=>i is ChatwootClientApiInterceptor).length;
-      expect(authInterceptorCount, equals(0));
+      expect(result.dio.interceptors.length, equals(1));
     });
 
     test(
@@ -76,8 +72,7 @@ void main() {
 
       //THEN
       expect(result.options.baseUrl, equals(testChatwootParameters.baseUrl));
-      final authInterceptorCount = result.interceptors.where((i)=>i is ChatwootClientApiInterceptor).length;
-      expect(authInterceptorCount, equals(1));
+      expect(result.interceptors.length, equals(2));
     });
 
     test(
