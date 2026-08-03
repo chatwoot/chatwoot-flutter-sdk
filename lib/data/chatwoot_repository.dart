@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 
 import 'package:chatwoot_sdk/chatwoot_callbacks.dart';
 import 'package:chatwoot_sdk/chatwoot_client.dart';
@@ -39,7 +40,11 @@ abstract class ChatwootRepository {
 
   Future<void> sendMessage(ChatwootNewMessageRequest request);
 
+  Future<void> sendAttachment(ChatwootNewMessageRequest request, File file);
+
   void sendAction(ChatwootActionType action);
+
+  Future<void> updateLastSeen();
 
   Future<void> clear();
 
@@ -126,6 +131,24 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
     }
   }
 
+  ///Sends message with attachment to chatwoot inbox
+  @override
+  Future<void> sendAttachment(
+      ChatwootNewMessageRequest request, File file) async {
+    try {
+      final createdMessage =
+          await clientService.createMessageWithAttachment(request, file);
+      await localStorage.messagesDao.saveMessage(createdMessage);
+      callbacks.onMessageSent?.call(createdMessage, request.echoId);
+      if (clientService.connection != null && !_isListeningForEvents) {
+        listenForEvents();
+      }
+    } on ChatwootClientException catch (e) {
+      callbacks.onError?.call(
+          ChatwootClientException(e.cause, e.type, data: request.echoId));
+    }
+  }
+
   /// Connects to chatwoot websocket and starts listening for updates
   ///
   /// Received events/messages are pushed through [ChatwootClient.callbacks]
@@ -155,10 +178,13 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
         print("here comes message: $event");
         final message = chatwootEvent.message!.data!.getMessage();
         localStorage.messagesDao.saveMessage(message);
-        if (message.isMine) {
-          callbacks.onMessageDelivered
-              ?.call(message, chatwootEvent.message!.data!.echoId!);
+        final echoId = chatwootEvent.message?.data?.echoId;
+        if (message.isMine && echoId != null) {
+          callbacks.onMessageDelivered?.call(message, echoId);
         } else {
+          // A message with isMine==true but no echoId is a server-generated
+          // activity/automation message (message_type == 3 etc.) — treat as
+          // an incoming message to avoid a null-assertion crash.
           callbacks.onMessageReceived?.call(message);
         }
       } else if (chatwootEvent.message?.event ==
@@ -227,6 +253,16 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   void sendAction(ChatwootActionType action) {
     clientService.sendAction(
         localStorage.contactDao.getContact()!.pubsubToken ?? "", action);
+  }
+
+  ///Updates the last seen status for the conversation
+  @override
+  Future<void> updateLastSeen() async {
+    try {
+      await clientService.updateLastSeen();
+    } on ChatwootClientException catch (e) {
+      callbacks.onError?.call(e);
+    }
   }
 
   ///Publishes presence update to websocket channel at a 30 second interval

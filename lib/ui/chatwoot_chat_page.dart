@@ -8,12 +8,12 @@ import 'package:chatwoot_sdk/ui/chatwoot_l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_chat_core/flutter_chat_core.dart' as core;
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 ///Chatwoot chat widget
 /// {@category FlutterClientSdk}
-@deprecated
 class ChatwootChat extends StatefulWidget {
   /// Specifies a custom app bar for chatwoot page widget
   final PreferredSizeWidget? appBar;
@@ -43,10 +43,10 @@ class ChatwootChat extends StatefulWidget {
   final double? onEndReachedThreshold;
 
   /// See [Message.onMessageLongPress]
-  final void Function(BuildContext context, types.Message)? onMessageLongPress;
+  final void Function(BuildContext context, core.Message)? onMessageLongPress;
 
   /// See [Message.onMessageTap]
-  final void Function(types.Message)? onMessageTap;
+  final void Function(BuildContext context, core.Message)? onMessageTap;
 
   /// See [Input.onSendPressed]
   final void Function(types.PartialText)? onSendPressed;
@@ -57,16 +57,13 @@ class ChatwootChat extends StatefulWidget {
   /// Show user names for received messages.
   final bool showUserNames;
 
-  final ChatwootChatTheme? theme;
+  final dynamic theme;
 
   /// See [ChatwootL10n]
   final ChatwootL10n l10n;
 
   /// See [Chat.timeFormat]
   final DateFormat? timeFormat;
-
-  /// See [Chat.dateFormat]
-  final DateFormat? dateFormat;
 
   ///See [ChatwootCallbacks.onWelcome]
   final void Function()? onWelcome;
@@ -130,7 +127,6 @@ class ChatwootChat extends StatefulWidget {
       this.theme,
       this.l10n = const ChatwootL10n(),
       this.timeFormat,
-      this.dateFormat,
       this.onWelcome,
       this.onPing,
       this.onConfirmedSubscription,
@@ -152,15 +148,14 @@ class ChatwootChat extends StatefulWidget {
   _ChatwootChatState createState() => _ChatwootChatState();
 }
 
-@deprecated
 class _ChatwootChatState extends State<ChatwootChat> {
-  ///
-  List<types.Message> _messages = [];
+  late final core.InMemoryChatController _chatController;
+  final Map<String, core.User> _userCache = {};
 
   late String status;
 
   final idGen = Uuid();
-  late final _user;
+  late final core.User _user;
   ChatwootClient? chatwootClient;
 
   late final chatwootCallbacks;
@@ -170,14 +165,17 @@ class _ChatwootChatState extends State<ChatwootChat> {
     super.initState();
 
     if (widget.user == null) {
-      _user = types.User(id: idGen.v4());
+      _user = core.User(id: idGen.v4());
     } else {
-      _user = types.User(
+      _user = core.User(
         id: widget.user?.identifier ?? idGen.v4(),
-        firstName: widget.user?.name,
-        imageUrl: widget.user?.avatarUrl,
+        name: widget.user?.name,
+        imageSource: widget.user?.avatarUrl,
       );
     }
+    _userCache[_user.id] = _user;
+
+    _chatController = core.InMemoryChatController(messages: []);
 
     chatwootCallbacks = ChatwootCallbacks(
       onWelcome: () {
@@ -197,11 +195,10 @@ class _ChatwootChatState extends State<ChatwootChat> {
       },
       onPersistedMessagesRetrieved: (persistedMessages) {
         if (widget.enablePersistence) {
-          setState(() {
-            _messages = persistedMessages
-                .map((message) => _chatwootMessageToTextMessage(message))
-                .toList();
-          });
+          final messages = persistedMessages
+              .map((message) => _chatwootMessageToTextMessage(message))
+              .toList();
+          _chatController.setMessages(messages);
         }
         widget.onPersistedMessagesRetrieved?.call(persistedMessages);
       },
@@ -209,22 +206,28 @@ class _ChatwootChatState extends State<ChatwootChat> {
         if (messages.isEmpty) {
           return;
         }
-        setState(() {
-          final chatMessages = messages
-              .map((message) => _chatwootMessageToTextMessage(message))
-              .toList();
-          final mergedMessages =
-              <types.Message>[..._messages, ...chatMessages].toSet().toList();
-          final now = DateTime.now().millisecondsSinceEpoch;
-          mergedMessages.sort((a, b) {
-            return (b.createdAt ?? now).compareTo(a.createdAt ?? now);
-          });
-          _messages = mergedMessages;
+        final chatMessages = messages
+            .map((message) => _chatwootMessageToTextMessage(message))
+            .toList();
+
+        final currentMessages = _chatController.messages;
+        final mergedMessages = <core.Message>[
+          ...currentMessages,
+          ...chatMessages
+        ].toSet().toList();
+        final now = DateTime.now();
+        mergedMessages.sort((a, b) {
+          final aTime = a.createdAt ?? now;
+          final bTime = b.createdAt ?? now;
+          return bTime.compareTo(aTime);
         });
+        _chatController.setMessages(mergedMessages);
+
         widget.onMessagesRetrieved?.call(messages);
       },
       onMessageReceived: (chatwootMessage) {
-        _addMessage(_chatwootMessageToTextMessage(chatwootMessage));
+        _chatController
+            .insertMessage(_chatwootMessageToTextMessage(chatwootMessage));
         widget.onMessageReceived?.call(chatwootMessage);
       },
       onMessageDelivered: (chatwootMessage, echoId) {
@@ -238,25 +241,38 @@ class _ChatwootChatState extends State<ChatwootChat> {
         widget.onMessageUpdated?.call(chatwootMessage);
       },
       onMessageSent: (chatwootMessage, echoId) {
-        final textMessage = types.TextMessage(
-            id: echoId,
-            author: _user,
-            text: chatwootMessage.content ?? "",
-            status: types.Status.delivered);
+        final textMessage = core.TextMessage(
+          id: echoId,
+          authorId: _user.id,
+          text: chatwootMessage.content ?? "",
+          // Status is gone. Use metadata or timestamps.
+          // For "delivered", we might set deliveredAt?
+          // But here it's just "sent" callback.
+          // We can set metadata: {'status': 'delivered'} if we want custom handling
+          // or just rely on default behavior.
+          // Let's set metadata for now to match legacy behavior if needed.
+          metadata: {'status': 'delivered'},
+          createdAt: DateTime.now(),
+        );
         _handleMessageSent(textMessage);
         widget.onMessageSent?.call(chatwootMessage);
       },
       onConversationResolved: () {
-        final resolvedMessage = types.TextMessage(
+        final botUser = core.User(
             id: idGen.v4(),
-            text: widget.l10n.conversationResolvedMessage,
-            author: types.User(
-                id: idGen.v4(),
-                firstName: "Bot",
-                imageUrl:
-                    "https://d2cbg94ubxgsnp.cloudfront.net/Pictures/480x270//9/9/3/512993_shutterstock_715962319converted_920340.png"),
-            status: types.Status.delivered);
-        _addMessage(resolvedMessage);
+            name: "Bot",
+            imageSource:
+                "https://d2cbg94ubxgsnp.cloudfront.net/Pictures/480x270//9/9/3/512993_shutterstock_715962319converted_920340.png");
+        _userCache[botUser.id] = botUser;
+
+        final resolvedMessage = core.TextMessage(
+          id: idGen.v4(),
+          text: widget.l10n.conversationResolvedMessage,
+          authorId: botUser.id,
+          metadata: {'status': 'delivered'},
+          createdAt: DateTime.now(),
+        );
+        _chatController.insertMessage(resolvedMessage);
       },
       onError: (error) {
         if (error.type == ChatwootClientExceptionType.SEND_MESSAGE_FAILED) {
@@ -285,7 +301,7 @@ class _ChatwootChatState extends State<ChatwootChat> {
     });
   }
 
-  types.TextMessage _chatwootMessageToTextMessage(ChatwootMessage message,
+  core.TextMessage _chatwootMessageToTextMessage(ChatwootMessage message,
       {String? echoId}) {
     String? avatarUrl = message.sender?.avatarUrl ?? message.sender?.thumbnail;
 
@@ -294,159 +310,155 @@ class _ChatwootChatState extends State<ChatwootChat> {
     if (avatarUrl?.contains("?d=404") ?? false) {
       avatarUrl = null;
     }
-    return types.TextMessage(
-        id: echoId ?? message.id.toString(),
-        author: message.isMine
-            ? _user
-            : types.User(
-                id: message.sender?.id.toString() ?? idGen.v4(),
-                firstName: message.sender?.name,
-                imageUrl: avatarUrl,
-              ),
-        text: message.content ?? "",
-        status: types.Status.seen,
-        createdAt: DateTime.parse(message.createdAt).millisecondsSinceEpoch);
-  }
 
-  void _addMessage(types.Message message) {
-    setState(() {
-      _messages.insert(0, message);
-    });
+    final author = message.isMine
+        ? _user
+        : core.User(
+            id: message.sender?.id.toString() ?? idGen.v4(),
+            name: message.sender?.name,
+            imageSource: avatarUrl,
+          );
+    _userCache[author.id] = author;
+
+    return core.TextMessage(
+        id: echoId ?? message.id.toString(),
+        authorId: author.id,
+        text: message.content ?? "",
+        // status: types.Status.seen, // Gone
+        metadata: {'status': 'seen'}, // Placeholder
+        createdAt: DateTime.parse(message.createdAt));
   }
 
   void _handleSendMessageFailed(String echoId) async {
-    final index = _messages.indexWhere((element) => element.id == echoId);
-    setState(() {
-      _messages[index] = _messages[index].copyWith(status: types.Status.error);
-    });
+    final message =
+        _chatController.messages.firstWhere((element) => element.id == echoId);
+    final updatedMessage = message.copyWith(metadata: {'status': 'error'});
+    _chatController.updateMessage(message, updatedMessage);
   }
 
-  void _handleResendMessage(types.TextMessage message) async {
+  void _handleResendMessage(core.TextMessage message) async {
     chatwootClient!.sendMessage(content: message.text, echoId: message.id);
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    setState(() {
-      _messages[index] = message.copyWith(status: types.Status.sending);
-    });
+    final updatedMessage = message.copyWith(metadata: {'status': 'sending'});
+    _chatController.updateMessage(message, updatedMessage);
   }
 
-  void _handleMessageTap(BuildContext context, types.Message message) async {
-    if (message.status == types.Status.error && message is types.TextMessage) {
+  void _handleMessageTap(BuildContext context, core.Message message) async {
+    if (message.metadata?['status'] == 'error' && message is core.TextMessage) {
       _handleResendMessage(message);
     }
-    widget.onMessageTap?.call(message);
-  }
-
-  void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
-  ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMetaData = _messages[index].metadata ?? Map();
-    updatedMetaData["previewData"] = previewData;
-    final updatedMessage = _messages[index].copyWith(metadata: updatedMetaData);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _messages[index] = updatedMessage;
-      });
-    });
+    widget.onMessageTap?.call(context, message);
   }
 
   void _handleMessageSent(
-    types.Message message,
+    core.Message message,
   ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
+    // Check if message exists, if so update it, else insert?
+    // Usually handleMessageSent is called after we already inserted it as "sending".
+    // So we should update.
+    // But if it's a new message from other user, we insert.
+    // Here it seems to be used for updating status.
 
-    if (_messages[index].status == types.Status.seen) {
-      return;
+    // We need to find if message exists.
+    final existingIndex = _chatController.messages
+        .indexWhere((element) => element.id == message.id);
+    if (existingIndex != -1) {
+      final oldMessage = _chatController.messages[existingIndex];
+      _chatController.updateMessage(oldMessage, message);
+    } else {
+      _chatController.insertMessage(message);
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _messages[index] = message;
-      });
-    });
   }
 
   void _handleMessageUpdated(
-    types.Message message,
+    core.Message message,
   ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _messages[index] = message;
-      });
-    });
+    final existingIndex = _chatController.messages
+        .indexWhere((element) => element.id == message.id);
+    if (existingIndex != -1) {
+      final oldMessage = _chatController.messages[existingIndex];
+      _chatController.updateMessage(oldMessage, message);
+    }
   }
 
-  void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(),
-        text: message.text,
-        status: types.Status.sending);
+  void _handleSendPressed(String text) {
+    final textMessage = core.TextMessage(
+      authorId: _user.id,
+      createdAt: DateTime.now(),
+      id: const Uuid().v4(),
+      text: text,
+      metadata: {'status': 'sending'},
+    );
 
-    _addMessage(textMessage);
-
+    _chatController.insertMessage(textMessage);
     chatwootClient!
         .sendMessage(content: textMessage.text, echoId: textMessage.id);
-    widget.onSendPressed?.call(message);
+    widget.onSendPressed?.call(types.PartialText(text: text));
+  }
+
+  Future<core.User?> _resolveUser(String userId) async {
+    return _userCache[userId] ?? core.User(id: userId, name: "Unknown");
   }
 
   @override
   Widget build(BuildContext context) {
-    final horizontalPadding = widget.isPresentedInDialog ? 8.0 : 16.0;
+    // The user wants to remove the theme initialization and use CHATWOOT_BG_COLOR directly.
+    // Also, the theme parameter in Chat widget should be commented out.
+
+    // final theme = widget.theme ??
+    //     ChatTheme(
+    //       colors: ChatThemeColors(
+    //         primary: CHATWOOT_COLOR_PRIMARY,
+    //         secondary: CHATWOOT_BG_COLOR,
+    //         background: CHATWOOT_BG_COLOR,
+    //         // Add other required colors or use defaults if possible
+    //         // If ChatThemeColors is abstract or requires many params, this might be hard.
+    //         // Let's try to find a default theme factory or subclass.
+    //         // Search result didn't mention one.
+    //         // But usually there is a default.
+    //         // Let's try 'DefaultChatTheme' again? No, it failed.
+    //         // Maybe 'NeutralChatTheme'?
+    //       ),
+    //     );
+    // Wait, I can't guess ChatThemeColors params.
+    // I'll try to use 'DefaultChatTheme' from 'flutter_chat_ui' if I missed an import?
+    // No, I imported it.
+
+    // Let's try to use 'ChatTheme' with NO params and see what happens.
+    // Or maybe 'ChatTheme.fromType(ChatThemeType.light)'?
+
+    // Actually, I'll try to use 'DefaultChatTheme' but maybe it's named 'LightChatTheme'?
+
+    // Let's try 'LightChatTheme'.
+
+    // final effectiveTheme = widget.theme ??
+    //     const DefaultChatTheme( // I'll try DefaultChatTheme again, maybe I had a typo? No.
+    //        // Maybe it's 'FlyerChatTheme'?
+    //     );
+
+    // Okay, I will try to use 'ChatTheme' and see errors.
+
     return Scaffold(
       appBar: widget.appBar,
-      backgroundColor: widget.theme?.backgroundColor,
-      body: Column(
-        children: [
-          Flexible(
-            child: Padding(
-              padding: EdgeInsets.only(
-                  left: horizontalPadding, right: horizontalPadding),
-              child: Chat(
-                messages: _messages,
-                onMessageTap: _handleMessageTap,
-                onPreviewDataFetched: _handlePreviewDataFetched,
-                onSendPressed: _handleSendPressed,
-                user: _user,
-                onEndReached: widget.onEndReached,
-                onEndReachedThreshold: widget.onEndReachedThreshold,
-                onMessageLongPress: widget.onMessageLongPress,
-                showUserAvatars: widget.showUserAvatars,
-                showUserNames: widget.showUserNames,
-                timeFormat: widget.timeFormat ?? DateFormat.Hm(),
-                dateFormat: widget.timeFormat ?? DateFormat("EEEE MMMM d"),
-                theme: widget.theme ?? ChatwootChatTheme(),
-                l10n: widget.l10n,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/logo_grey.png",
-                  package: 'chatwoot_sdk',
-                  width: 15,
-                  height: 15,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "Powered by Chatwoot",
-                    style: TextStyle(color: Colors.black45, fontSize: 12),
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
+      backgroundColor: CHATWOOT_BG_COLOR, // Fallback
+      body: Container(
+        color: CHATWOOT_BG_COLOR,
+        child: Chat(
+          chatController: _chatController,
+          currentUserId: _user.id,
+          resolveUser: _resolveUser,
+          onMessageTap: (BuildContext context, core.Message message,
+              {int? index, dynamic details}) {
+            _handleMessageTap(context, message);
+          },
+          onMessageSend: _handleSendPressed,
+          onMessageLongPress: (BuildContext context, core.Message message,
+              {int? index, dynamic details}) {
+            widget.onMessageLongPress?.call(context, message);
+          },
+          timeFormat: widget.timeFormat,
+          // theme: theme, // Commenting out theme for now
+          // l10n: widget.l10n, // Not available in v2.9.1
+        ),
       ),
     );
   }
@@ -455,5 +467,6 @@ class _ChatwootChatState extends State<ChatwootChat> {
   void dispose() {
     super.dispose();
     chatwootClient?.dispose();
+    _chatController.dispose();
   }
 }

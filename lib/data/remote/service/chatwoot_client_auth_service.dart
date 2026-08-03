@@ -68,8 +68,8 @@ class ChatwootClientAuthServiceImpl extends ChatwootClientAuthService {
             ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
       }
     } on DioException catch (e) {
-      throw ChatwootClientException(
-          e.message ?? '', ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
+      throw ChatwootClientException(e.message ?? '',
+          ChatwootClientExceptionType.CREATE_CONVERSATION_FAILED);
     }
   }
 }

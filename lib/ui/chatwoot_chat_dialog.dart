@@ -9,7 +9,23 @@ import 'chatwoot_chat_page.dart';
 
 ///Chatwoot chat modal widget
 /// {@category FlutterClientSdk}
-@deprecated
+///
+/// ⚠️ **CRITICAL: This widget is NOT FUNCTIONAL with flutter_chat_ui v2.x**
+///
+/// This widget depends on ChatwootChat which is incompatible with flutter_chat_ui v2.x.
+///
+/// **Please use one of these alternatives:**
+/// - `ChatwootWidget` (recommended) - Webview-based chat, fully functional
+/// - `ChatwootClient` - Build your own custom UI
+///
+/// To use this deprecated widget, downgrade to:
+/// ```yaml
+/// flutter_chat_ui: ^1.6.15
+/// flutter_chat_types: ^3.6.2
+/// ```
+/// And remove: `flutter_chat_core: ^2.8.0`
+@Deprecated('Not functional with flutter_chat_ui v2.x. '
+    'Use ChatwootWidget or downgrade to flutter_chat_ui ^1.6.15')
 class ChatwootChatDialog extends StatefulWidget {
   static show(
     BuildContext context, {
@@ -188,15 +204,9 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
                 user: widget.user,
                 enablePersistence: widget.enablePersistence,
                 timeFormat: widget.timeFormat,
-                dateFormat: widget.dateFormat,
                 theme: ChatwootChatTheme(
-                    primaryColor: widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY,
-                    secondaryColor: widget.secondaryColor ?? Colors.white,
                     backgroundColor:
-                        widget.backgroundColor ?? CHATWOOT_BG_COLOR,
-                    userAvatarNameColors: [
-                      widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY
-                    ]),
+                        widget.backgroundColor ?? CHATWOOT_BG_COLOR),
                 isPresentedInDialog: true,
                 onConversationIsOffline: () {
                   setState(() {

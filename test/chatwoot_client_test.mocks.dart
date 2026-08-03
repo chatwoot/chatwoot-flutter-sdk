@@ -4,13 +4,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
+import 'dart:io' as _i9;
 
 import 'package:chatwoot_sdk/chatwoot_callbacks.dart' as _i4;
 import 'package:chatwoot_sdk/data/chatwoot_repository.dart' as _i5;
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart' as _i7;
 import 'package:chatwoot_sdk/data/local/local_storage.dart' as _i3;
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart'
-    as _i9;
+    as _i10;
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart'
     as _i8;
 import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_service.dart'
@@ -157,7 +158,24 @@ class MockChatwootRepository extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
-  void sendAction(_i9.ChatwootActionType? action) => super.noSuchMethod(
+  _i6.Future<void> sendAttachment(
+    _i8.ChatwootNewMessageRequest? request,
+    _i9.File? file,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendAttachment,
+          [
+            request,
+            file,
+          ],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  void sendAction(_i10.ChatwootActionType? action) => super.noSuchMethod(
         Invocation.method(
           #sendAction,
           [action],

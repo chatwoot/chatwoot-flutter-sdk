@@ -8,14 +8,14 @@ import 'dart:async' as _i10;
 import 'package:async/async.dart' as _i12;
 import 'package:dio/src/adapter.dart' as _i3;
 import 'package:dio/src/cancel_token.dart' as _i11;
-import 'package:dio/src/dio.dart' as _i9;
+import 'package:dio/src/dio.dart' as _i7;
 import 'package:dio/src/dio_mixin.dart' as _i5;
 import 'package:dio/src/options.dart' as _i2;
 import 'package:dio/src/response.dart' as _i6;
 import 'package:dio/src/transformer.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:stream_channel/stream_channel.dart' as _i8;
-import 'package:web_socket_channel/src/channel.dart' as _i7;
+import 'package:stream_channel/stream_channel.dart' as _i9;
+import 'package:web_socket_channel/src/channel.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -81,8 +81,8 @@ class _FakeResponse_4<T1> extends _i1.SmartFake implements _i6.Response<T1> {
         );
 }
 
-class _FakeWebSocketSink_5 extends _i1.SmartFake implements _i7.WebSocketSink {
-  _FakeWebSocketSink_5(
+class _FakeDio_5 extends _i1.SmartFake implements _i7.Dio {
+  _FakeDio_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -91,9 +91,19 @@ class _FakeWebSocketSink_5 extends _i1.SmartFake implements _i7.WebSocketSink {
         );
 }
 
-class _FakeStreamChannel_6<T> extends _i1.SmartFake
-    implements _i8.StreamChannel<T> {
-  _FakeStreamChannel_6(
+class _FakeWebSocketSink_6 extends _i1.SmartFake implements _i8.WebSocketSink {
+  _FakeWebSocketSink_6(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeStreamChannel_7<T> extends _i1.SmartFake
+    implements _i9.StreamChannel<T> {
+  _FakeStreamChannel_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -105,7 +115,7 @@ class _FakeStreamChannel_6<T> extends _i1.SmartFake
 /// A class which mocks [Dio].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDio extends _i1.Mock implements _i9.Dio {
+class MockDio extends _i1.Mock implements _i7.Dio {
   MockDio() {
     _i1.throwOnMissingStub(this);
   }
@@ -624,6 +634,7 @@ class MockDio extends _i1.Mock implements _i9.Dio {
     Map<String, dynamic>? queryParameters,
     _i11.CancelToken? cancelToken,
     bool? deleteOnError = true,
+    _i2.FileAccessMode? fileAccessMode = _i2.FileAccessMode.write,
     String? lengthHeader = r'content-length',
     Object? data,
     _i2.Options? options,
@@ -640,6 +651,7 @@ class MockDio extends _i1.Mock implements _i9.Dio {
             #queryParameters: queryParameters,
             #cancelToken: cancelToken,
             #deleteOnError: deleteOnError,
+            #fileAccessMode: fileAccessMode,
             #lengthHeader: lengthHeader,
             #data: data,
             #options: options,
@@ -659,6 +671,7 @@ class MockDio extends _i1.Mock implements _i9.Dio {
               #queryParameters: queryParameters,
               #cancelToken: cancelToken,
               #deleteOnError: deleteOnError,
+              #fileAccessMode: fileAccessMode,
               #lengthHeader: lengthHeader,
               #data: data,
               #options: options,
@@ -674,6 +687,7 @@ class MockDio extends _i1.Mock implements _i9.Dio {
     _i2.ProgressCallback? onReceiveProgress,
     _i11.CancelToken? cancelToken,
     bool? deleteOnError = true,
+    _i2.FileAccessMode? fileAccessMode = _i2.FileAccessMode.write,
     String? lengthHeader = r'content-length',
     Object? data,
     _i2.Options? options,
@@ -689,6 +703,7 @@ class MockDio extends _i1.Mock implements _i9.Dio {
             #onReceiveProgress: onReceiveProgress,
             #cancelToken: cancelToken,
             #deleteOnError: deleteOnError,
+            #fileAccessMode: fileAccessMode,
             #lengthHeader: lengthHeader,
             #data: data,
             #options: options,
@@ -707,6 +722,7 @@ class MockDio extends _i1.Mock implements _i9.Dio {
               #onReceiveProgress: onReceiveProgress,
               #cancelToken: cancelToken,
               #deleteOnError: deleteOnError,
+              #fileAccessMode: fileAccessMode,
               #lengthHeader: lengthHeader,
               #data: data,
               #options: options,
@@ -807,12 +823,45 @@ class MockDio extends _i1.Mock implements _i9.Dio {
           ),
         )),
       ) as _i10.Future<_i6.Response<T>>);
+
+  @override
+  _i7.Dio clone({
+    _i2.BaseOptions? options,
+    _i5.Interceptors? interceptors,
+    _i3.HttpClientAdapter? httpClientAdapter,
+    _i4.Transformer? transformer,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #clone,
+          [],
+          {
+            #options: options,
+            #interceptors: interceptors,
+            #httpClientAdapter: httpClientAdapter,
+            #transformer: transformer,
+          },
+        ),
+        returnValue: _FakeDio_5(
+          this,
+          Invocation.method(
+            #clone,
+            [],
+            {
+              #options: options,
+              #interceptors: interceptors,
+              #httpClientAdapter: httpClientAdapter,
+              #transformer: transformer,
+            },
+          ),
+        ),
+      ) as _i7.Dio);
 }
 
 /// A class which mocks [WebSocketChannel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebSocketChannel extends _i1.Mock implements _i7.WebSocketChannel {
+class MockWebSocketChannel extends _i1.Mock implements _i8.WebSocketChannel {
   MockWebSocketChannel() {
     _i1.throwOnMissingStub(this);
   }
@@ -824,13 +873,13 @@ class MockWebSocketChannel extends _i1.Mock implements _i7.WebSocketChannel {
       ) as _i10.Future<void>);
 
   @override
-  _i7.WebSocketSink get sink => (super.noSuchMethod(
+  _i8.WebSocketSink get sink => (super.noSuchMethod(
         Invocation.getter(#sink),
-        returnValue: _FakeWebSocketSink_5(
+        returnValue: _FakeWebSocketSink_6(
           this,
           Invocation.getter(#sink),
         ),
-      ) as _i7.WebSocketSink);
+      ) as _i8.WebSocketSink);
 
   @override
   _i10.Stream<dynamic> get stream => (super.noSuchMethod(
@@ -839,7 +888,7 @@ class MockWebSocketChannel extends _i1.Mock implements _i7.WebSocketChannel {
       ) as _i10.Stream<dynamic>);
 
   @override
-  void pipe(_i8.StreamChannel<dynamic>? other) => super.noSuchMethod(
+  void pipe(_i9.StreamChannel<dynamic>? other) => super.noSuchMethod(
         Invocation.method(
           #pipe,
           [other],
@@ -848,75 +897,75 @@ class MockWebSocketChannel extends _i1.Mock implements _i7.WebSocketChannel {
       );
 
   @override
-  _i8.StreamChannel<S> transform<S>(
-          _i8.StreamChannelTransformer<S, dynamic>? transformer) =>
+  _i9.StreamChannel<S> transform<S>(
+          _i9.StreamChannelTransformer<S, dynamic>? transformer) =>
       (super.noSuchMethod(
         Invocation.method(
           #transform,
           [transformer],
         ),
-        returnValue: _FakeStreamChannel_6<S>(
+        returnValue: _FakeStreamChannel_7<S>(
           this,
           Invocation.method(
             #transform,
             [transformer],
           ),
         ),
-      ) as _i8.StreamChannel<S>);
+      ) as _i9.StreamChannel<S>);
 
   @override
-  _i8.StreamChannel<dynamic> transformStream(
+  _i9.StreamChannel<dynamic> transformStream(
           _i10.StreamTransformer<dynamic, dynamic>? transformer) =>
       (super.noSuchMethod(
         Invocation.method(
           #transformStream,
           [transformer],
         ),
-        returnValue: _FakeStreamChannel_6<dynamic>(
+        returnValue: _FakeStreamChannel_7<dynamic>(
           this,
           Invocation.method(
             #transformStream,
             [transformer],
           ),
         ),
-      ) as _i8.StreamChannel<dynamic>);
+      ) as _i9.StreamChannel<dynamic>);
 
   @override
-  _i8.StreamChannel<dynamic> transformSink(
+  _i9.StreamChannel<dynamic> transformSink(
           _i12.StreamSinkTransformer<dynamic, dynamic>? transformer) =>
       (super.noSuchMethod(
         Invocation.method(
           #transformSink,
           [transformer],
         ),
-        returnValue: _FakeStreamChannel_6<dynamic>(
+        returnValue: _FakeStreamChannel_7<dynamic>(
           this,
           Invocation.method(
             #transformSink,
             [transformer],
           ),
         ),
-      ) as _i8.StreamChannel<dynamic>);
+      ) as _i9.StreamChannel<dynamic>);
 
   @override
-  _i8.StreamChannel<dynamic> changeStream(
+  _i9.StreamChannel<dynamic> changeStream(
           _i10.Stream<dynamic> Function(_i10.Stream<dynamic>)? change) =>
       (super.noSuchMethod(
         Invocation.method(
           #changeStream,
           [change],
         ),
-        returnValue: _FakeStreamChannel_6<dynamic>(
+        returnValue: _FakeStreamChannel_7<dynamic>(
           this,
           Invocation.method(
             #changeStream,
             [change],
           ),
         ),
-      ) as _i8.StreamChannel<dynamic>);
+      ) as _i9.StreamChannel<dynamic>);
 
   @override
-  _i8.StreamChannel<dynamic> changeSink(
+  _i9.StreamChannel<dynamic> changeSink(
           _i10.StreamSink<dynamic> Function(_i10.StreamSink<dynamic>)?
               change) =>
       (super.noSuchMethod(
@@ -924,35 +973,35 @@ class MockWebSocketChannel extends _i1.Mock implements _i7.WebSocketChannel {
           #changeSink,
           [change],
         ),
-        returnValue: _FakeStreamChannel_6<dynamic>(
+        returnValue: _FakeStreamChannel_7<dynamic>(
           this,
           Invocation.method(
             #changeSink,
             [change],
           ),
         ),
-      ) as _i8.StreamChannel<dynamic>);
+      ) as _i9.StreamChannel<dynamic>);
 
   @override
-  _i8.StreamChannel<S> cast<S>() => (super.noSuchMethod(
+  _i9.StreamChannel<S> cast<S>() => (super.noSuchMethod(
         Invocation.method(
           #cast,
           [],
         ),
-        returnValue: _FakeStreamChannel_6<S>(
+        returnValue: _FakeStreamChannel_7<S>(
           this,
           Invocation.method(
             #cast,
             [],
           ),
         ),
-      ) as _i8.StreamChannel<S>);
+      ) as _i9.StreamChannel<S>);
 }
 
 /// A class which mocks [WebSocketSink].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebSocketSink extends _i1.Mock implements _i7.WebSocketSink {
+class MockWebSocketSink extends _i1.Mock implements _i8.WebSocketSink {
   MockWebSocketSink() {
     _i1.throwOnMissingStub(this);
   }

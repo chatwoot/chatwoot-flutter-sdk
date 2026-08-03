@@ -1,8 +1,8 @@
+import 'dart:io';
+
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:chatwoot_sdk/data/chatwoot_repository.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_sdk/data/remote/requests/chatwoot_action_data.dart';
 import 'package:chatwoot_sdk/data/remote/requests/chatwoot_new_message_request.dart';
 import 'package:chatwoot_sdk/di/modules.dart';
 import 'package:chatwoot_sdk/chatwoot_parameters.dart';
@@ -54,10 +54,25 @@ class ChatwootClient {
   /// Sends chatwoot message. The echoId is your temporary message id. When message sends successfully
   /// [ChatwootMessage] will be returned with the [echoId] on [ChatwootCallbacks.onMessageSent]. If
   /// message fails to send [ChatwootCallbacks.onError] will be triggered [echoId] as data.
+  /// [contentAttributes] is a map of additional attributes to be sent with the message.
   Future<void> sendMessage(
-      {required String content, required String echoId}) async {
-    final request = ChatwootNewMessageRequest(content: content, echoId: echoId);
+      {required String content,
+      required String echoId,
+      Map<String, dynamic>? contentAttributes}) async {
+    final request = ChatwootNewMessageRequest(
+        content: content, echoId: echoId, contentAttributes: contentAttributes);
     await _repository.sendMessage(request);
+  }
+
+  /// Sends chatwoot message with attachment.
+  Future<void> sendAttachment(
+      {required String content,
+      required String echoId,
+      required File file,
+      Map<String, dynamic>? contentAttributes}) async {
+    final request = ChatwootNewMessageRequest(
+        content: content, echoId: echoId, contentAttributes: contentAttributes);
+    await _repository.sendAttachment(request, file);
   }
 
   ///Send chatwoot action performed by user.
@@ -65,6 +80,11 @@ class ChatwootClient {
   /// Example: User started typing
   Future<void> sendAction(ChatwootActionType action) async {
     _repository.sendAction(action);
+  }
+
+  /// Updates the last seen status for the conversation
+  Future<void> updateLastSeen() async {
+    await _repository.updateLastSeen();
   }
 
   ///Disposes chatwoot client and cancels all stream subscriptions

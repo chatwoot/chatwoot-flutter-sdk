@@ -223,8 +223,6 @@ String? eventMessageTypeToJson(ChatwootEventMessageType? actionType) {
       return "message.updated";
     case ChatwootEventMessageType.conversation_status_changed:
       return "conversation.status_changed";
-    default:
-      return actionType.toString();
   }
 }
 

@@ -8,7 +8,10 @@
 .buildlog/
 .history
 .svn/
-*.g.dart
+# lib/**/*.g.dart is deliberately tracked: this package is consumed as a git
+# and path dependency, and pub does not run build_runner for dependencies, so
+# consumers cannot compile without the generated sources.
+example/**/*.g.dart
 *.mocks.dart
 applicationDocumentsPath
 hive_testing_path

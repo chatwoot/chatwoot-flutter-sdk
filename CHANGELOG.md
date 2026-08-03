@@ -38,3 +38,9 @@
 
 - Fixed message sending issues
 - Adds development docs
+
+## [0.0.10] - Nov 10, 2025
+
+- Updated riverpod dependency to ^3.0.0 for compatibility with latest Flutter projects
+- Fixed test compatibility with riverpod 3.x API changes
+- Regenerated build_runner outputs
