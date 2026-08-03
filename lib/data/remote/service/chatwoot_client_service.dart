@@ -37,6 +37,8 @@ abstract class ChatwootClientService {
 
   Future<List<ChatwootMessage>> getAllMessages();
 
+  Future<void> updateLastSeen();
+
   void startWebSocketConnection(String contactPubsubToken,
       {WebSocketChannel Function(Uri)? onStartConnection});
 
@@ -73,12 +75,11 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
       ChatwootNewMessageRequest request, File file) async {
     try {
       String fileName = file.path.split('/').last;
-      FormData formData = FormData.fromMap({
-        "content": request.content,
-        "echo_id": request.echoId,
-        "attachments[]":
-            await MultipartFile.fromFile(file.path, filename: fileName),
-      });
+      final jsonMap = request.toJson();
+      jsonMap.removeWhere((key, value) => value == null);
+      jsonMap["attachments[]"] =
+          await MultipartFile.fromFile(file.path, filename: fileName);
+      FormData formData = FormData.fromMap(jsonMap);
 
       final createResponse = await _dio.post(
           "/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations/${ChatwootClientApiInterceptor.INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER}/messages",
@@ -114,6 +115,23 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
     } on DioException catch (e) {
       throw ChatwootClientException(
           e.message ?? '', ChatwootClientExceptionType.GET_MESSAGES_FAILED);
+    }
+  }
+
+  ///Updates the last seen status for the conversation
+  @override
+  Future<void> updateLastSeen() async {
+    try {
+      final createResponse = await _dio.post(
+          "/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}/conversations/${ChatwootClientApiInterceptor.INTERCEPTOR_CONVERSATION_IDENTIFIER_PLACEHOLDER}/update_last_seen");
+      if (!(createResponse.statusCode ?? 0).isBetween(199, 300)) {
+        throw ChatwootClientException(
+            createResponse.statusMessage ?? "unknown error",
+            ChatwootClientExceptionType.SEND_MESSAGE_FAILED);
+      }
+    } on DioException catch (e) {
+      throw ChatwootClientException(
+          e.message ?? '', ChatwootClientExceptionType.SEND_MESSAGE_FAILED);
     }
   }
 
@@ -201,7 +219,17 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
   @override
   void startWebSocketConnection(String contactPubsubToken,
       {WebSocketChannel Function(Uri)? onStartConnection}) {
-    final socketUrl = Uri.parse(_baseUrl.replaceFirst("http", "ws") + "/cable");
+    // Parse the base URL to properly construct WebSocket URL
+    final baseUri = Uri.parse(_baseUrl);
+
+    // Construct WebSocket URL with proper scheme and preserve host/port
+    final socketUrl = Uri(
+      scheme: baseUri.scheme == 'https' ? 'wss' : 'ws',
+      host: baseUri.host,
+      port: baseUri.hasPort && baseUri.port > 0 ? baseUri.port : null, // Only include valid ports
+      path: '/cable',
+    );
+
     this.connection = onStartConnection == null
         ? WebSocketChannel.connect(socketUrl)
         : onStartConnection(socketUrl);

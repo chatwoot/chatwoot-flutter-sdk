@@ -68,8 +68,10 @@ class ChatwootClient {
   Future<void> sendAttachment(
       {required String content,
       required String echoId,
-      required File file}) async {
-    final request = ChatwootNewMessageRequest(content: content, echoId: echoId);
+      required File file,
+      Map<String, dynamic>? contentAttributes}) async {
+    final request = ChatwootNewMessageRequest(
+        content: content, echoId: echoId, contentAttributes: contentAttributes);
     await _repository.sendAttachment(request, file);
   }
 
@@ -78,6 +80,11 @@ class ChatwootClient {
   /// Example: User started typing
   Future<void> sendAction(ChatwootActionType action) async {
     _repository.sendAction(action);
+  }
+
+  /// Updates the last seen status for the conversation
+  Future<void> updateLastSeen() async {
+    await _repository.updateLastSeen();
   }
 
   ///Disposes chatwoot client and cancels all stream subscriptions
