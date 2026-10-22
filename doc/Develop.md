@@ -109,7 +109,9 @@ flag allows the expected dirty-source warning after code generation in CI.
 The root `build.yaml` limits generation to SDK sources and tests so native
 example plugin symlinks are not scanned as package source files.
 
-Use Java 17 for the Android example. After `flutter pub get`, validate its
+Use Java 17 for the Android example. It pins NDK 28.2.13676358 to match the JNI
+plugin and allows a 4 GiB Gradle heap for Flutter's native artifact transforms.
+The root CI job compiles its debug APK. After `flutter pub get`, validate its
 native builds separately from the root unit tests:
 
 ```bash

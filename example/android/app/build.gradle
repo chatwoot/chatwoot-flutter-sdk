@@ -26,6 +26,8 @@ if (flutterVersionName == null) {
 android {
     namespace "com.example.example"
     compileSdkVersion 36
+    // JNI requires this NDK; use it for the app as well as the plugin.
+    ndkVersion "28.2.13676358"
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
