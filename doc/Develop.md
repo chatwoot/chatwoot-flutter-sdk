@@ -4,6 +4,17 @@
 
 Set up your local environment for developing a Flutter app by using their [guide](https://docs.flutter.dev/get-started/install).
 
+Use Flutter 3.44.8 / Dart 3.12.2 for SDK development and code generation, as
+CI does. The generator/test dependency graph requires newer SDK pins than the
+runtime consumer minimum. Do not override Flutter's pinned dependencies to
+make the development graph resolve on an older SDK.
+
+To validate consumers, switch to Flutter 3.35.0 / Dart 3.9.0 and run
+`dart tool/check_minimum_consumer.dart`. It creates a temporary consumer with
+no overrides, checks the public widget API and navigation boundaries, and runs
+the Hive 2 upgrade fixture.
+It never launches the widget or contacts a Chatwoot installation.
+
 ## Clone the repository
 
 Clone the [chatwoot-flutter-sdk](https://github.com/chatwoot/chatwoot-flutter-sdk) repository.
@@ -82,8 +93,31 @@ flutter pub upgrade
 If you want to check the correctness of the code try running the commands below.
 
 ```
-flutter pub run build_runner clean
-flutter pub run build_runner--delete-conflicting-outputs
-flutter test
+dart run build_runner clean
+dart run build_runner build
+node --test test/webview_widget/*.test.cjs
+flutter test --concurrency=1
 flutter analyze
+dart pub publish --dry-run --ignore-warnings
 ```
+
+The JavaScript bridge and generated-file regression tests use Node.js 18 or
+newer and can run without Flutter. The package dry run does not publish or
+upload a release. Confirm that its file list includes the generated `lib/`
+parts, then test a consumer app before releasing. Review every warning; the
+flag allows the expected dirty-source warning after code generation in CI.
+The root `build.yaml` limits generation to SDK sources and tests so native
+example plugin symlinks are not scanned as package source files.
+
+Use Java 17 for the Android example. After `flutter pub get`, validate its
+native builds separately from the root unit tests:
+
+```bash
+cd example
+flutter build apk --debug
+flutter build ios --no-codesign
+```
+
+On a test device or simulator, check initial widget loading, user/locale/custom
+attributes, attachment selection/cancel/upload, and an upgrade retaining an
+existing conversation. Use a non-production Chatwoot inbox for these checks.

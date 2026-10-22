@@ -1,3 +1,15 @@
+## [0.1.0] - Unreleased
+
+- Migrate the website widget to InAppWebView for native attachment selection.
+- Queue widget messages until the native JavaScript bridge is ready.
+- Keep the initial iOS widget load in the WebView instead of opening Safari.
+- Include generated library sources in the published package.
+- Require Dart 3.9 / Flutter 3.35, Android API 23+ (or Flutter's higher minimum),
+  Java 17, and iOS 13+. CI uses Flutter 3.44.8.
+- Replace Hive with Hive CE while preserving the existing adapter IDs.
+- Remove the deprecated native chat UI classes and the `onAttachFile` callback.
+  See the README migration notes before upgrading.
+
 ## [0.0.1] - Jul 15,2021
 
 - Setup initial client sdk flow

@@ -2,11 +2,22 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
+import 'package:chatwoot_sdk/ui/webview_widget/javascript_bridge.dart';
 import 'package:chatwoot_sdk/ui/webview_widget/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+// iOS asks about the initial URL as well as user navigation. Keep the widget's
+// configured request embedded. Its query binds the inbox and stored conversation;
+// web content must not replace those parameters before user configuration runs.
+bool isWidgetNavigation(Uri target, Uri widgetUrl) =>
+    target.scheme == widgetUrl.scheme &&
+    target.host == widgetUrl.host &&
+    target.port == widgetUrl.port &&
+    target.path == widgetUrl.path &&
+    target.query == widgetUrl.query;
 
 ///Chatwoot webview widget
 /// {@category FlutterClientSdk}
@@ -29,23 +40,26 @@ class Webview extends StatefulWidget {
   /// See [ChatwootWidget.onLoadCompleted]
   final void Function()? onLoadCompleted;
 
-  Webview(
-      {Key? key,
-      required String websiteToken,
-      required String baseUrl,
-      ChatwootUser? user,
-      String locale = "en",
-      customAttributes,
-      this.closeWidget,
-      this.onLoadStarted,
-      this.onLoadProgress,
-      this.onLoadCompleted})
-      : super(key: key) {
+  Webview({
+    Key? key,
+    required String websiteToken,
+    required String baseUrl,
+    ChatwootUser? user,
+    String locale = "en",
+    customAttributes,
+    this.closeWidget,
+    this.onLoadStarted,
+    this.onLoadProgress,
+    this.onLoadCompleted,
+  }) : super(key: key) {
     widgetUrl =
         "${baseUrl}/widget?website_token=${websiteToken}&locale=${locale}";
 
     injectedJavaScript = generateScripts(
-        user: user, locale: locale, customAttributes: customAttributes);
+      user: user,
+      locale: locale,
+      customAttributes: customAttributes,
+    );
   }
 
   @override
@@ -63,6 +77,7 @@ class _WebviewState extends State<Webview> {
       String webviewUrl = widget.widgetUrl;
 
       final cwCookie = await StoreHelper.getCookie();
+      if (!mounted) return;
       if (cwCookie.isNotEmpty) {
         webviewUrl = "$webviewUrl&cw_conversation=$cwCookie";
       }
@@ -80,9 +95,7 @@ class _WebviewState extends State<Webview> {
     }
 
     return InAppWebView(
-      initialUrlRequest: URLRequest(
-        url: WebUri(_webviewUrl!),
-      ),
+      initialUrlRequest: URLRequest(url: WebUri(_webviewUrl!)),
       initialSettings: InAppWebViewSettings(
         javaScriptEnabled: true,
         allowFileAccessFromFileURLs: true,
@@ -90,20 +103,14 @@ class _WebviewState extends State<Webview> {
         transparentBackground: true,
         allowFileAccess: true,
         allowContentAccess: true,
-        useShouldOverrideUrlLoading:true,
+        useShouldOverrideUrlLoading: true,
         mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
       ),
       initialUserScripts: UnmodifiableListView([
         UserScript(
-          source: """
-window.ReactNativeWebView = {
-  postMessage: function(message) {
-    window.flutter_inappwebview.callHandler('ReactNativeWebView', message);
-  }
-};
-      """,
+          source: chatwootJavaScriptBridge,
           injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
-        )
+        ),
       ]),
       onWebViewCreated: (controller) async {
         controller.addJavaScriptHandler(
@@ -134,7 +141,6 @@ window.ReactNativeWebView = {
             }
           },
         );
-
       },
       onProgressChanged: (controller, progress) {
         widget.onLoadProgress?.call(progress);
@@ -148,6 +154,9 @@ window.ReactNativeWebView = {
       shouldOverrideUrlLoading: (controller, navigationAction) async {
         final uri = navigationAction.request.url;
         if (uri != null) {
+          if (isWidgetNavigation(uri, Uri.parse(_webviewUrl!))) {
+            return NavigationActionPolicy.ALLOW;
+          }
           _goToUrl(uri.toString());
         }
         return NavigationActionPolicy.CANCEL;

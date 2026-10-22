@@ -1,0 +1,9 @@
+targets:
+  $default:
+    # Native example builds create symlinks to dependency source trees.
+    # Generate SDK adapters and mocks without traversing those dependencies.
+    sources:
+      - "$package$"
+      - lib/**
+      - test/**
+      - pubspec.yaml
