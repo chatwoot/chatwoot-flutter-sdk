@@ -2,7 +2,7 @@ import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
 import 'package:chatwoot_sdk/data/local/local_storage.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'chatwoot_conversation.g.dart';
 

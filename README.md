@@ -2,6 +2,33 @@
 
 # Integrate Chatwoot with Flutter app
 
+## Requirements for 0.1.0
+
+- Dart 3.9 or newer and Flutter 3.35 or newer for consumers. The minimum-consumer
+  check resolves without overrides and covers the public API and Hive upgrade.
+  SDK development, generation and the checked-in lockfiles use Flutter 3.44.8.
+- Android API 23 or newer, or the minimum required by your Flutter version,
+  whichever is higher. Build with Java 17.
+- iOS 13 or the higher minimum required by your Flutter version or Xcode SDK.
+  Set the deployment target in your Podfile and Xcode project. For example,
+  Xcode 27 requires iOS 15 targets; this does not validate iOS 13 behavior.
+
+### Migrating from 0.0.9
+
+Version 0.1.0 uses InAppWebView for the website widget's native file picker.
+Remove the `onAttachFile` argument from `ChatwootWidget` and apply the Android
+FileProvider and iOS permission settings below. File selection is handled by
+the native WebView.
+
+The deprecated `ChatwootChat`, `ChatwootChatDialog`, `ChatwootChatTheme`, and
+`ChatwootL10n` classes have been removed. Use `ChatwootWidget` for the website
+channel, or build a custom UI around `ChatwootClient` for an API channel.
+
+Hive has been replaced by Hive CE. The SDK keeps the existing box names and
+adapter IDs; test upgrades with existing persisted conversations. Android
+secure storage 10 migrates the previous encrypted preferences automatically
+by default. Do not clear existing app storage as part of an upgrade.
+
 Integrate Chatwoot flutter client into your flutter app and talk to your visitors in real time. [Chatwoot](https://github.com/chatwoot/chatwoot) helps you to chat with your visitors and provide exceptional support in real time. To use Chatwoot in your flutter app, follow the steps described below.
 
 <img src="https://user-images.githubusercontent.com/22669874/225545427-bd3fe38c-d116-4286-b542-67b03a51e2d2.jpg" alt="chatwoot screenshot" height="560"/>
@@ -31,9 +58,6 @@ import 'dart:io';
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image/image.dart' as image;
-import 'package:image_picker/image_picker.dart' as image_picker;
-import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -90,8 +114,6 @@ class _MyHomePageState extends State<MyHomePage> {
             exit(0);
           }
         },
-        //attachment only works on android for now
-        onAttachFile: _androidFilePicker,
         onLoadStarted: () {
           print("loading widget");
         },
@@ -104,30 +126,41 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
-  Future<List<String>> _androidFilePicker() async {
-    final picker = image_picker.ImagePicker();
-    final photo =
-        await picker.pickImage(source: image_picker.ImageSource.gallery);
-
-    if (photo == null) {
-      return [];
-    }
-
-    final imageData = await photo.readAsBytes();
-    final decodedImage = image.decodeImage(imageData);
-    final scaledImage = image.copyResize(decodedImage, width: 500);
-    final jpg = image.encodeJpg(scaledImage, quality: 90);
-
-    final filePath = (await getTemporaryDirectory()).uri.resolve(
-          './image_${DateTime.now().microsecondsSinceEpoch}.jpg',
-        );
-    final file = await File.fromUri(filePath).create(recursive: true);
-    await file.writeAsBytes(jpg, flush: true);
-
-    return [file.uri.toString()];
-  }
 }
+```
+
+* To better support file attachments, **for android** define a FileProvider in AndroidManifest.xml under the `<application>` tag. Replace ${applicationId} with your application id
+```xml
+<provider
+   android:name="androidx.core.content.FileProvider"
+   android:authorities="${applicationId}.flutter_inappwebview_android.fileprovider"
+   android:exported="false"
+   android:grantUriPermissions="true">
+   <meta-data
+       android:name="android.support.FILE_PROVIDER_PATHS"
+       android:resource="@xml/file_paths" />
+</provider>
+```
+* Under `<manifest>` tag in AndroidManifest.xml. Add files access permissions:
+```xml
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+```
+* Then in res/xml/file_paths.xml
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="cache" path="." />
+    <external-path name="external_files" path="." />
+</paths>
+```
+* **For iOS** declare Usage Description Keys in Info.plist. Add:
+```xml
+<key>NSCameraUsageDescription</key>
+<string>This app requires camera access to upload photos.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>This app requires access to your photo library to upload files.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>This app requires microphone access for recording audio.</string>
 ```
 
 Horray! You're done.
@@ -143,7 +176,6 @@ Horray! You're done.
 | locale           | en      | String                          | User locale                                                                                            |
 | closeWidget      | -       | void Function()                 | widget close event                                                                                     |
 | customAttributes | -       | dynamic                         | Additional information about the customer                                                              |
-| onAttachFile     | -       | Future<List<String>> Function() | Widget Attachment event. Should return a list of File Uris Currently supported only on Android devices |
 | onLoadStarted    | -       | void Function()                 | Widget load start event                                                                                |
 | onLoadProgress   | -       | void Function(int)              | Widget Load progress event                                                                             |
 | onLoadCompleted  | -       | void Function()                 | Widget Load completed event                                                                            |

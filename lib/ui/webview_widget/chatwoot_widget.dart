@@ -23,9 +23,6 @@ class ChatwootWidget extends StatefulWidget {
   ///Additional information about the customer
   final customAttributes;
 
-  ///Widget Attachment event. Currently supported only on Android devices
-  final Future<List<String>> Function()? onAttachFile;
-
   ///Widget Load started event
   final void Function()? onLoadStarted;
 
@@ -42,7 +39,6 @@ class ChatwootWidget extends StatefulWidget {
       this.locale = "en",
       this.customAttributes,
       this.closeWidget,
-      this.onAttachFile,
       this.onLoadStarted,
       this.onLoadProgress,
       this.onLoadCompleted})
@@ -67,7 +63,6 @@ class _ChatwootWidgetState extends State<ChatwootWidget> {
       locale: widget.locale,
       customAttributes: widget.customAttributes,
       closeWidget: widget.closeWidget,
-      onAttachFile: widget.onAttachFile,
       onLoadStarted: widget.onLoadStarted,
       onLoadCompleted: widget.onLoadCompleted,
       onLoadProgress: widget.onLoadProgress,
