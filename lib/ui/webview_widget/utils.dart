@@ -14,18 +14,20 @@ bool isJsonString(string) {
   return true;
 }
 
-String createWootPostMessage(object) {
-  final stringfyObject = "${WOOT_PREFIX}${jsonEncode(object)}";
-  final script = 'window.postMessage(\'${stringfyObject}\');';
-  return script;
+String createWootPostMessage(Object? object) {
+  final message = '$WOOT_PREFIX${jsonEncode(object)}';
+  return 'window.postMessage(${jsonEncode(message)});';
 }
 
 String getMessage(String data) {
   return data.replaceAll(WOOT_PREFIX, '');
 }
 
-String generateScripts(
-    {ChatwootUser? user, String? locale, dynamic customAttributes}) {
+String generateScripts({
+  ChatwootUser? user,
+  String? locale,
+  dynamic customAttributes,
+}) {
   String script = '';
   if (user != null) {
     final userObject = {
@@ -38,7 +40,7 @@ String generateScripts(
   if (locale != null) {
     final localeObject = {
       "event": PostMessageEvents.SET_LOCALE,
-      "locale": locale
+      "locale": locale,
     };
     script += createWootPostMessage(localeObject);
   }

@@ -2,6 +2,8 @@
 
 - Migrate the website widget to InAppWebView for native attachment selection.
 - Queue widget messages until the native JavaScript bridge is ready.
+- Preserve quoted, multiline and Unicode customer details when configuring the widget.
+- Require an explicit website token before the example connects to an instance.
 - Keep the initial iOS widget load in the WebView instead of opening Safari.
 - Include generated library sources in the published package.
 - Require Dart 3.9 / Flutter 3.35, Android API 23+ (or Flutter's higher minimum),

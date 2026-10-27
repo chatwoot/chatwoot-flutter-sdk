@@ -11,8 +11,9 @@ make the development graph resolve on an older SDK.
 
 To validate consumers, switch to Flutter 3.35.0 / Dart 3.9.0 and run
 `dart tool/check_minimum_consumer.dart`. It creates a temporary consumer with
-no overrides, checks the public widget API and navigation boundaries, and runs
-the Hive 2 upgrade fixture.
+no overrides, checks the public widget API, configuration encoding and navigation
+boundaries, and runs the Hive 2 upgrade fixture. The configuration cases execute
+the generated JavaScript with Node.js 18 or newer.
 It never launches the widget or contacts a Chatwoot installation.
 
 ## Clone the repository
@@ -51,6 +52,14 @@ Use any of the methods mentioned below for running a sample project.
 
 ```
 flutter run
+```
+
+The example waits for an explicit website token before connecting. Run it with
+your test inbox and instance:
+
+```bash
+flutter run --dart-define=CHATWOOT_WEBSITE_TOKEN=your-test-inbox-token \
+  --dart-define=CHATWOOT_BASE_URL=https://your-test-instance.example
 ```
 
 **NB:** If there is no device connected or the simulator is not open, this will open in your default browser.

@@ -30,6 +30,8 @@ jobs:
       - run: dart run build_runner build
       - run: flutter test --concurrency=1
       - run: flutter analyze
+      - run: flutter test --concurrency=1
+        working-directory: example
       # Compile the migrated Android example; unit tests do not evaluate Gradle
       # repositories, Kotlin configuration or manifest namespace migration.
       - run: flutter build apk --debug --target-platform android-arm64
