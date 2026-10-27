@@ -39,6 +39,7 @@ void main() => runApp(ChatwootWidget(
       'fixtures/legacy_hive_adapters.dart',
       'webview_widget/navigation_test.dart',
       'webview_widget/configuration_test.dart',
+      'webview_widget/security_settings_test.dart',
     ]) {
       final target = File('${fixture.path}/test/$name');
       target.parent.createSync(recursive: true);

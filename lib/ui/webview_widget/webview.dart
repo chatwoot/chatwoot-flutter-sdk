@@ -98,13 +98,10 @@ class _WebviewState extends State<Webview> {
       initialUrlRequest: URLRequest(url: WebUri(_webviewUrl!)),
       initialSettings: InAppWebViewSettings(
         javaScriptEnabled: true,
-        allowFileAccessFromFileURLs: true,
-        allowUniversalAccessFromFileURLs: true,
         transparentBackground: true,
         allowFileAccess: true,
         allowContentAccess: true,
         useShouldOverrideUrlLoading: true,
-        mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
       ),
       initialUserScripts: UnmodifiableListView([
         UserScript(

@@ -2,6 +2,7 @@
 
 - Migrate the website widget to InAppWebView for native attachment selection.
 - Queue widget messages until the native JavaScript bridge is ready.
+- Keep platform restrictions on cross-origin file access and mixed content.
 - Preserve quoted, multiline and Unicode customer details when configuring the widget.
 - Require an explicit website token before the example connects to an instance.
 - Keep the initial iOS widget load in the WebView instead of opening Safari.
