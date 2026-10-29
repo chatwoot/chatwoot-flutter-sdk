@@ -3,11 +3,11 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
-import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {

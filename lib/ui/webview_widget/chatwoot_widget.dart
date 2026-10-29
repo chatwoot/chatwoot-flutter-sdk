@@ -1,5 +1,5 @@
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
-import 'package:chatwoot_sdk/ui/webview_widget/webview.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_client_sdk/ui/webview_widget/webview.dart';
 import 'package:flutter/material.dart';
 
 ///ChatwootWidget

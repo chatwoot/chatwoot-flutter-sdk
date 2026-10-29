@@ -1,4 +1,4 @@
-[![Pub Version](https://img.shields.io/pub/v/chatwoot_client_sdk?color=blueviolet)](https://pub.dev/packages/chatwoot_sdk)
+[![Pub Version](https://img.shields.io/pub/v/chatwoot_client_sdk?color=blueviolet)](https://pub.dev/packages/chatwoot_client_sdk)
 
 # Integrate Chatwoot with Flutter app
 
@@ -13,12 +13,17 @@
   Set the deployment target in your Podfile and Xcode project. For example,
   Xcode 27 requires iOS 15 targets; this does not validate iOS 13 behavior.
 
-### Migrating from 0.0.9
+### Migrating from 0.0.8
+
+The official package is `chatwoot_client_sdk`, published by `chatwoot.com`.
+If you used a Git revision named `chatwoot_sdk`, update its dependency key and
+imports to `chatwoot_client_sdk`. Use the entry point
+`package:chatwoot_client_sdk/chatwoot_client_sdk.dart`.
 
 Version 0.1.0 uses InAppWebView for the website widget's native file picker.
-Remove the `onAttachFile` argument from `ChatwootWidget` and apply the Android
-FileProvider and iOS permission settings below. File selection is handled by
-the native WebView.
+If you used `ChatwootWidget` from an earlier Git revision, remove its
+`onAttachFile` argument. Apply the Android FileProvider and iOS permission
+settings below. File selection is handled by the native WebView.
 
 The deprecated `ChatwootChat`, `ChatwootChatDialog`, `ChatwootChatTheme`, and
 `ChatwootL10n` classes have been removed. Use `ChatwootWidget` for the website
@@ -37,13 +42,13 @@ Integrate Chatwoot flutter client into your flutter app and talk to your visitor
 
 Run the command below in your terminal
 
-`flutter pub add chatwoot_sdk`
+`flutter pub add chatwoot_client_sdk`
 
 or
 
 Add
-`chatwoot_sdk:<<version>>`
-to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/chatwoot_sdk) for the latest version.
+`chatwoot_client_sdk:<<version>>`
+to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubspec) file. You can check [here](https://pub.dev/packages/chatwoot_client_sdk) for the latest version.
 
 ## 2. How to use
 
@@ -55,7 +60,7 @@ to your project's [pubspec.yml](https://flutter.dev/docs/development/tools/pubsp
 ```dart
 import 'dart:io';
 
-import 'package:chatwoot_sdk/chatwoot_sdk.dart';
+import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

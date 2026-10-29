@@ -1,4 +1,4 @@
-import 'package:chatwoot_sdk/ui/webview_widget/webview.dart';
+import 'package:chatwoot_client_sdk/ui/webview_widget/webview.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

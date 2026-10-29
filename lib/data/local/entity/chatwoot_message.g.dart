@@ -81,7 +81,8 @@ ChatwootMessage _$ChatwootMessageFromJson(Map<String, dynamic> json) =>
       sender: json['sender'] == null
           ? null
           : ChatwootEventMessageUser.fromJson(
-              json['sender'] as Map<String, dynamic>),
+              json['sender'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$ChatwootMessageToJson(ChatwootMessage instance) =>

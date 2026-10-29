@@ -1,4 +1,4 @@
-import 'package:chatwoot_sdk/chatwoot_sdk.dart';
+import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../lib/main.dart';

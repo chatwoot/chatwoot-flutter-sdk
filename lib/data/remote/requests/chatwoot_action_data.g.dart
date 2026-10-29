@@ -7,11 +7,7 @@ part of 'chatwoot_action_data.dart';
 // **************************************************************************
 
 ChatwootActionData _$ChatwootActionDataFromJson(Map<String, dynamic> json) =>
-    ChatwootActionData(
-      action: actionTypeFromJson(json['action'] as String?),
-    );
+    ChatwootActionData(action: actionTypeFromJson(json['action'] as String?));
 
 Map<String, dynamic> _$ChatwootActionDataToJson(ChatwootActionData instance) =>
-    <String, dynamic>{
-      'action': actionTypeToJson(instance.action),
-    };
+    <String, dynamic>{'action': actionTypeToJson(instance.action)};

@@ -1,5 +1,7 @@
 ## [0.1.0] - 2026-10-29
 
+- Restore the official `chatwoot_client_sdk` package identity and entry point.
+
 - Migrate the website widget to InAppWebView for native attachment selection.
 - Queue widget messages until the native JavaScript bridge is ready.
 - Keep platform restrictions on cross-origin file access and mixed content.
