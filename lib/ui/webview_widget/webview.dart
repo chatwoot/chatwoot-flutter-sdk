@@ -1,13 +1,23 @@
+import 'dart:collection';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:chatwoot_sdk/chatwoot_sdk.dart';
+import 'package:chatwoot_sdk/ui/webview_widget/javascript_bridge.dart';
 import 'package:chatwoot_sdk/ui/webview_widget/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_flutter_android/webview_flutter_android.dart'
-    as webview_flutter_android;
+
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+// iOS asks about the initial URL as well as user navigation. Keep the widget's
+// configured request embedded. Its query binds the inbox and stored conversation;
+// web content must not replace those parameters before user configuration runs.
+bool isWidgetNavigation(Uri target, Uri widgetUrl) =>
+    target.scheme == widgetUrl.scheme &&
+    target.host == widgetUrl.host &&
+    target.port == widgetUrl.port &&
+    target.path == widgetUrl.path &&
+    target.query == widgetUrl.query;
 
 ///Chatwoot webview widget
 /// {@category FlutterClientSdk}
@@ -21,9 +31,6 @@ class Webview extends StatefulWidget {
   /// See [ChatwootWidget.closeWidget]
   final void Function()? closeWidget;
 
-  /// See [ChatwootWidget.onAttachFile]
-  final Future<List<String>> Function()? onAttachFile;
-
   /// See [ChatwootWidget.onLoadStarted]
   final void Function()? onLoadStarted;
 
@@ -33,24 +40,26 @@ class Webview extends StatefulWidget {
   /// See [ChatwootWidget.onLoadCompleted]
   final void Function()? onLoadCompleted;
 
-  Webview(
-      {Key? key,
-      required String websiteToken,
-      required String baseUrl,
-      ChatwootUser? user,
-      String locale = "en",
-      customAttributes,
-      this.closeWidget,
-      this.onAttachFile,
-      this.onLoadStarted,
-      this.onLoadProgress,
-      this.onLoadCompleted})
-      : super(key: key) {
+  Webview({
+    Key? key,
+    required String websiteToken,
+    required String baseUrl,
+    ChatwootUser? user,
+    String locale = "en",
+    customAttributes,
+    this.closeWidget,
+    this.onLoadStarted,
+    this.onLoadProgress,
+    this.onLoadCompleted,
+  }) : super(key: key) {
     widgetUrl =
         "${baseUrl}/widget?website_token=${websiteToken}&locale=${locale}";
 
     injectedJavaScript = generateScripts(
-        user: user, locale: locale, customAttributes: customAttributes);
+      user: user,
+      locale: locale,
+      customAttributes: customAttributes,
+    );
   }
 
   @override
@@ -58,74 +67,99 @@ class Webview extends StatefulWidget {
 }
 
 class _WebviewState extends State<Webview> {
-  WebViewController? _controller;
+  String? _webviewUrl;
+
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       String webviewUrl = widget.widgetUrl;
-      final cwCookie = await StoreHelper.getCookie();
-      if (cwCookie.isNotEmpty) {
-        webviewUrl = "${webviewUrl}&cw_conversation=${cwCookie}";
-      }
-      setState(() {
-        _controller = WebViewController()
-          ..setJavaScriptMode(JavaScriptMode.unrestricted)
-          ..setBackgroundColor(Colors.white)
-          ..setNavigationDelegate(
-            NavigationDelegate(
-              onProgress: (int progress) {
-                // Update loading bar.
-                widget.onLoadProgress?.call(progress);
-              },
-              onPageStarted: (String url) {
-                widget.onLoadStarted?.call();
-              },
-              onPageFinished: (String url) async {
-                widget.onLoadCompleted?.call();
-              },
-              onWebResourceError: (WebResourceError error) {},
-              onNavigationRequest: (NavigationRequest request) {
-                _goToUrl(request.url);
-                return NavigationDecision.prevent;
-              },
-            ),
-          )
-          ..addJavaScriptChannel("ReactNativeWebView",
-              onMessageReceived: (JavaScriptMessage jsMessage) {
-            print("Chatwoot message received: ${jsMessage.message}");
-            final message = getMessage(jsMessage.message);
-            if (isJsonString(message)) {
-              final parsedMessage = jsonDecode(message);
-              final eventType = parsedMessage["event"];
-              final type = parsedMessage["type"];
-              if (eventType == 'loaded') {
-                final authToken = parsedMessage["config"]["authToken"];
-                StoreHelper.storeCookie(authToken);
-                _controller?.runJavaScript(widget.injectedJavaScript);
-              }
-              if (type == 'close-widget') {
-                widget.closeWidget?.call();
-              }
-            }
-          })
-          ..loadRequest(Uri.parse(webviewUrl));
 
-        if (Platform.isAndroid && widget.onAttachFile != null) {
-          final androidController = _controller!.platform
-              as webview_flutter_android.AndroidWebViewController;
-          androidController
-              .setOnShowFileSelector((_) => widget.onAttachFile!.call());
-        }
+      final cwCookie = await StoreHelper.getCookie();
+      if (!mounted) return;
+      if (cwCookie.isNotEmpty) {
+        webviewUrl = "$webviewUrl&cw_conversation=$cwCookie";
+      }
+
+      setState(() {
+        _webviewUrl = webviewUrl;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return _controller != null
-        ? WebViewWidget(controller: _controller!)
-        : SizedBox();
+    if (_webviewUrl == null) {
+      return const SizedBox();
+    }
+
+    return InAppWebView(
+      initialUrlRequest: URLRequest(url: WebUri(_webviewUrl!)),
+      initialSettings: InAppWebViewSettings(
+        javaScriptEnabled: true,
+        transparentBackground: true,
+        allowFileAccess: true,
+        allowContentAccess: true,
+        useShouldOverrideUrlLoading: true,
+      ),
+      initialUserScripts: UnmodifiableListView([
+        UserScript(
+          source: chatwootJavaScriptBridge,
+          injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+        ),
+      ]),
+      onWebViewCreated: (controller) async {
+        controller.addJavaScriptHandler(
+          handlerName: "ReactNativeWebView",
+          callback: (args) async {
+            if (args.isEmpty) return;
+
+            final message = getMessage(args.first);
+
+            if (isJsonString(message)) {
+              final parsedMessage = jsonDecode(message);
+
+              final eventType = parsedMessage["event"];
+              final type = parsedMessage["type"];
+
+              if (eventType == 'loaded') {
+                final authToken = parsedMessage["config"]["authToken"];
+                StoreHelper.storeCookie(authToken);
+
+                await controller.evaluateJavascript(
+                  source: widget.injectedJavaScript,
+                );
+              }
+
+              if (type == 'close-widget') {
+                widget.closeWidget?.call();
+              }
+            }
+          },
+        );
+      },
+      onProgressChanged: (controller, progress) {
+        widget.onLoadProgress?.call(progress);
+      },
+      onLoadStart: (controller, url) {
+        widget.onLoadStarted?.call();
+      },
+      onLoadStop: (controller, url) async {
+        widget.onLoadCompleted?.call();
+      },
+      shouldOverrideUrlLoading: (controller, navigationAction) async {
+        final uri = navigationAction.request.url;
+        if (uri != null) {
+          if (isWidgetNavigation(uri, Uri.parse(_webviewUrl!))) {
+            return NavigationActionPolicy.ALLOW;
+          }
+          _goToUrl(uri.toString());
+        }
+        return NavigationActionPolicy.CANCEL;
+      },
+      onReceivedError: (controller, request, error) {},
+    );
   }
 
   _goToUrl(String url) {
