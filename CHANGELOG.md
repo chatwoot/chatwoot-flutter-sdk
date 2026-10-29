@@ -1,4 +1,4 @@
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-10-29
 
 - Migrate the website widget to InAppWebView for native attachment selection.
 - Queue widget messages until the native JavaScript bridge is ready.

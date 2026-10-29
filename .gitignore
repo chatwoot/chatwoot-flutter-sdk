@@ -13,6 +13,8 @@
 # Generated library parts must ship to Git/path and pub.dev consumers.
 !lib/**/*.g.dart
 *.mocks.dart
+# These generated mocks are committed for the SDK test suite.
+!test/**/*.mocks.dart
 applicationDocumentsPath
 hive_testing_path
 
