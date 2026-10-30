@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:chatwoot_sdk/data/local/dao/chatwoot_messages_dao.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
-import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
+import 'package:chatwoot_client_sdk/data/local/dao/chatwoot_messages_dao.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
+import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 

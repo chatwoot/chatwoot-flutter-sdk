@@ -1,11 +1,11 @@
 // Synthetic upgrade fixture: legacy Hive 2.2.3 uses the retained wire schema.
 // These adapters intentionally use the old engine, not Hive CE's writer.
 import 'package:hive/hive.dart' as legacy;
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_contact.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_conversation.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_message.dart';
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
-import 'package:chatwoot_sdk/data/remote/responses/chatwoot_event.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_contact.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_conversation.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_message.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_client_sdk/data/remote/responses/chatwoot_event.dart';
 
 class LegacyChatwootContactAdapter extends legacy.TypeAdapter<ChatwootContact> {
   @override

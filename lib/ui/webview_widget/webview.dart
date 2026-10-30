@@ -1,9 +1,9 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:chatwoot_sdk/chatwoot_sdk.dart';
-import 'package:chatwoot_sdk/ui/webview_widget/javascript_bridge.dart';
-import 'package:chatwoot_sdk/ui/webview_widget/utils.dart';
+import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
+import 'package:chatwoot_client_sdk/ui/webview_widget/javascript_bridge.dart';
+import 'package:chatwoot_client_sdk/ui/webview_widget/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

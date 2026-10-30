@@ -15,7 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  chatwoot_sdk:
+  chatwoot_client_sdk:
     path: ${jsonEncode(root.path)}
   archive: ^4.5.2
 dev_dependencies:
@@ -25,7 +25,7 @@ dev_dependencies:
 ''');
     Directory('${fixture.path}/lib').createSync();
     File('${fixture.path}/lib/main.dart').writeAsStringSync('''
-import 'package:chatwoot_sdk/chatwoot_sdk.dart';
+import 'package:chatwoot_client_sdk/chatwoot_client_sdk.dart';
 import 'package:flutter/widgets.dart';
 
 void main() => runApp(ChatwootWidget(
@@ -35,6 +35,7 @@ void main() => runApp(ChatwootWidget(
 ));
 ''');
     for (final name in [
+      'package_identity_test.dart',
       'data/local/hive_upgrade_test.dart',
       'fixtures/legacy_hive_adapters.dart',
       'webview_widget/navigation_test.dart',

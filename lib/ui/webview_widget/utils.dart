@@ -1,6 +1,6 @@
 import "dart:convert";
 
-import "package:chatwoot_sdk/data/local/entity/chatwoot_user.dart";
+import "package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
 
 import "constants.dart";

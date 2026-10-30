@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
-import 'package:chatwoot_sdk/ui/webview_widget/constants.dart';
-import 'package:chatwoot_sdk/ui/webview_widget/utils.dart';
+import 'package:chatwoot_client_sdk/data/local/entity/chatwoot_user.dart';
+import 'package:chatwoot_client_sdk/ui/webview_widget/constants.dart';
+import 'package:chatwoot_client_sdk/ui/webview_widget/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _page = r'''

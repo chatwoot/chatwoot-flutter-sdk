@@ -1,4 +1,4 @@
-import 'package:chatwoot_sdk/ui/webview_widget/webview.dart';
+import 'package:chatwoot_client_sdk/ui/webview_widget/webview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
